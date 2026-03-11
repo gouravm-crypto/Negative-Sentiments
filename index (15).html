@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Negative Sentiments · CaratLane CS Audit</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --mag:#C8005A;--mag-lt:#F0006E;--mag-dk:#8A003E;
+  --mag-pale:#FFF0F6;--mag-mist:rgba(200,0,90,.06);--mag-glow:rgba(200,0,90,.22);
+  --gold:#B8860B;--gold-lt:#E8B840;
+  --ink:#0F0A10;--ink2:#1E0E1A;
+  --body:#FAFAF8;--surface:#FFFFFF;--surface2:#FDF5F9;
+  --bdr:#EEE4EC;--bdr2:#E0CCD8;
+  --txt:#1A0818;--txt2:#5A3048;--txt3:#9A7085;--txt4:#C4A8B8;
+  --sh-sm:0 2px 8px rgba(15,10,16,.08),0 1px 3px rgba(15,10,16,.05);
+  --sh-md:0 4px 16px rgba(15,10,16,.10),0 2px 6px rgba(15,10,16,.06);
+  --sh-lg:0 8px 32px rgba(15,10,16,.14),0 4px 12px rgba(15,10,16,.08);
+  --red:#C8005A;--red-dim:rgba(200,0,90,.08);
+  --amber:#B8860B;--amber-dim:rgba(184,134,11,.10);
+  --green:#1a7a4a;--green-dim:rgba(26,122,74,.08);
+  --blue:#1a4fa0;--blue-dim:rgba(26,79,160,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes gpulse{0%,100%{box-shadow:0 0 10px rgba(184,134,11,.5)}50%{box-shadow:0 0 22px rgba(184,134,11,.8),0 0 40px rgba(184,134,11,.2)}}
+@keyframes bpulse{0%,100%{box-shadow:0 0 0 0 var(--mag-glow)}50%{box-shadow:0 0 0 7px rgba(200,0,90,0)}}
+@keyframes htbp{0%,100%{box-shadow:0 0 6px var(--mag-glow)}50%{box-shadow:0 0 16px var(--mag-glow),0 0 28px rgba(200,0,90,.15)}}
+@keyframes scan{0%,100%{top:-200px}50%{top:100%}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes sdwn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══ HEADER ══ */
+.hdr{
+  position:sticky;top:0;z-index:900;
+  background:var(--ink2);
+  border-bottom:2px solid transparent;
+  border-image:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent) 1;
+  display:flex;align-items:center;padding:0 40px;height:70px;
+  width:100%;
+}
+.hdr-brand{display:flex;align-items:center;gap:12px;margin-right:44px;flex-shrink:0;cursor:pointer;}
+.hdr-brand:hover{opacity:.85;}
+.cl-logo{width:40px;height:40px;object-fit:cover;border-radius:8px;flex-shrink:0;}
+.cl-text{display:flex;flex-direction:column;gap:1px;}
+.cl-name{font-size:15px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#fff;line-height:1;}
+.cl-sub{font-size:7.5px;font-weight:400;letter-spacing:3px;text-transform:uppercase;color:rgba(255,200,220,.42);line-height:1;}
+.hdr-sep{width:1px;height:32px;background:rgba(255,255,255,.1);margin-right:32px;flex-shrink:0;}
+.hdr-nav{display:flex;flex:1;gap:4px;overflow-x:auto;}
+.hdr-nav::-webkit-scrollbar{display:none;}
+.ntab{
+  height:70px;padding:0 16px;
+  display:flex;align-items:center;
+  font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,200,220,.35);white-space:nowrap;flex-shrink:0;
+  cursor:pointer;border-bottom:2.5px solid transparent;
+  transition:color .2s,border-color .2s,background .2s;text-decoration:none;
+}
+.ntab:hover{color:rgba(255,200,220,.72);}
+.ntab.active{color:#fff;border-bottom-color:var(--mag);background:rgba(200,0,90,.08);}
+.hdr-badge{
+  margin-left:auto;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--mag);border:1.5px solid rgba(200,0,90,.4);padding:5px 12px;border-radius:20px;
+  background:rgba(200,0,90,.08);flex-shrink:0;animation:bpulse 2.5s ease-in-out infinite;
+}
+
+/* ══ HERO ══ */
+.hero{
+  background:linear-gradient(180deg,#fff 0%,#FFF8FB 55%,#FFF3F8 100%);
+  padding:72px 0 64px;
+  position:relative;overflow:hidden;
+  border-bottom:1.5px solid var(--bdr);
+  width:100%;
+}
+.hero-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 120% 90% at 50% -5%,rgba(200,0,90,.09) 0%,transparent 55%),radial-gradient(ellipse 55% 45% at 5% 95%,rgba(184,134,11,.07) 0%,transparent 60%);}
+.hero-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(200,0,90,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(200,0,90,.04) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 75% 65% at 50% 50%,black 20%,transparent 100%);}
+.hero-scan{position:absolute;left:0;right:0;height:200px;pointer-events:none;background:linear-gradient(180deg,transparent 0%,rgba(200,0,90,.04) 40%,rgba(200,0,90,.07) 50%,rgba(200,0,90,.04) 60%,transparent 100%);animation:scan 9s ease-in-out infinite;}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1200px;margin:0 auto;padding:0 40px;}
+.hero-logo-wrap{display:flex;align-items:center;gap:16px;margin-bottom:28px;}
+.hero-logo-circle{width:68px;height:68px;border-radius:50%;overflow:hidden;box-shadow:0 0 30px rgba(200,0,90,.15),0 4px 20px rgba(0,0,0,.18);border:1.5px solid rgba(200,0,90,.2);flex-shrink:0;}
+.hero-logo-circle img{width:100%;height:100%;object-fit:cover;}
+.hero-brand-txt{display:flex;flex-direction:column;gap:3px;}
+.hero-cl-name{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ink);}
+.hero-cl-tata{font-size:8px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--txt3);}
+.hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--mag);margin-bottom:16px;display:flex;align-items:center;gap:10px;opacity:0;animation:up .7s ease .1s forwards;}
+.hero-eyebrow::before{content:'';width:20px;height:1.5px;background:var(--mag);border-radius:2px;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,6.5vw,88px);font-weight:800;letter-spacing:-2px;line-height:.92;color:var(--ink);opacity:0;animation:up .9s ease .2s forwards;position:relative;display:inline-block;margin-bottom:6px;}
+.hero-title::after{content:'';position:absolute;bottom:-8px;left:0;right:20%;height:3px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent);background-size:200% 100%;animation:shimmer 3.2s linear infinite;border-radius:2px;}
+.hero-title .em{color:var(--mag);font-style:italic;}
+.hero-subtitle{font-family:'Cormorant Garamond',serif;font-size:clamp(13px,1.8vw,19px);font-weight:300;letter-spacing:clamp(5px,1.5vw,12px);text-transform:uppercase;color:var(--mag);margin-top:22px;opacity:0;animation:up .9s ease .32s forwards;}
+.hero-divider{display:flex;align-items:center;gap:12px;margin:24px 0;opacity:0;animation:up .8s ease .44s forwards;}
+.hdiv-line{width:72px;height:1px;background:linear-gradient(90deg,transparent,rgba(184,134,11,.42));}
+.hdiv-line.r{background:linear-gradient(270deg,transparent,rgba(184,134,11,.42));}
+.hdiv-gem{width:6px;height:6px;transform:rotate(45deg);background:var(--gold);box-shadow:0 0 10px rgba(184,134,11,.5);animation:gpulse 2.2s ease-in-out infinite;}
+.hdiv-gem.sm{width:3px;height:3px;background:var(--mag);box-shadow:0 0 6px var(--mag-glow);animation-delay:.6s;}
+.hero-desc{font-size:14px;color:var(--txt3);line-height:1.75;max-width:580px;opacity:0;animation:up .8s ease .52s forwards;margin-bottom:40px;}
+
+/* HERO STATS */
+.hero-stats{display:flex;gap:0;max-width:780px;border:1.5px solid var(--bdr2);border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:var(--sh-md);opacity:0;animation:up .8s ease .62s forwards;}
+.hero-stat{flex:1;padding:24px 28px;border-right:1.5px solid var(--bdr);cursor:default;transition:background .2s;}
+.hero-stat:last-child{border-right:none;}
+.hero-stat:hover{background:var(--mag-pale);}
+.hero-stat-num{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:800;line-height:1;margin-bottom:4px;display:flex;align-items:baseline;gap:4px;}
+.hero-stat-num .delta{font-size:13px;color:var(--mag);}
+.hero-stat-label{font-size:9.5px;font-weight:700;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;}
+.hero-border{position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag-dk),var(--mag),var(--gold-lt),var(--mag),var(--mag-dk),transparent);background-size:200% 100%;animation:shimmer 3.5s linear infinite;}
+
+/* ══ MAIN LAYOUT ══ */
+.main{width:100%;max-width:1200px;margin:0 auto;padding:0 40px 100px;}
+
+/* ══ SECTION ══ */
+section{padding:72px 0;}
+section+section{border-top:1.5px solid var(--bdr);}
+
+.sec-ey{font-size:8.5px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--mag);margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.sec-ey::before{content:'';width:20px;height:1.5px;background:var(--mag);border-radius:2px;flex-shrink:0;}
+.sec-ttl{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3.5vw,44px);font-weight:700;color:var(--ink);line-height:1.05;margin-bottom:8px;}
+.sec-sub{font-size:13px;color:var(--txt3);line-height:1.7;max-width:640px;margin-bottom:40px;}
+.sec-rule{height:1.5px;margin-bottom:40px;background:linear-gradient(90deg,var(--mag),var(--gold-lt),transparent);opacity:.2;border-radius:2px;}
+
+/* ══ ERP CALLOUT ══ */
+.erp-callout{
+  background:linear-gradient(135deg,rgba(184,134,11,.06) 0%,rgba(200,0,90,.06) 100%);
+  border:1.5px solid rgba(184,134,11,.2);
+  border-radius:18px;padding:28px 32px;margin-bottom:40px;position:relative;overflow:hidden;
+  box-shadow:var(--sh-sm);
+}
+.erp-callout::before{content:'ERP';position:absolute;right:-8px;top:-16px;font-family:'Cormorant Garamond',serif;font-size:110px;font-weight:800;color:rgba(184,134,11,.05);pointer-events:none;line-height:1;}
+.erp-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;color:var(--amber);margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.erp-body{font-size:13px;color:var(--txt3);line-height:1.75;max-width:700px;}
+
+/* ══ STAT CARDS ══ */
+.stat-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.stat-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px;}
+.sc{background:var(--surface);border:1.5px solid var(--bdr);border-radius:16px;padding:24px;position:relative;overflow:hidden;box-shadow:var(--sh-sm);transition:all .25s cubic-bezier(.34,1.56,.64,1);}
+.sc:hover{transform:translateY(-4px);box-shadow:var(--sh-md),0 6px 24px rgba(200,0,90,.08);}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--bdr));}
+.sc.red{--accent:var(--mag);}
+.sc.amber{--accent:var(--gold);}
+.sc.green{--accent:var(--green);}
+.sc.blue{--accent:var(--blue);}
+.sc-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:10px;}
+.sc-num{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:800;line-height:1;margin-bottom:8px;}
+.sc.red .sc-num{color:var(--mag);}
+.sc.amber .sc-num{color:var(--gold);}
+.sc.green .sc-num{color:var(--green);}
+.sc.blue .sc-num{color:var(--blue);}
+.sc-delta{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;}
+.d-up{background:rgba(200,0,90,.08);color:var(--mag);}
+.d-down{background:rgba(26,122,74,.08);color:var(--green);}
+
+/* ══ CHART CARDS ══ */
+.chart-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+.chart-grid-full{margin-bottom:20px;}
+.cc-card{background:var(--surface);border:1.5px solid var(--bdr);border-radius:18px;padding:28px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
+.cc-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;opacity:.5;}
+.cc-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.cc-sub{font-size:11px;color:var(--txt3);margin-bottom:20px;}
+.chart-wrap{position:relative;height:240px;}
+.chart-wrap-tall{position:relative;height:300px;}
+.legend{display:flex;gap:18px;margin-bottom:14px;flex-wrap:wrap;}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--txt3);}
+.leg-dot{width:10px;height:10px;border-radius:2px;}
+
+/* ══ COMPARE BARS ══ */
+.compare-row{display:grid;grid-template-columns:130px 1fr 55px;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--bdr);}
+.compare-row:last-child{border-bottom:none;}
+.compare-label{font-size:12.5px;color:var(--txt2);font-weight:500;}
+.compare-bars{display:flex;flex-direction:column;gap:4px;}
+.bar-wrap{display:flex;align-items:center;gap:8px;}
+.bar-bg{flex:1;height:7px;background:rgba(200,0,90,.07);border-radius:4px;overflow:hidden;border:1px solid rgba(200,0,90,.08);}
+.bar-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1);}
+.bar-w1 .bar-fill{background:linear-gradient(90deg,var(--blue),rgba(26,79,160,.6));}
+.bar-w2 .bar-fill{background:linear-gradient(90deg,var(--mag),var(--mag-lt));}
+.bar-week{font-size:9px;font-weight:700;color:var(--txt4);width:22px;letter-spacing:.5px;}
+.compare-change{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;text-align:right;}
+
+/* ══ AGENT GRID ══ */
+.agent-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.agent-card{
+  background:var(--surface);border:1.5px solid var(--bdr);border-radius:18px;
+  padding:22px 24px;cursor:pointer;position:relative;overflow:hidden;
+  box-shadow:var(--sh-sm);transition:all .28s cubic-bezier(.34,1.56,.64,1);
+}
+.agent-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--mag),var(--gold-lt),var(--mag));background-size:200% 100%;opacity:0;animation:shimmer 3s linear infinite;transition:opacity .25s;}
+.agent-card:hover{transform:translateY(-5px);box-shadow:var(--sh-lg),0 8px 30px var(--mag-glow);border-color:rgba(200,0,90,.25);}
+.agent-card:hover::before{opacity:1;}
+.agent-card.critical{border-color:rgba(200,0,90,.2);background:linear-gradient(135deg,#fff 0%,#FFF5F9 100%);}
+.agent-card.escalating{border-color:rgba(184,134,11,.2);}
+
+.agent-badge{
+  position:absolute;top:14px;right:14px;
+  font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  padding:3px 8px;border-radius:4px;
+}
+.badge-critical{background:rgba(200,0,90,.1);color:var(--mag);border:1px solid rgba(200,0,90,.2);}
+.badge-escalating{background:rgba(184,134,11,.1);color:var(--gold);border:1px solid rgba(184,134,11,.2);}
+.badge-new{background:rgba(26,79,160,.08);color:var(--blue);border:1px solid rgba(26,79,160,.2);}
+
+.agent-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:3px;padding-right:90px;}
+.agent-team{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:16px;}
+.agent-metrics{display:flex;gap:16px;margin-bottom:16px;}
+.agent-metric-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;line-height:1;margin-bottom:2px;}
+.agent-metric-num.red{color:var(--mag);}
+.agent-metric-num.amber{color:var(--gold);}
+.agent-metric-num.muted{color:var(--txt4);}
+.agent-metric-label{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--txt3);}
+.agent-divider{height:1px;background:var(--bdr);margin-bottom:14px;}
+.agent-wk{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.wk-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;letter-spacing:.5px;}
+.wk1{background:rgba(26,79,160,.08);color:var(--blue);border:1px solid rgba(26,79,160,.15);}
+.wk2{background:rgba(200,0,90,.08);color:var(--mag);border:1px solid rgba(200,0,90,.15);}
+.wk-arrow{color:var(--gold);font-size:16px;font-weight:700;}
+.agent-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{font-size:10px;padding:3px 9px;border-radius:4px;background:var(--body);border:1.5px solid var(--bdr2);color:var(--txt2);}
+.tag.bad{background:rgba(200,0,90,.07);border-color:rgba(200,0,90,.15);color:var(--mag);}
+
+/* ══ RISK MATRIX ══ */
+.risk-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:48px;}
+.risk-dot{
+  aspect-ratio:1;border-radius:14px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  border:1.5px solid var(--bdr);background:var(--surface);
+  padding:14px 8px;text-align:center;box-shadow:var(--sh-sm);
+}
+.risk-dot:hover{transform:scale(1.07);box-shadow:var(--sh-md),0 6px 20px var(--mag-glow);}
+.risk-dot.r5{background:linear-gradient(135deg,#fff5f9 0%,#ffe8f2 100%);border-color:rgba(200,0,90,.3);}
+.risk-dot.r4{background:rgba(200,0,90,.05);border-color:rgba(200,0,90,.18);}
+.risk-dot.r3{background:rgba(184,134,11,.05);border-color:rgba(184,134,11,.2);}
+.risk-dot.r2{background:rgba(26,79,160,.04);border-color:rgba(26,79,160,.15);}
+.risk-dot.r1{background:var(--surface2);}
+.risk-name{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.risk-num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;line-height:1;}
+.risk-dot.r5 .risk-num{color:var(--mag);}
+.risk-dot.r4 .risk-num{color:var(--mag);opacity:.7;}
+.risk-dot.r3 .risk-num{color:var(--gold);}
+.risk-dot.r2 .risk-num{color:var(--blue);}
+.risk-dot.r1 .risk-num{color:var(--txt3);}
+.risk-label{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--txt3);margin-top:2px;}
+
+/* ══ MODAL ══ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(15,10,16,.6);
+  backdrop-filter:blur(10px);z-index:999;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--surface);border:1.5px solid var(--bdr2);border-radius:22px;
+  padding:36px;max-width:600px;width:90%;max-height:85vh;overflow-y:auto;
+  transform:scale(.95) translateY(12px);transition:transform .3s;position:relative;
+  box-shadow:var(--sh-lg),0 20px 60px rgba(200,0,90,.12);
+}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:22px 22px 0 0;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent);background-size:200% 100%;animation:shimmer 3s linear infinite;}
+.modal-overlay.open .modal{transform:scale(1) translateY(0);}
+.modal-close{
+  position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;
+  background:var(--body);border:1.5px solid var(--bdr2);color:var(--txt3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:15px;transition:all .2s;
+}
+.modal-close:hover{background:var(--mag-pale);color:var(--mag);border-color:rgba(200,0,90,.3);}
+.modal-status{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;}
+.modal-name{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:800;color:var(--ink);margin-bottom:3px;}
+.modal-team{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:20px;}
+.modal-metrics{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap;}
+.mm{background:var(--body);border:1.5px solid var(--bdr);border-radius:10px;padding:12px 16px;text-align:center;min-width:76px;}
+.mm-num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;line-height:1;}
+.mm-num.red{color:var(--mag);}
+.mm-num.amber{color:var(--gold);}
+.mm-num.green{color:var(--green);}
+.mm-num.blue{color:var(--blue);}
+.mm-label{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--txt3);margin-top:4px;}
+.modal-section-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin:18px 0 8px;}
+.modal-cases{display:flex;flex-direction:column;gap:8px;}
+.modal-case{
+  background:var(--body);border:1.5px solid var(--bdr);
+  border-left:3px solid var(--bdr2);border-radius:0 10px 10px 0;padding:12px 14px;
+}
+.modal-case.crucial{border-left-color:var(--mag);}
+.modal-case.neutral{border-left-color:var(--gold);}
+.modal-case.less{border-left-color:var(--txt4);}
+.modal-case-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.modal-case-q{font-size:13px;font-weight:600;color:var(--ink);}
+.modal-case-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;}
+.cb-crucial{background:rgba(200,0,90,.08);color:var(--mag);}
+.cb-neutral{background:rgba(184,134,11,.08);color:var(--gold);}
+.cb-less{background:rgba(160,100,120,.08);color:var(--txt3);}
+.modal-dislike{font-size:11px;color:var(--txt3);margin-bottom:4px;}
+.modal-summary{font-size:12px;color:var(--txt2);line-height:1.6;}
+.modal-rc{
+  background:linear-gradient(135deg,rgba(200,0,90,.05) 0%,rgba(184,134,11,.05) 100%);
+  border:1.5px solid rgba(200,0,90,.15);border-radius:12px;padding:16px 18px;margin-top:18px;
+}
+.modal-rc-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mag);margin-bottom:8px;}
+.modal-rc-txt{font-size:13px;color:var(--txt2);line-height:1.65;}
+
+/* ══ FOOTER ══ */
+.footer{
+  background:var(--ink2);
+  border-top:2px solid transparent;
+  border-image:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent) 1;
+  padding:40px;display:flex;justify-content:space-between;align-items:center;
+  width:100%;
+}
+.ft-brand{display:flex;align-items:center;gap:10px;}
+.ft-gem{width:8px;height:8px;transform:rotate(45deg);background:var(--gold);animation:gpulse 2.5s ease-in-out infinite;}
+.ft-txt{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.8);}
+.ft-right{text-align:right;font-size:11px;color:rgba(255,200,220,.35);line-height:1.8;}
+.ft-right strong{color:rgba(255,200,220,.6);font-weight:600;}
+
+/* ══ FADE ══ */
+.fade-up{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+
+/* ══ SCROLLBAR ══ */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--body);}
+::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:3px;}
+
+@media(max-width:768px){
+  .hdr{padding:0 16px;}
+  .hero-inner{padding:0 16px;}
+  .main{padding:0 16px 60px;}
+  .stat-grid-4{grid-template-columns:1fr 1fr;}
+  .stat-grid-3{grid-template-columns:1fr 1fr;}
+  .chart-grid-2{grid-template-columns:1fr;}
+  .agent-grid{grid-template-columns:1fr;}
+  .risk-grid{grid-template-columns:repeat(3,1fr);}
+  .footer{flex-direction:column;gap:16px;text-align:center;padding:28px 16px;}
+  .ft-right{text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-brand">
+    <img src="data:image/webp;base64,UklGRi4UAABXRUJQVlA4WAoAAAAMAAAAHwMAVwIAVlA4IOwRAADwpgCdASogA1gCPnU6nUoko6MhoTPoMJAOiWlu4XdhH9Q9d51L3n9z9IGzO5H1hdo+jN5P/J+cb/M+oj9RewjznPMb51PqQ/xm+9b0l/h8kf8p/5jtc/4HnH1WPYDkONCtBfY7wAu/e8ngA/J/6H/wvWh+R8z9JToCeLHnK/Q/+D7B3SP/dAGYgvxU96SD3KcuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cKQGT7+82fnA9przDlY9ynLly5cuXLly5cuXLly5cuXE3TxyjGaaN9v+Hmmy1NKy7+Yz1oPhvBfpfZWW64Y6QX4qe9JB7lOXLly5cKaaF5//19OvJ3uO3oXbCRkxtG0Hg1VeBkkQkYNPc9f8yOdicwFZ1y7y7J8ULEcHmJ70kHuU5cuXLly5cuXLlwrua1X6Go863I7jPzAGoJd/xQdjH9wwuANDRB2zyAo27zlI2E1MXokIjI/xWkFaNMGQX4qe9JB7lOXLly5cuXLlZlt3jEo+DTfsmWEZ+fNfkYpQZCleyAplxq34qe9JB7lOXLly5cuXLlysfwT25zjr+/VnQ5X04H/7GUUltYbtLZ34qe9JB7lOXLly5cuXLly4QUK4AhTnsR66UWcBTWsY7W/Tt+4X4qe9JB7lOXLly5cuXLly5cuFUq3BQVtkqO1jonhIqdfTF+WGaxFZHg6QX4qe9JB7lOXLly5cuXLly5cyCdu6wUs+6s7OgfwQPX7srd+q9F4X4qe9JB7lOXLly5cuXLly5cuXMhH+llvoBtUQ9mxgXdGnbfrAGpN/pIPcpy5cuXLly5cuXLly5crEZcyEzs4OqHwEerJw4ugDBywIgzYwcHBIx2HuU5cuXLly5cuXLly5cuXKzxcXg3vpNUCOQkkliECndtduJi2Pa07UquUvBg3ZA6TZtXlAC5ut7/5RmpzpuOu9vnZ/TuTLhfip70kHuU5cuXLly5cuVmn8iVKQcg9N2AsQlsx6ZcOkCGR3B4CMYGIIBSbAQlPjLZc15Xs+bX0BiasbfgP9rNyv+4Y6QX4qe9JB7lOXLly5cyIPN2dSU55K/pgHMgVFcIUlJXMZEHBu835Ss5HjC07lOXLly5cuXLly5cuXLly5cuXCl4WIh/afP5H3+sGXrwkHuU5cuXLly5cuXLly5cuXLly53z05cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXKwAA/v+11v/x16LkXJ/0w0HoHswPNnEA0DiAAAAAAAAAAAAAAAAAEdl123aN1hZpzsn5+1esVeYx8MU+rIWBI3Y+xBjMtqtbGkk1fXGL8upPDtGVg9AiwqiLKmun2XSwqI4Wh7camqxzRBdX4s2E6l45bzvacXp3pqjqzCEIK+5Pi/AgkbgbRh/XkCVVQg0C65Oa8QDPJriOg6fWQVvNBVD9hQUs/tFWqD3xfFWYItd/MVni1fP4U9yca+7w2cjro1yY+iIWlzK3hUtDMq9Ei90NETDV4GFQgyHkJjbXZzh1bsDHIjR/tilXdZOedtMcEnEpsSX5ZU5ouScby3wl76xgekWc9VaLNT+olrwu+m/CrPoVVW7Hw5Wxj2VgHVeuSS0gDEaDYsHUGS8WR3S5Fo5qc1JecENop36/hd2X4pEpG8gsFIhDMIJyMzKk7cTcNHWXu1+YcMU+Uhp/3HvPV/p8yRN4YSFdim03DXwOtG9mXFflijtTByg+e4/sFjZnrG0ZrV5+2J/tSYBUUu8p9TTuopmHJOuhLCmph8mu4dvndJ1ZLmzf3zhN1XEo5yAR1GpjE8Ln1D2lTF1kfXxg4sHna3LouGIZRquvccB2AfuTR/2lYCmeseMJmXSanV5NiPDX9O33qOsdnSmOS+Lg9JJEJBm+Y6o03LdliofgWwmEGsReBzfszo8cbOX6USuK7BqqHiExGYBbhJUq2e2uenZNI31JAN8XW0gzTN7UyqmbfjHabjNz6cwidHaqmLxI7zYtKwgmttgNe+sSD1TPyS8qW47HHjklj/UPe16aa0Lh791AITXuRVgg6lqSIT44EQ7EqzAUsYw0/VgJa/td+HoClDb4s5sH5KnKmjN5heGDgMXCr5nqDgem4s8xDDTZayIJHMjB3cU09eflJVl1D5e3DJ77i670tfHTCU5LZGaDerf4itIcBaMhLsZXh2ZmonkdumV+bnualB4SBaZk1HLRTy+QR2MD5futCPybzmkAYfWzd7wGgiA41RQZYbkiF+3Lt9yAhY5Op6Pt58jCbYLD7b0k8LHFF8KkWHJfrEnIIQwVYH8KHVDbqI1qPiqahyqHzxLEhzvTRTgzWS17c0SqkHmfD93BHE7WEb5M6mhyIi6hQOmaqZ8/GMXD/mJNmlkccSKZIBbITqWU3C4sMVdwRTHO0STtbNRyXkwad2bEeCrH2iDXB1vC9GFRNGP4oSlUi8c087n5KjKhkNBH5OUPt+O834QiwyRsSVWPcCP++ois9Az3PuUVpJUWabtINRA86yJUuFYdNjviqhCuf/9YfUiv4HumFHIOZ+1QmDQ4liERi0TvKZ8l3k9K4XzTDJgPulSYfxUyPC6Adh8lM0jcrY8yOgylJP2pLRR6+vjxYkbixdXDJKhpwkOTXpm+vGzpGbnWr98SNiWsjMgJn3xJE2b6S/WJ3OQCdIFkIZl1cvkbDnMMmH8i+r0OltayaIZ3v3moK6zQJy2TSFSak1kx2Y8R+y4Ek9RDlEfIeziMii7ws8CWDQsKTmM8+1j+/5dCWI9A/ti4sfbWEuZtFsb0jrDEn4Ysb7Sc0jk5L0fJ/t3JJf+5vuJGCEFFDVavfX/uWXt4Pt/XDoQk2DSxMO22sO5/Bmvuj4Q8zRAzdar01eET+oK/1LRWu7XhZFcotA0DVkj1IrwFA7iGib55TkNaAiYADuXNx7rd/UAsQMh7+hF/QNihJizzs65ZckAFWuFhGgz3xBvD6S2BziBFiqvscNPWii8Zk3wEsFcc/RYN0PIagANqsq3Zr9F0GsZjH5E+Oymb80J3jD1VScKVQumMD3dS0S+BsAV6mG4kIJ8de4i2IVLD4qinMpybIf67kwe1vu3Ek7n22iZjMaVczHu4SsxLtaWGAqoy3m12AHarGpfoPgcs7kG/Yigckkf441N65nHEmg6VHqgGAACqM4LIb2f3RHGkEXtYJjb4dTt7oHDwLdKbPzVKo33TdTO4e6vinEFR3wqDVavinEE3Bwxs21S39ONDfygqSDluHkLOMkJTpMb8r07X3EJQjsNMhGSxi7plP5xm0FrRkQIUoFpV9ycnFWabXenX+K9xXKqmzZDcosufJaxijFQSxxblvZcnqCayhIaN7adutrjOxA58u/HFAADYPdcP0TeFS9HruE0+uAlfFJxngIGsWE8w5sMklwM2GYnDSBWOEuIPgfb/H4DlQ+Y7SvuQEDMbPw1GjtoUvlvCK1GmR18r0+2oejOykzeWP8BCv76S4MMEZPXOzcS08Xb9V+rVNUM5TUHccO4H6bASe+rYuHjFxXlatwklHrT5SarSa0n14xzG0mvKKTtiDg2uKmwBaW8cf0oUvlpUYVqls/RypetvA+Vop3VduQ/gMSBmT/jsCeLDWot7Eu3vtgCkQ9L+o0gqofptpX2SoxM2NYZ09JX49vSuCWyqul7rMyHoQwmuZUZrIEQSWWpEeUyr8UEvJPJDkICIT7PxVimI96DYh2XcHiKloYxvK63GFBM6xXgDOnEYDR7PgtfGdmH7gAFj6gQlajTuHLqAeH22AmBtzkJ7W+IyhgfYJPl0aDpccJ7ODFFVg3qd8lEpvXhDwg6z5/pzLmuQqpbedg3SS/pHR9Hq6btHAdPOau1aFhcP6Y/LB/yn60LvYRBOlZ3g7Z4f/yQmcZVeO+U2L4WJ0VUVWDTpK844h1RO46cnsqgYaQrv74W3qJfndJ02xU/+cIuY9AICIEGiNTeFqgipMn8yMmCyrpVj7oYKpxJmsEwyY1UcCzNTMSO21MnvbcSUoZRFUh/XJnwGrUaT9msp4Q/XXyXM5GXKSBorwDqVaMh0IO9wGsg+H34Hbs6xG+3e7wweFMWudZd4Wh0X+ztN7hHlHhAhWoFez6qV3zN7Hmn3rP+6HBnWPdro/xD/6vSfeEMapEdM1IjibPBtGtIB+/ZZrOdvX95TUjDcJekaHWcJalJibePTh+/Bzm0hKo8CPIMeZwHap06WR+AKZiGaVpZueCJYP6uQg6KiMr7IwxgJi5UlHYQvvDTmQKZTOYMfjVWT9NavsR/FrVDMHf/A/VUiPyv1DxTd1MM17p4qrFYyP/GWzMRUtGXSAXWkaKyFTJ7sRKVWdemGW9HmTBFrxynXgLWQvFztFgZ6JTsgH19dd3EqH/3m4XiieZqodU8B/n4xhYOsHesBHHraNdYj3sKnWVDcrsHNAJQ9igGqNjn5f6RnaK5FrG+ktqbpcp9zWGuFmqXYJvkMk5fAyDyEN2LO+syPknpqBZqh2V+/ZwvnZhK/NhuQAvgecVRF4F5aC8sVuKu+NHz5L8XkPAWgr3j4IvLGTMU+HQ78ctzVv5Kgb/A+BvvjEzzjqhMx2ue+x8bcuSShl+qfCft+W1KpnMbiwU+5xLUEAim5PoszW73Ic2wqYArtrfSp/dlpIjws9QYYIAWwG2wJnKoA/Qbr9WuB9ojSc6tpHTxUNTXjRptrfNShZaRK+vkhDwLjzxDnXNO/JWNcKbYA42F8ci67ZaqlLdREPCDVT2zTU9Bc71upeSSmLW/ZKaK91B0rol+/uywaU6mzjjmTEcKqI3njmE5AfXR+D5OS1vx95GTdQs5PrN6rCgxUgCpO98KpAJrDrHdJufYhmrDJpFq2nbK62MatNeO3qNkWw+yH8PH/mPeK5VUpUmqderQCTrViwC5cm5hfBHeBui7MzWh7AvjuoF7FB38My5fYBcwfhf7D0Noz2//CqeAG6MQcuDVL/AcruuiC4INweHlBoiH6nM39eUI5JiLeUeDumymVK7CfRhAl7/KZtIysBAqM5JdDKMXK3FXBkjIHTOZf2yxTCzM2CkRwyetqsJplgA9t062dMAhz/sMbEysHjG8hcn81hja8QQXHaPVmunEkIolg5rM3K6J2Ect5G6fxmMZPBS9QcyVC0mc4mxILDhAAAFAYbfbzpO8RXxVupmPvGcfsZgZzkJl6arl/HlNUCxYHplfKgjWNPXEHbYWxTZ5YrQa92eWtWVh52jo69X9rSuxV1qh1iKRENSldl+ub2TYG0AGtZYma/cRgLGsxLh6vTJYdVbkgUVTru0jy4Ev1MickNok6f7mnXavu1ndezaJ/xzckwEYppQr4HRyoYACTYBqpVqXRKXZUNt0yBnVO1V5V3iEG3nhUJ8z9xKAAACY/MXuKTsDZBu9ZSoxsyKOteW2TFMQ/+2XizacvGaAoCoW4d3J8udQhQTr4l9VbWCIeMgvY7zj3hqURDYF2ju1XP24mRY+2UvOC4WPMd3+7OHqKak1fOYepj2Z+EMaYORsv2i5J8syYAAAAAAAAAAAAAAAAAAAAAAAAAAAARVhJRroAAABFeGlmAABJSSoACAAAAAYAEgEDAAEAAAABAAAAGgEFAAEAAABWAAAAGwEFAAEAAABeAAAAKAEDAAEAAAACAAAAEwIDAAEAAAABAAAAaYcEAAEAAABmAAAAAAAAAEgAAAABAAAASAAAAAEAAAAGAACQBwAEAAAAMDIxMAGRBwAEAAAAAQIDAACgBwAEAAAAMDEwMAGgAwABAAAA//8AAAKgBAABAAAAIAMAAAOgBAABAAAAWAIAAAAAAABYTVAgWgEAADw/eHBhY2tldCBiZWdpbj0iIiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkdvIFhNUCBTREsgMS4wIj48cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPjxyZGY6RGVzY3JpcHRpb24geG1sbnM6eG1wUmlnaHRzPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvcmlnaHRzLyIgcmRmOmFib3V0PSIiIHhtcFJpZ2h0czpNYXJrZWQ9IkZhbHNlIj48L3JkZjpEZXNjcmlwdGlvbj48L3JkZjpSREY+PC94OnhtcG1ldGE+Cjw/eHBhY2tldCBlbmQ9InciPz4=" class="cl-logo" alt="CaratLane">
+    <div class="cl-text">
+      <div class="cl-name">CaratLane</div>
+      <div class="cl-sub">A Tata Product</div>
+    </div>
+  </div>
+  <div class="hdr-sep"></div>
+  <nav class="hdr-nav">
+    <a class="ntab active" href="#overview">Overview</a>
+    <a class="ntab" href="#comparison">W1 vs W2</a>
+    <a class="ntab" href="#consultants">Consultants</a>
+    <a class="ntab" href="#risk">Risk Index</a>
+  </nav>
+  <div class="hdr-badge">Week 2 Live</div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-scan"></div>
+  <div class="hero-inner">
+    <div class="hero-logo-wrap">
+      <div class="hero-logo-circle"><img src="data:image/webp;base64,UklGRi4UAABXRUJQVlA4WAoAAAAMAAAAHwMAVwIAVlA4IOwRAADwpgCdASogA1gCPnU6nUoko6MhoTPoMJAOiWlu4XdhH9Q9d51L3n9z9IGzO5H1hdo+jN5P/J+cb/M+oj9RewjznPMb51PqQ/xm+9b0l/h8kf8p/5jtc/4HnH1WPYDkONCtBfY7wAu/e8ngA/J/6H/wvWh+R8z9JToCeLHnK/Q/+D7B3SP/dAGYgvxU96SD3KcuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cKQGT7+82fnA9przDlY9ynLly5cuXLly5cuXLly5cuXE3TxyjGaaN9v+Hmmy1NKy7+Yz1oPhvBfpfZWW64Y6QX4qe9JB7lOXLly5cKaaF5//19OvJ3uO3oXbCRkxtG0Hg1VeBkkQkYNPc9f8yOdicwFZ1y7y7J8ULEcHmJ70kHuU5cuXLly5cuXLlwrua1X6Go863I7jPzAGoJd/xQdjH9wwuANDRB2zyAo27zlI2E1MXokIjI/xWkFaNMGQX4qe9JB7lOXLly5cuXLlZlt3jEo+DTfsmWEZ+fNfkYpQZCleyAplxq34qe9JB7lOXLly5cuXLlysfwT25zjr+/VnQ5X04H/7GUUltYbtLZ34qe9JB7lOXLly5cuXLly4QUK4AhTnsR66UWcBTWsY7W/Tt+4X4qe9JB7lOXLly5cuXLly5cuFUq3BQVtkqO1jonhIqdfTF+WGaxFZHg6QX4qe9JB7lOXLly5cuXLly5cyCdu6wUs+6s7OgfwQPX7srd+q9F4X4qe9JB7lOXLly5cuXLly5cuXMhH+llvoBtUQ9mxgXdGnbfrAGpN/pIPcpy5cuXLly5cuXLly5crEZcyEzs4OqHwEerJw4ugDBywIgzYwcHBIx2HuU5cuXLly5cuXLly5cuXKzxcXg3vpNUCOQkkliECndtduJi2Pa07UquUvBg3ZA6TZtXlAC5ut7/5RmpzpuOu9vnZ/TuTLhfip70kHuU5cuXLly5cuVmn8iVKQcg9N2AsQlsx6ZcOkCGR3B4CMYGIIBSbAQlPjLZc15Xs+bX0BiasbfgP9rNyv+4Y6QX4qe9JB7lOXLly5cyIPN2dSU55K/pgHMgVFcIUlJXMZEHBu835Ss5HjC07lOXLly5cuXLly5cuXLly5cuXCl4WIh/afP5H3+sGXrwkHuU5cuXLly5cuXLly5cuXLly53z05cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXKwAA/v+11v/x16LkXJ/0w0HoHswPNnEA0DiAAAAAAAAAAAAAAAAAEdl123aN1hZpzsn5+1esVeYx8MU+rIWBI3Y+xBjMtqtbGkk1fXGL8upPDtGVg9AiwqiLKmun2XSwqI4Wh7camqxzRBdX4s2E6l45bzvacXp3pqjqzCEIK+5Pi/AgkbgbRh/XkCVVQg0C65Oa8QDPJriOg6fWQVvNBVD9hQUs/tFWqD3xfFWYItd/MVni1fP4U9yca+7w2cjro1yY+iIWlzK3hUtDMq9Ei90NETDV4GFQgyHkJjbXZzh1bsDHIjR/tilXdZOedtMcEnEpsSX5ZU5ouScby3wl76xgekWc9VaLNT+olrwu+m/CrPoVVW7Hw5Wxj2VgHVeuSS0gDEaDYsHUGS8WR3S5Fo5qc1JecENop36/hd2X4pEpG8gsFIhDMIJyMzKk7cTcNHWXu1+YcMU+Uhp/3HvPV/p8yRN4YSFdim03DXwOtG9mXFflijtTByg+e4/sFjZnrG0ZrV5+2J/tSYBUUu8p9TTuopmHJOuhLCmph8mu4dvndJ1ZLmzf3zhN1XEo5yAR1GpjE8Ln1D2lTF1kfXxg4sHna3LouGIZRquvccB2AfuTR/2lYCmeseMJmXSanV5NiPDX9O33qOsdnSmOS+Lg9JJEJBm+Y6o03LdliofgWwmEGsReBzfszo8cbOX6USuK7BqqHiExGYBbhJUq2e2uenZNI31JAN8XW0gzTN7UyqmbfjHabjNz6cwidHaqmLxI7zYtKwgmttgNe+sSD1TPyS8qW47HHjklj/UPe16aa0Lh791AITXuRVgg6lqSIT44EQ7EqzAUsYw0/VgJa/td+HoClDb4s5sH5KnKmjN5heGDgMXCr5nqDgem4s8xDDTZayIJHMjB3cU09eflJVl1D5e3DJ77i670tfHTCU5LZGaDerf4itIcBaMhLsZXh2ZmonkdumV+bnualB4SBaZk1HLRTy+QR2MD5futCPybzmkAYfWzd7wGgiA41RQZYbkiF+3Lt9yAhY5Op6Pt58jCbYLD7b0k8LHFF8KkWHJfrEnIIQwVYH8KHVDbqI1qPiqahyqHzxLEhzvTRTgzWS17c0SqkHmfD93BHE7WEb5M6mhyIi6hQOmaqZ8/GMXD/mJNmlkccSKZIBbITqWU3C4sMVdwRTHO0STtbNRyXkwad2bEeCrH2iDXB1vC9GFRNGP4oSlUi8c087n5KjKhkNBH5OUPt+O834QiwyRsSVWPcCP++ois9Az3PuUVpJUWabtINRA86yJUuFYdNjviqhCuf/9YfUiv4HumFHIOZ+1QmDQ4liERi0TvKZ8l3k9K4XzTDJgPulSYfxUyPC6Adh8lM0jcrY8yOgylJP2pLRR6+vjxYkbixdXDJKhpwkOTXpm+vGzpGbnWr98SNiWsjMgJn3xJE2b6S/WJ3OQCdIFkIZl1cvkbDnMMmH8i+r0OltayaIZ3v3moK6zQJy2TSFSak1kx2Y8R+y4Ek9RDlEfIeziMii7ws8CWDQsKTmM8+1j+/5dCWI9A/ti4sfbWEuZtFsb0jrDEn4Ysb7Sc0jk5L0fJ/t3JJf+5vuJGCEFFDVavfX/uWXt4Pt/XDoQk2DSxMO22sO5/Bmvuj4Q8zRAzdar01eET+oK/1LRWu7XhZFcotA0DVkj1IrwFA7iGib55TkNaAiYADuXNx7rd/UAsQMh7+hF/QNihJizzs65ZckAFWuFhGgz3xBvD6S2BziBFiqvscNPWii8Zk3wEsFcc/RYN0PIagANqsq3Zr9F0GsZjH5E+Oymb80J3jD1VScKVQumMD3dS0S+BsAV6mG4kIJ8de4i2IVLD4qinMpybIf67kwe1vu3Ek7n22iZjMaVczHu4SsxLtaWGAqoy3m12AHarGpfoPgcs7kG/Yigckkf441N65nHEmg6VHqgGAACqM4LIb2f3RHGkEXtYJjb4dTt7oHDwLdKbPzVKo33TdTO4e6vinEFR3wqDVavinEE3Bwxs21S39ONDfygqSDluHkLOMkJTpMb8r07X3EJQjsNMhGSxi7plP5xm0FrRkQIUoFpV9ycnFWabXenX+K9xXKqmzZDcosufJaxijFQSxxblvZcnqCayhIaN7adutrjOxA58u/HFAADYPdcP0TeFS9HruE0+uAlfFJxngIGsWE8w5sMklwM2GYnDSBWOEuIPgfb/H4DlQ+Y7SvuQEDMbPw1GjtoUvlvCK1GmR18r0+2oejOykzeWP8BCv76S4MMEZPXOzcS08Xb9V+rVNUM5TUHccO4H6bASe+rYuHjFxXlatwklHrT5SarSa0n14xzG0mvKKTtiDg2uKmwBaW8cf0oUvlpUYVqls/RypetvA+Vop3VduQ/gMSBmT/jsCeLDWot7Eu3vtgCkQ9L+o0gqofptpX2SoxM2NYZ09JX49vSuCWyqul7rMyHoQwmuZUZrIEQSWWpEeUyr8UEvJPJDkICIT7PxVimI96DYh2XcHiKloYxvK63GFBM6xXgDOnEYDR7PgtfGdmH7gAFj6gQlajTuHLqAeH22AmBtzkJ7W+IyhgfYJPl0aDpccJ7ODFFVg3qd8lEpvXhDwg6z5/pzLmuQqpbedg3SS/pHR9Hq6btHAdPOau1aFhcP6Y/LB/yn60LvYRBOlZ3g7Z4f/yQmcZVeO+U2L4WJ0VUVWDTpK844h1RO46cnsqgYaQrv74W3qJfndJ02xU/+cIuY9AICIEGiNTeFqgipMn8yMmCyrpVj7oYKpxJmsEwyY1UcCzNTMSO21MnvbcSUoZRFUh/XJnwGrUaT9msp4Q/XXyXM5GXKSBorwDqVaMh0IO9wGsg+H34Hbs6xG+3e7wweFMWudZd4Wh0X+ztN7hHlHhAhWoFez6qV3zN7Hmn3rP+6HBnWPdro/xD/6vSfeEMapEdM1IjibPBtGtIB+/ZZrOdvX95TUjDcJekaHWcJalJibePTh+/Bzm0hKo8CPIMeZwHap06WR+AKZiGaVpZueCJYP6uQg6KiMr7IwxgJi5UlHYQvvDTmQKZTOYMfjVWT9NavsR/FrVDMHf/A/VUiPyv1DxTd1MM17p4qrFYyP/GWzMRUtGXSAXWkaKyFTJ7sRKVWdemGW9HmTBFrxynXgLWQvFztFgZ6JTsgH19dd3EqH/3m4XiieZqodU8B/n4xhYOsHesBHHraNdYj3sKnWVDcrsHNAJQ9igGqNjn5f6RnaK5FrG+ktqbpcp9zWGuFmqXYJvkMk5fAyDyEN2LO+syPknpqBZqh2V+/ZwvnZhK/NhuQAvgecVRF4F5aC8sVuKu+NHz5L8XkPAWgr3j4IvLGTMU+HQ78ctzVv5Kgb/A+BvvjEzzjqhMx2ue+x8bcuSShl+qfCft+W1KpnMbiwU+5xLUEAim5PoszW73Ic2wqYArtrfSp/dlpIjws9QYYIAWwG2wJnKoA/Qbr9WuB9ojSc6tpHTxUNTXjRptrfNShZaRK+vkhDwLjzxDnXNO/JWNcKbYA42F8ci67ZaqlLdREPCDVT2zTU9Bc71upeSSmLW/ZKaK91B0rol+/uywaU6mzjjmTEcKqI3njmE5AfXR+D5OS1vx95GTdQs5PrN6rCgxUgCpO98KpAJrDrHdJufYhmrDJpFq2nbK62MatNeO3qNkWw+yH8PH/mPeK5VUpUmqderQCTrViwC5cm5hfBHeBui7MzWh7AvjuoF7FB38My5fYBcwfhf7D0Noz2//CqeAG6MQcuDVL/AcruuiC4INweHlBoiH6nM39eUI5JiLeUeDumymVK7CfRhAl7/KZtIysBAqM5JdDKMXK3FXBkjIHTOZf2yxTCzM2CkRwyetqsJplgA9t062dMAhz/sMbEysHjG8hcn81hja8QQXHaPVmunEkIolg5rM3K6J2Ect5G6fxmMZPBS9QcyVC0mc4mxILDhAAAFAYbfbzpO8RXxVupmPvGcfsZgZzkJl6arl/HlNUCxYHplfKgjWNPXEHbYWxTZ5YrQa92eWtWVh52jo69X9rSuxV1qh1iKRENSldl+ub2TYG0AGtZYma/cRgLGsxLh6vTJYdVbkgUVTru0jy4Ev1MickNok6f7mnXavu1ndezaJ/xzckwEYppQr4HRyoYACTYBqpVqXRKXZUNt0yBnVO1V5V3iEG3nhUJ8z9xKAAACY/MXuKTsDZBu9ZSoxsyKOteW2TFMQ/+2XizacvGaAoCoW4d3J8udQhQTr4l9VbWCIeMgvY7zj3hqURDYF2ju1XP24mRY+2UvOC4WPMd3+7OHqKak1fOYepj2Z+EMaYORsv2i5J8syYAAAAAAAAAAAAAAAAAAAAAAAAAAAARVhJRroAAABFeGlmAABJSSoACAAAAAYAEgEDAAEAAAABAAAAGgEFAAEAAABWAAAAGwEFAAEAAABeAAAAKAEDAAEAAAACAAAAEwIDAAEAAAABAAAAaYcEAAEAAABmAAAAAAAAAEgAAAABAAAASAAAAAEAAAAGAACQBwAEAAAAMDIxMAGRBwAEAAAAAQIDAACgBwAEAAAAMDEwMAGgAwABAAAA//8AAAKgBAABAAAAIAMAAAOgBAABAAAAWAIAAAAAAABYTVAgWgEAADw/eHBhY2tldCBiZWdpbj0iIiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkdvIFhNUCBTREsgMS4wIj48cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPjxyZGY6RGVzY3JpcHRpb24geG1sbnM6eG1wUmlnaHRzPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvcmlnaHRzLyIgcmRmOmFib3V0PSIiIHhtcFJpZ2h0czpNYXJrZWQ9IkZhbHNlIj48L3JkZjpEZXNjcmlwdGlvbj48L3JkZjpSREY+PC94OnhtcG1ldGE+Cjw/eHBhY2tldCBlbmQ9InciPz4=" alt="CaratLane"></div>
+      <div class="hero-brand-txt">
+        <div class="hero-cl-name">CaratLane</div>
+        <div class="hero-cl-tata">A Tata Product</div>
+      </div>
+    </div>
+    <div class="hero-eyebrow">CaratLane &middot; CS Quality Audit</div>
+    <div class="hero-title">Negative<br><span class="em">Sentiments</span><br>Dashboard</div>
+    <div class="hero-subtitle">NS Project &middot; Week 2</div>
+    <div class="hero-divider">
+      <div class="hdiv-line"></div>
+      <div class="hdiv-gem sm"></div>
+      <div class="hdiv-gem"></div>
+      <div class="hdiv-gem sm"></div>
+      <div class="hdiv-line r"></div>
+    </div>
+    <div class="hero-desc">Real-time visibility into customer experience failures, consultant performance gaps, and systemic root causes across all validated audit interactions.</div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num" style="color:var(--ink)">288<span class="delta">▲</span></div>
+        <div class="hero-stat-label">Validated Cases</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" style="color:var(--mag)">80</div>
+        <div class="hero-stat-label">Crucial</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" style="color:var(--gold)">46<span style="font-size:16px;color:var(--txt3)">%</span></div>
+        <div class="hero-stat-label">Resolution Rate</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" style="color:var(--blue)">24</div>
+        <div class="hero-stat-label">JCs Flagged</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-border"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="sec-ey fade-up">Week 2 — Current State</div>
+  <div class="sec-ttl fade-up">Audit Overview</div>
+  <div class="sec-sub fade-up">288 validated cases — Criticality confirmed. Pending rows excluded. Week 2 is a 134% increase in audited volume from Week 1.</div>
+  <div class="sec-rule"></div>
+
+  <div class="erp-callout fade-up">
+    <div class="erp-title">⚠ ERP Software Migration — Primary Root Cause</div>
+    <div class="erp-body">CaratLane is mid-ERP migration. This is the single largest driver of dispatch delays, refund TAT breaches, fake delivery timestamps, and payment mapping failures. All tech-attributed cases should be read against this context — these reflect migration stress, not standalone team failures.</div>
+  </div>
+
+  <div class="stat-grid-4 fade-up">
+    <div class="sc red"><div class="sc-label">Crucial</div><div class="sc-num">80</div><div class="sc-delta d-up">▲ 47 from W1</div></div>
+    <div class="sc amber"><div class="sc-label">Neutral</div><div class="sc-num">114</div><div class="sc-delta d-up">▲ 48 from W1</div></div>
+    <div class="sc blue"><div class="sc-label">Less Significant</div><div class="sc-num">94</div><div class="sc-delta d-up">▲ 70 from W1</div></div>
+    <div class="sc" style="--accent:var(--bdr2)"><div class="sc-label">Total Validated</div><div class="sc-num" style="color:var(--ink)">288</div><div class="sc-delta d-up">▲ 165 from W1</div></div>
+  </div>
+
+  <div class="stat-grid-3 fade-up">
+    <div class="sc red"><div class="sc-label">Still Negative at End</div><div class="sc-num">132</div><div class="sc-delta d-up">▲ 57 from W1 (75)</div></div>
+    <div class="sc green"><div class="sc-label">Resolved at End</div><div class="sc-num">45</div><div class="sc-delta d-up">▲ 20 from W1 (25)</div></div>
+    <div class="sc amber"><div class="sc-label">Training Gaps Flagged</div><div class="sc-num">30</div><div class="sc-delta d-up">▲ 25 from W1 (5)</div></div>
+  </div>
+
+  <div class="chart-grid-2 fade-up">
+    <div class="cc-card">
+      <div class="cc-title">Root Cause Breakdown (CCPT1)</div>
+      <div class="cc-sub">Week 2 · 288 validated cases</div>
+      <div class="chart-wrap"><canvas id="ccpt1Chart"></canvas></div>
+    </div>
+    <div class="cc-card">
+      <div class="cc-title">Team Distribution</div>
+      <div class="cc-sub">Cases by team — Week 2</div>
+      <div class="chart-wrap"><canvas id="teamChart"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section id="comparison">
+  <div class="sec-ey fade-up">Trend Analysis</div>
+  <div class="sec-ttl fade-up">Week 1 vs Week 2</div>
+  <div class="sec-sub fade-up">Audit volume more than doubled. Crucial cases grew 142%. Training gaps jumped 6×. The patterns are intensifying, not resolving.</div>
+  <div class="sec-rule"></div>
+
+  <div class="chart-grid-full fade-up">
+    <div class="cc-card">
+      <div class="cc-title">Overall Metrics Comparison</div>
+      <div class="cc-sub">Side-by-side across all key audit dimensions</div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:rgba(26,79,160,.65)"></div> Week 1</div>
+        <div class="leg-item"><div class="leg-dot" style="background:rgba(200,0,90,.65)"></div> Week 2</div>
+      </div>
+      <div class="chart-wrap-tall"><canvas id="comparisonChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-grid-2 fade-up">
+    <div class="cc-card">
+      <div class="cc-title">Criticality Split</div>
+      <div class="cc-sub">Crucial vs Neutral vs Less Significant</div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:rgba(26,79,160,.65)"></div> Week 1</div>
+        <div class="leg-item"><div class="leg-dot" style="background:rgba(200,0,90,.65)"></div> Week 2</div>
+      </div>
+      <div class="chart-wrap"><canvas id="criticalityChart"></canvas></div>
+    </div>
+    <div class="cc-card">
+      <div class="cc-title">Root Cause W1 vs W2</div>
+      <div class="cc-sub">CCPT1 category shift</div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:rgba(26,79,160,.65)"></div> Week 1</div>
+        <div class="leg-item"><div class="leg-dot" style="background:rgba(200,0,90,.65)"></div> Week 2</div>
+      </div>
+      <div class="chart-wrap"><canvas id="rootCauseChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="cc-card fade-up">
+    <div class="cc-title">Consultant Case Count — W1 vs W2</div>
+    <div class="cc-sub">Agents present in both weeks. Sorted by Week 2 volume.</div>
+    <div class="legend" style="margin-bottom:20px">
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(26,79,160,.65)"></div> Week 1</div>
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(200,0,90,.65)"></div> Week 2</div>
+    </div>
+    <div id="agentCompareBars"></div>
+  </div>
+</section>
+
+<!-- CONSULTANTS -->
+<section id="consultants">
+  <div class="sec-ey fade-up">Consultant Performance</div>
+  <div class="sec-ttl fade-up">63 Cases &middot; 24 JCs Flagged</div>
+  <div class="sec-sub fade-up">Click any consultant card for detailed case breakdown, failure pattern analysis, and root cause diagnosis. Sorted by risk level.</div>
+  <div class="sec-rule"></div>
+  <div class="agent-grid fade-up" id="agentGrid"></div>
+</section>
+
+<!-- RISK -->
+<section id="risk">
+  <div class="sec-ey fade-up">Risk Index</div>
+  <div class="sec-ttl fade-up">Intervention Priority</div>
+  <div class="sec-sub fade-up">Composite risk score: Crucial × 4 + Unresolved × 2 + Total + week-on-week escalation bonus. Higher = more urgent.</div>
+  <div class="sec-rule"></div>
+  <div class="risk-grid fade-up" id="riskMatrix"></div>
+
+  <div class="chart-grid-2 fade-up">
+    <div class="cc-card">
+      <div class="cc-title">Failure Pattern Frequency</div>
+      <div class="cc-sub">What consultants are being flagged for — Week 2</div>
+      <div class="chart-wrap-tall"><canvas id="failureChart"></canvas></div>
+    </div>
+    <div class="cc-card">
+      <div class="cc-title">Unresolved Cases by Agent</div>
+      <div class="cc-sub">Cases still negative at call end (agents with 2+ cases)</div>
+      <div class="chart-wrap-tall"><canvas id="resolutionChart"></canvas></div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /main -->
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="ft-brand">
+    <div class="ft-gem"></div>
+    <div class="ft-txt">Negative Sentiments · CaratLane CS Audit</div>
+  </div>
+  <div class="ft-right">
+    Week 2 · March 2026 · 288 Validated Cases<br>
+    <strong>Made by Gourav M</strong> · QA | NS Project<br>
+    Confidential — Internal Use Only
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalBg(event)">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+const W1 = {
+  total:123, crucial:33, neutral:66, less:24, neg:75, pos:25,
+  consultant:33, process:43, tech:13, customer:22, training:5,
+  teams:{'Post Sale IB':72,'Post Sale OB':17,'Post Sale WA':10,'Store':5,'Presales OB':4,'TAH':4,'Presales IB':3,'Experience':2,'Clive':1}
+};
+const W2 = {
+  total:288, crucial:80, neutral:114, less:94, neg:132, pos:45,
+  consultant:63, process:112, tech:33, customer:50, training:30,
+  teams:{'Post Sale IB':102,'Post Sale OB':57,'Post Sale WA':28,'Presales OB':7,'Store':5,'TAH':4,'Presales IB':4,'Experience':2,'Clive':1}
+};
+
+const AGENTS = [
+  {
+    name:'Shabeena A', team:'Post Sale IB', w1:8, w2:10,
+    crucial:7, neutral:3, less:0, unresolved:7, total:10,
+    status:'critical',
+    tags:['Rude Tone','No Ownership','Wrong Info','Can\'t Fetch Details','Email Deflection'],
+    rootCause:'Behavioural & attitude gap — failures span wrong info, ownership refusal, rudeness and call avoidance across every query type. Pattern worsened week-on-week. Requires performance management intervention, not just training.',
+    cases:[
+      {q:'Delivery Related',crit:'Crucial',dislike:'Improper Handling',summary:'Order placed Jan 12, 2 months no dispatch. Cx irate. JC failed to handle irate customer or escalate.'},
+      {q:'Refund Related',crit:'Neutral',dislike:'Lack of ownership, Improper Handling',summary:'JC unnecessarily guided Cx to write email to cs@caratlane.com instead of checking refund status.'},
+      {q:'Delivery Related',crit:'Neutral',dislike:'Improper Handling, Lack of ownership',summary:'Order OFD since Feb 25. JC failed to give update or take ownership.'},
+      {q:'Delay in Delivery',crit:'Neutral',dislike:'Consultant',summary:'JC gave incorrect info — said order in transit to store and in crafting simultaneously.'},
+      {q:'Order Status',crit:'Crucial',dislike:'Consultant',summary:'Rude tone, interruptions flagged. Need apology and empathy. Did not de-escalate irate Cx.'},
+      {q:'LTE Order Pick Up',crit:'Crucial',dislike:'Consultant',summary:'LTE pickup rejected twice. JC said she\'d check, call disconnected, no callback. Cx connected to another JC.'},
+      {q:'Product Quality',crit:'Crucial',dislike:'Consultant',summary:'Tarnishing complaint. JC told Cx to contact store — WRONG. All quality complaints handled by helpline.'},
+      {q:'Delay Delivery',crit:'Crucial',dislike:'Delay Delivery',summary:'Cx shared order and phone number, JC could not fetch details. Cx asked for manager. JC unable to assist.'},
+      {q:'Profile Changes',crit:'Crucial',dislike:'Improper Handling',summary:'Incorrect email on profile. JC lacked process knowledge for profile correction. Issue ongoing 2 months.'},
+      {q:'Refund Related',crit:'Crucial',dislike:'Lack of ownership',summary:'Profile balance and transaction delays. JC failed to confirm resolution before closing the chat.'},
+    ]
+  },
+  {
+    name:'Umra F', team:'Post Sale IB', w1:5, w2:9,
+    crucial:2, neutral:1, less:6, unresolved:5, total:9,
+    status:'escalating',
+    tags:['Interruptions','Improper Handling','Wrong Number Confirmed','No Call Structure'],
+    rootCause:'Call structure gap — no clear framework for open to close. New cases this week include confirming wrong number to a Cx and mishandling loan enquiry. Repeated pattern suggests systemic handling deficiency, not situational stress.',
+    cases:[
+      {q:'Delivery Related',crit:'Neutral',dislike:'Tone & Manner',summary:'Order placed Feb 11, missed timeline. JC raised ticket but tone flagged.'},
+      {q:'Digi Gold',crit:'Less significant',dislike:'Improper Handling',summary:'Cx purchased DG via PhonePe seeking refund. Improper handling.'},
+      {q:'Order Status',crit:'Less significant',dislike:'Multiple Interruptions, Lack of ownership',summary:'Payment not debited. JC interrupted Cx multiple times.'},
+      {q:'Jewellery Selection',crit:'Less significant',dislike:'Incorrect Information',summary:'Cx enquired about loan/credit on CL. JC eventually confirmed wrong number was entered.'},
+      {q:'Jewellery Selection',crit:'Less significant',dislike:'Incorrect Information',summary:'Cx expressing gratitude for loan service. JC confused CL service with Paytm-related service.'},
+      {q:'Order Status',crit:'Less significant',dislike:'Improper Handling',summary:'Payment not debited. Repeat case, same improper handling pattern.'},
+      {q:'Order Status',crit:'Crucial',dislike:'Consultant',summary:'Gift order for special occasion. Delivery delayed. JC committed callback — none made.'},
+      {q:'Order Cancellation',crit:'Crucial',dislike:'Lack of ownership',summary:'OTP delivery failure. JC should have raised backend ticket and checked alternate verification. Did not.'},
+      {q:'Delivery Related',crit:'Less significant',dislike:'Lack of ownership',summary:'Unhappy with delivery. JC failed to confirm resolution before closing, no 24-hr follow-up.'},
+    ]
+  },
+  {
+    name:'Muzakir N', team:'Post Sale IB', w1:2, w2:5,
+    crucial:3, neutral:1, less:1, unresolved:2, total:5,
+    status:'escalating',
+    tags:['Long Holds','Cold Transfers','No Briefing','Tone Issues'],
+    rootCause:'Call etiquette & protocol gap — new pattern this week: putting Cx on hold mid-conversation without warning (one Cx held 40 min and disconnected), cold transfers without briefing receiving team. Specific protocol training needed.',
+    cases:[
+      {q:'Delivery Related',crit:'Crucial',dislike:'Lack of Empathy, Tone & manner',summary:'High-value TAH necklace order. Jan order, multiple revised delivery dates. JC procedural, no empathy.'},
+      {q:'Delay Compensation',crit:'Crucial',dislike:'Improper Handling',summary:'Cx on hold mid-conversation. Disconnected after 3 minutes with no resolution.'},
+      {q:'Delivery Related',crit:'Less significant',dislike:'Unnecessary Transfer',summary:'Frustrated about delayed delivery. Transferred without briefing receiving team — cold transfer.'},
+      {q:'Refund Related',crit:'Crucial',dislike:'Long Hold',summary:'Chain weight issue, seeking refund. Cx on hold 40 minutes. Transferred without briefing receiving team.'},
+      {q:'Delivery Related',crit:'Neutral',dislike:'Tone & manner',summary:'Return request, product not marked delivered. Tone issues flagged.'},
+    ]
+  },
+  {
+    name:'Mazia N', team:'Post Sale IB', w1:4, w2:5,
+    crucial:2, neutral:3, less:0, unresolved:3, total:5,
+    status:'escalating',
+    tags:['Missed Follow-ups','Poor Query Comprehension','Blunt Tone on Refunds'],
+    rootCause:'De-escalation gap — becomes blunt and upfront when she cannot give a refund update or resolve an issue. Tone on frustrating calls worsens Cx experience. Missed follow-ups are a systemic pattern, not isolated.',
+    cases:[
+      {q:'Digi Gold',crit:'Neutral',dislike:'Missed follow up',summary:'DG sold Feb 24, not reflecting in bank. JC promised backend check and callback — never called back.'},
+      {q:'Delivery Related',crit:'Neutral',dislike:'Failed to understand query',summary:'Cx spoke to store to expedite. JC failed to understand the context, empathy missing.'},
+      {q:'Order Status',crit:'Crucial',dislike:'Consultant',summary:'Delivery delay. JC raised SR for faster delivery. Follow-up call done but no response. No apology for delay.'},
+      {q:'Order Status',crit:'Neutral',dislike:'Consultant',summary:'Call hold needs work. No apology for delay happened. Payment mapping pending.'},
+      {q:'Refund Related',crit:'Crucial',dislike:'Tone & manner',summary:'Pending refund, Cx irate. JC upfront and blunt without refund update. Tone and manner flagged.'},
+    ]
+  },
+  {
+    name:'John F', team:'Post Sale WA', w1:0, w2:3,
+    crucial:2, neutral:1, less:0, unresolved:3, total:3,
+    status:'new-flag',
+    tags:['No Ownership','Failed to Probe','Incomplete Resolution'],
+    rootCause:'New JC flag — all 3 cases on Post Sale WA. Consistent pattern: not probing enough, not taking ownership, leaving conversations without a next step. Needs immediate coaching before pattern compounds.',
+    cases:[
+      {q:'Delivery Related',crit:'Crucial',dislike:'Lack of ownership',summary:'Feb order, missed delivery date. JC checked but missed taking ownership. Did not pass delivery callback.'},
+      {q:'Delivery Related',crit:'Crucial',dislike:'Lack of probing and ownership',summary:'Delivery marked return to CL. JC initially missed probing for resolution. Ownership not taken.'},
+      {q:'SKU Authenticity',crit:'Neutral',dislike:'Lack of ownership, Incomplete information',summary:'Cx claims received weight less than ordered. JC lacked ownership and did not give complete info.'},
+    ]
+  },
+  {
+    name:'Rahul Mi', team:'Presales OB', w1:2, w2:2,
+    crucial:2, neutral:0, less:0, unresolved:1, total:2,
+    status:'critical',
+    tags:['OGE vs CL Exchange','Repeat Error','No Retraining Yet'],
+    rootCause:'Product knowledge gap — gave wrong OGE policy in Week 1, gave the same wrong answer again in Week 2. No corrective action taken between weeks. Must be retrained on OGE vs CL Exchange immediately.',
+    cases:[
+      {q:'OGE',crit:'Crucial',dislike:'Incorrect Information',summary:'Customer asked about OGE. Rahul miscommunicated that exchange possible during TAH. Failed to confirm OGE vs LTE.'},
+      {q:'OGE',crit:'Crucial',dislike:'Improper Handling',summary:'Store told Cx exchange possible during TAH trial. Rahul described CL exchange policy, not OGE. Same error.'},
+    ]
+  },
+  {
+    name:'Huda A', team:'TAH / Store', w1:2, w2:2,
+    crucial:2, neutral:0, less:0, unresolved:1, total:2,
+    status:'critical',
+    tags:['No CRM Check','Repeat Calls Without Context','Callback Not Made'],
+    rootCause:'Process discipline gap — calling without reading CRM history is a habit, not a one-off. Week 1 flagged, Week 2 same error. TC callback also not made. CRM hygiene training overdue and not yet applied.',
+    cases:[
+      {q:'Delay in Delivery',crit:'Crucial',dislike:'Consultant',summary:'TAH order delayed. JC called twice without checking previous interactions. Cx had to re-explain everything.'},
+      {q:'Treasure Chest',crit:'Crucial',dislike:'Failed to callback',summary:'Cx wanted TC redemption. Got call but had other plans. Callback informed — never made. Cx irate.'},
+    ]
+  },
+  {
+    name:'Chanchal S', team:'Post Sale IB', w1:3, w2:3,
+    crucial:0, neutral:2, less:1, unresolved:3, total:3,
+    status:'escalating',
+    tags:['Rude Tone','Incomplete Info','No Apology'],
+    rootCause:'Soft skills gap — all 3 cases unresolved despite 0 Crucial. Tone issues and incomplete information across payment, cancellation and LTE queries. No improvement from Week 1 pattern.',
+    cases:[
+      {q:'Payment Query',crit:'Less significant',dislike:'Tone & manner',summary:'Amount deducted but not received at CL end. Tone flagged as rude.'},
+      {q:'Order Cancellation',crit:'Neutral',dislike:'Incomplete information',summary:'Order not delivered 1+ month. Cx wanted cancellation. Incomplete info shared.'},
+      {q:'LTE Update',crit:'Neutral',dislike:'Consultant',summary:'No apology for delay. Wrong warranty info given. Told Cx charges won\'t apply without product assessment.'},
+    ]
+  },
+  {
+    name:'Khushi J', team:'Post Sale OB', w1:0, w2:2,
+    crucial:0, neutral:1, less:1, unresolved:2, total:2,
+    status:'new-flag',
+    tags:['Missed Follow-up','Language Barrier','No Callback'],
+    rootCause:'New flag — ownership gap on follow-through. Both cases unresolved. Language barrier case was handled by arranging callback but no callback record found. Needs monitoring in Week 3.',
+    cases:[
+      {q:'Shaya Order Cancellation',crit:'Less significant',dislike:'Lack of ownership and Empathy',summary:'Accidental order placed. JC processed cancellation but lacked empathy.'},
+      {q:'Failed Delivery',crit:'Neutral',dislike:'Missed follow up',summary:'Cx speaks Telugu. JC arranged callback — no record of callback being made. NCF case.'},
+    ]
+  },
+  {
+    name:'Shruthiparmar D', team:'Post Sale WA', w1:0, w2:2,
+    crucial:1, neutral:0, less:1, unresolved:0, total:2,
+    status:'new-flag',
+    tags:['No Ownership','Refund Not Checked','Delivery Not Confirmed'],
+    rootCause:'New flag — consistent lack of ownership on both delivery and refund queries. Did not confirm resolution with Cx before closing either conversation.',
+    cases:[
+      {q:'Delivery Related',crit:'Less significant',dislike:'Lack of ownership',summary:'Shipment status changed without notice. JC should have confirmed resolution and followed up.'},
+      {q:'Order Cancellation / Refund',crit:'Crucial',dislike:'Lack of ownership',summary:'Refund not yet processed. JC did not check status, confirm timeline, or take ownership.'},
+    ]
+  },
+  {
+    name:'Juwairiya A', team:'Post Sale IB', w1:0, w2:2,
+    crucial:0, neutral:2, less:0, unresolved:0, total:2,
+    status:'new-flag',
+    tags:['Promised Callback','Follow-through Gap'],
+    rootCause:'Both cases resolved eventually but pattern of promising callback without SR is forming. Monitor in Week 3.',
+    cases:[
+      {q:'Refund Status',crit:'Neutral',dislike:'Consultant',summary:'Refund processed, not credited. JC said she\'d check and call back. Pattern of verbal commitments without SR.'},
+      {q:'Refund Status',crit:'Neutral',dislike:'Consultant',summary:'Cancelled order refund pending. JC committed callback. Same pattern as above case.'},
+    ]
+  },
+  {
+    name:'Deepali G', team:'Presales', w1:0, w2:2,
+    crucial:0, neutral:0, less:2, unresolved:0, total:2,
+    status:'new-flag',
+    tags:['Long Hold','Offer Query'],
+    rootCause:'New flag — both Less Significant cases. Long hold on Women\'s Day offer enquiries. Low priority but worth noting.',
+    cases:[
+      {q:'Store Details / Offer',crit:'Less significant',dislike:'Long Hold',summary:'Looking for ring design, disappointed no Women\'s Day offers. JC held Cx too long.'},
+      {q:'Store Details / Offer',crit:'Less significant',dislike:'Long Hold',summary:'Similar Women\'s Day offer query. Same long hold pattern.'},
+    ]
+  },
+  {
+    name:'Vatsal Pa', team:'Presales OB', w1:1, w2:1,
+    crucial:1, neutral:0, less:0, unresolved:1, total:1,
+    status:'critical',
+    tags:['Digi Gold vs TC','Wrong Product Explained'],
+    rootCause:'Product knowledge gap — explained Treasure Chest to a Cx asking about Digi Gold (PhonePe). Single targeted retraining on DG vs TC product differentiation should fix this.',
+    cases:[
+      {q:'POP / Digi Gold',crit:'Crucial',dislike:'Incorrect Information',summary:'Customer asked about PhonePe investment plan (Digi Gold). JC explained Treasure Chest instead. Never confirmed which product.'},
+    ]
+  },
+  {
+    name:'Sweety S', team:'Post Sale IB', w1:1, w2:1,
+    crucial:1, neutral:0, less:0, unresolved:0, total:1,
+    status:'critical',
+    tags:['Disconnected Transferred Call'],
+    rootCause:'Transferred call was disconnected by JC immediately on pickup. Extreme ownership failure. Should be addressed as a conduct issue.',
+    cases:[
+      {q:'Transferred Call',crit:'Crucial',dislike:'Consultant disconnected',summary:'Call transferred to Sweety S. Disconnected immediately after picking up the transferred call.'},
+    ]
+  },
+  {
+    name:'Theja B', team:'Post Sale IB', w1:1, w2:1,
+    crucial:0, neutral:1, less:0, unresolved:1, total:1,
+    status:'new-flag',
+    tags:['Policy Deflection','Tone Issues'],
+    rootCause:'GC cancellation policy confusion. Told Cx not possible via helpline, LinkedIn said it was. JC then told Cx to contact LinkedIn person instead of escalating.',
+    cases:[
+      {q:'Order Cancellation / Policy',crit:'Neutral',dislike:'Lack of ownership, Tone & manner',summary:'GC cancellation. JC said not possible. Social media team said same-day cancellation possible. JC told Cx to contact LinkedIn person.'},
+    ]
+  },
+  {
+    name:'Aqsa A', team:'Post Sale OB', w1:0, w2:1,
+    crucial:1, neutral:0, less:0, unresolved:0, total:1,
+    status:'new-flag',
+    tags:['No Timeline Given','Vague Callback'],
+    rootCause:'New flag. Acknowledged concern and escalated but gave no specific timeline. Callback arranged with no confirmation it happened.',
+    cases:[
+      {q:'Order Status',crit:'Crucial',dislike:'Lack of ownership',summary:'JC escalated order status issue but gave no specific timeline. Callback arranged but vague.'},
+    ]
+  },
+  {
+    name:'Foram S', team:'Post Sale IB', w1:0, w2:1,
+    crucial:0, neutral:1, less:0, unresolved:0, total:1,
+    status:'new-flag',
+    tags:['Made Cx Repeat','Improper Handling'],
+    rootCause:'New flag. Made Cx repeat themselves multiple times before processing cancellation. Basic listening gap.',
+    cases:[
+      {q:'Order Cancellation',crit:'Neutral',dislike:'Improper Handling',summary:'Cx wanted cancellation. JC made Cx repeat themselves multiple times before acting.'},
+    ]
+  },
+  {
+    name:'Karun G', team:'Post Sale WA', w1:0, w2:1,
+    crucial:0, neutral:1, less:0, unresolved:1, total:1,
+    status:'new-flag',
+    tags:['Listening Gap','Negative Phrasing'],
+    rootCause:'New flag. Did not use positive phrases and failed to fully listen to Cx cancellation concern. WA channel handling needs improvement.',
+    cases:[
+      {q:'Delivery / Cancellation',crit:'Neutral',dislike:'Lack of listening/understanding, Failed to use positive phrases',summary:'Delivery delayed, Cx wanted cancellation. JC lacked active listening and used negative language.'},
+    ]
+  },
+  {
+    name:'Reena L', team:'TAH', w1:1, w2:1,
+    crucial:1, neutral:0, less:0, unresolved:0, total:1,
+    status:'critical',
+    tags:['TAH No-Show','No Response'],
+    rootCause:'TAH executive committed to home visit, did not show, did not call. Cx attempted multiple calls. Eventually resolved on March 2nd.',
+    cases:[
+      {q:'TAH Appointment',crit:'Crucial',dislike:'No Response',summary:'TAH booked. Executive said they\'d come, nobody came, nobody picked up despite multiple attempts. Resolved Mar 2.'},
+    ]
+  },
+  {
+    name:'Abdulsalam K', team:'TAH', w1:1, w2:1,
+    crucial:0, neutral:1, less:0, unresolved:0, total:1,
+    status:'new-flag',
+    tags:['TAH Callback Not Made'],
+    rootCause:'TAH executive no-show, keeps arranging callbacks but none made. Pattern mirrors Reena L case.',
+    cases:[
+      {q:'TAH Appointment',crit:'Neutral',dislike:'TAH executive\'s failed to callback',summary:'TAH executive did not show up. Keeps arranging callbacks — nobody calls.'},
+    ]
+  },
+  {
+    name:'Mallika R', team:'Post Sale IB', w1:1, w2:1,
+    crucial:0, neutral:1, less:0, unresolved:0, total:1,
+    status:'new-flag',
+    tags:['Incomplete POP Info'],
+    rootCause:'Partial POP policy explanation. Missed the Digi Gold transfer clause and GST deduction detail.',
+    cases:[
+      {q:'POP Cancellation',crit:'Neutral',dislike:'Consultant',summary:'POP redemption info shared but JC missed informing about DG transfer post 90 days and GST deductions.'},
+    ]
+  },
+  {
+    name:'Rayeesa S', team:'Post Sale WA', w1:1, w2:1,
+    crucial:0, neutral:0, less:1, unresolved:0, total:1,
+    status:'new-flag',
+    tags:['Lack of Empathy'],
+    rootCause:'Less significant flag. Lack of empathy on POP payment query. Low urgency.',
+    cases:[
+      {q:'POP Query',crit:'Less significant',dislike:'Lack of Empathy',summary:'Cx facing issue making POP payment. JC resolved but lacked empathy throughout.'},
+    ]
+  },
+  {
+    name:'Yasmeen K', team:'Presales', w1:0, w2:1,
+    crucial:0, neutral:0, less:1, unresolved:0, total:1,
+    status:'new-flag',
+    tags:['No Follow-up','Wrong Product Data'],
+    rootCause:'New flag. Incorrect product data not addressed. No follow-up call confirmed. Less significant but pattern to watch.',
+    cases:[
+      {q:'Purchase Experience',crit:'Less significant',dislike:'Lack of ownership',summary:'Unhappy with purchase, incorrect product data shown. JC did not confirm resolution or follow-up call.'},
+    ]
+  },
+  {
+    name:'Sadiqbasha I', team:'Post Sale OB', w1:0, w2:1,
+    crucial:0, neutral:0, less:1, unresolved:1, total:1,
+    status:'new-flag',
+    tags:['No Probing'],
+    rootCause:'New flag. Failed to probe sufficiently on failed pickup call. Cx asked for existing request to be closed — JC did not check further.',
+    cases:[
+      {q:'Failed Pickup',crit:'Less significant',dislike:'Lack of probing',summary:'Failed pickup call. Cx wanted existing request closed and would raise later. JC missed probing if anything else needed.'},
+    ]
+  },
+];
+
+
+// ============ CHARTS ============
+const dataLabelPlugin = {
+  id: 'dataLabels',
+  afterDatasetsDraw(chart) {
+    const { ctx } = chart;
+    chart.data.datasets.forEach((dataset, i) => {
+      const meta = chart.getDatasetMeta(i);
+      if (meta.hidden) return;
+      meta.data.forEach((bar, index) => {
+        const value = dataset.data[index];
+        if (!value) return;
+        ctx.save();
+        ctx.font = '700 11px DM Sans, sans-serif';
+        ctx.fillStyle = '#9A7085';
+        const isH = chart.config.options?.indexAxis === 'y';
+        const pos = bar.tooltipPosition();
+        if (isH) { ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText(value, pos.x+6, pos.y); }
+        else { ctx.textAlign='center'; ctx.textBaseline='bottom'; ctx.fillText(value, pos.x, pos.y-4); }
+        ctx.restore();
+      });
+    });
+  }
+};
+Chart.register(dataLabelPlugin);
+
+const TT = { backgroundColor:'#fff', borderColor:'#EEE4EC', borderWidth:1.5, titleColor:'#1A0818', bodyColor:'#9A7085', padding:12, cornerRadius:10 };
+const TX = { color:'#9A7085', font:{ family:'DM Sans, sans-serif', size:11 } };
+const GR = { color:'rgba(200,0,90,.05)' };
+const MAG = 'rgba(200,0,90,';
+const BLU = 'rgba(26,79,160,';
+
+new Chart(document.getElementById('ccpt1Chart'), {
+  type:'doughnut',
+  data:{ labels:['Process','Consultant','Customer','Technology'], datasets:[{ data:[112,63,50,33], backgroundColor:['#1a4fa0','#C8005A','#B8860B','#1a7a4a'], borderColor:'#fff', borderWidth:3, hoverOffset:8 }] },
+  options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:true, position:'right', labels:{ color:'#5A3048', font:{family:'DM Sans',size:12}, padding:16, boxWidth:12, borderRadius:3 } }, tooltip:TT }, cutout:'65%' }
+});
+
+new Chart(document.getElementById('teamChart'), {
+  type:'bar',
+  data:{ labels:['PS IB','PS OB','PS WA','Presales OB','Store','TAH','Presales IB','Experience','Clive'], datasets:[{ data:[102,57,28,7,5,4,4,2,1], backgroundColor:[BLU+'0.75)',BLU+'0.65)',BLU+'0.55)',BLU+'0.45)',BLU+'0.38)',BLU+'0.32)',BLU+'0.26)',BLU+'0.20)',BLU+'0.15)'], borderRadius:4, borderSkipped:false }] },
+  options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:TT }, scales:{ x:{grid:GR,ticks:TX}, y:{grid:GR,ticks:TX} } }
+});
+
+new Chart(document.getElementById('comparisonChart'), {
+  type:'bar',
+  data:{ labels:['Total Cases','Crucial','Neutral','Less Sig','Still Neg','Resolved','Consultant','Training Gaps'], datasets:[
+    { label:'Week 1', data:[123,33,66,24,75,25,33,5], backgroundColor:BLU+'0.65)', borderRadius:4, borderSkipped:false },
+    { label:'Week 2', data:[288,80,114,94,132,45,63,30], backgroundColor:MAG+'0.65)', borderRadius:4, borderSkipped:false }
+  ]},
+  options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:true, labels:{ color:'#5A3048', font:{family:'DM Sans',size:12}, padding:16, boxWidth:12, borderRadius:3 } }, tooltip:TT }, scales:{ x:{grid:GR,ticks:TX}, y:{grid:GR,ticks:TX} } }
+});
+
+new Chart(document.getElementById('criticalityChart'), {
+  type:'bar',
+  data:{ labels:['Crucial','Neutral','Less Significant'], datasets:[
+    { label:'Week 1', data:[33,66,24], backgroundColor:BLU+'0.65)', borderRadius:6, borderSkipped:false },
+    { label:'Week 2', data:[80,114,94], backgroundColor:MAG+'0.65)', borderRadius:6, borderSkipped:false }
+  ]},
+  options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:TT }, scales:{ x:{grid:GR,ticks:TX}, y:{grid:GR,ticks:TX} } }
+});
+
+new Chart(document.getElementById('rootCauseChart'), {
+  type:'bar',
+  data:{ labels:['Process','Consultant','Customer','Technology'], datasets:[
+    { label:'Week 1', data:[43,33,22,13], backgroundColor:BLU+'0.65)', borderRadius:6, borderSkipped:false },
+    { label:'Week 2', data:[112,63,50,33], backgroundColor:MAG+'0.65)', borderRadius:6, borderSkipped:false }
+  ]},
+  options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:TT }, scales:{ x:{grid:GR,ticks:TX}, y:{grid:GR,ticks:TX} } }
+});
+
+const failureData = { 'Lack of Ownership':11,'Consultant Behavior':10,'Improper Handling':7,'Incorrect Information':5,'Long Hold':3,'Tone & Manner':3,'Missed Follow-up':2,'Incomplete Info':2 };
+new Chart(document.getElementById('failureChart'), {
+  type:'bar',
+  data:{ labels:Object.keys(failureData), datasets:[{ data:Object.values(failureData), backgroundColor:[MAG+'0.75)',MAG+'0.65)',MAG+'0.55)',MAG+'0.45)','rgba(184,134,11,0.55)','rgba(184,134,11,0.45)',BLU+'0.45)',BLU+'0.35)'], borderRadius:4, borderSkipped:false }] },
+  options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{display:false}, tooltip:TT }, scales:{ x:{grid:GR,ticks:TX}, y:{ grid:{display:false}, ticks:{ color:'#5A3048', font:{family:'DM Sans',size:11} } } } }
+});
+
+const topAgents = AGENTS.filter(a => a.total >= 2);
+new Chart(document.getElementById('resolutionChart'), {
+  type:'bar',
+  data:{ labels:topAgents.map(a=>a.name.split(' ')[0]), datasets:[{ label:'Unresolved', data:topAgents.map(a=>a.unresolved), backgroundColor:topAgents.map(a=>a.unresolved>=5?MAG+'0.75)':a.unresolved>=3?'rgba(184,134,11,0.65)':BLU+'0.45)'), borderRadius:4, borderSkipped:false }] },
+  options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:TT }, scales:{ x:{grid:GR,ticks:TX}, y:{grid:GR,ticks:TX} } }
+});
+
+// ============ AGENT COMPARE BARS ============
+const allNames = ['Shabeena A','Umra F','Mazia N','Chanchal S','Muzakir N','Rahul Mi','Huda A','Theja B','Reena L','Vatsal Pa','Abdulsalam K','Sweety S','Rayeesa S','Mallika R'];
+const w1counts = {'Shabeena A':8,'Umra F':5,'Mazia N':4,'Chanchal S':3,'Muzakir N':2,'Rahul Mi':2,'Huda A':2,'Theja B':1,'Reena L':1,'Vatsal Pa':1,'Abdulsalam K':1,'Sweety S':1,'Rayeesa S':1,'Mallika R':1};
+const w2counts = {'Shabeena A':10,'Umra F':9,'Muzakir N':5,'Mazia N':5,'Chanchal S':3,'Rahul Mi':2,'Huda A':2,'Theja B':1,'Sweety S':1,'Reena L':1,'Vatsal Pa':1,'Abdulsalam K':1,'Rayeesa S':1,'Mallika R':1};
+const maxVal = 10;
+document.getElementById('agentCompareBars').innerHTML = allNames.map(name => {
+  const v1 = w1counts[name]||0, v2 = w2counts[name]||0, diff = v2-v1;
+  const chg = diff>0 ? `<span style="color:var(--mag)">▲${diff}</span>` : diff<0 ? `<span style="color:var(--green)">▼${Math.abs(diff)}</span>` : `<span style="color:var(--txt4)">—</span>`;
+  return `<div class="compare-row">
+    <div class="compare-label">${name}</div>
+    <div class="compare-bars">
+      <div class="bar-wrap bar-w1"><div class="bar-week">W1</div><div class="bar-bg"><div class="bar-fill" style="width:${(v1/maxVal)*100}%"></div></div><div style="font-size:10px;color:var(--txt3);width:14px">${v1}</div></div>
+      <div class="bar-wrap bar-w2"><div class="bar-week">W2</div><div class="bar-bg"><div class="bar-fill" style="width:${(v2/maxVal)*100}%"></div></div><div style="font-size:10px;color:var(--txt3);width:14px">${v2}</div></div>
+    </div>
+    <div class="compare-change">${chg}</div>
+  </div>`;
+}).join('');
+
+// ============ AGENT GRID ============
+function renderAgentGrid() {
+  const sorted = [...AGENTS].sort((a,b) => {
+    const score = x => x.crucial*3 + x.total + (x.w2>x.w1?2:0);
+    return score(b)-score(a);
+  });
+  const badgeMap = { critical:'badge-critical', escalating:'badge-escalating', 'new-flag':'badge-new' };
+  const badgeLbl = { critical:'High Risk', escalating:'↑ Escalating', 'new-flag':'New Flag' };
+  document.getElementById('agentGrid').innerHTML = sorted.map((a,i) => {
+    const wk = a.w1>0
+      ? `<div class="agent-wk"><span class="wk-pill wk1">W1: ${a.w1}</span><span class="wk-arrow">→</span><span class="wk-pill wk2">W2: ${a.w2}</span></div>`
+      : `<div class="agent-wk"><span class="wk-pill wk2">New W2: ${a.w2}</span></div>`;
+    const idx = AGENTS.findIndex(x=>x.name===a.name);
+    return `<div class="agent-card ${a.status}" onclick="openModal(${idx})">
+      <span class="agent-badge ${badgeMap[a.status]||'badge-new'}">${badgeLbl[a.status]||'Watch'}</span>
+      <div class="agent-name">${a.name}</div>
+      <div class="agent-team">${a.team}</div>
+      <div class="agent-metrics">
+        <div><div class="agent-metric-num red">${a.crucial}</div><div class="agent-metric-label">Crucial</div></div>
+        <div><div class="agent-metric-num amber">${a.neutral}</div><div class="agent-metric-label">Neutral</div></div>
+        <div><div class="agent-metric-num muted">${a.less}</div><div class="agent-metric-label">Less Sig</div></div>
+        <div><div class="agent-metric-num red">${a.unresolved}</div><div class="agent-metric-label">Unresolved</div></div>
+      </div>
+      <div class="agent-divider"></div>
+      ${wk}
+      <div class="agent-tags">${a.tags.slice(0,3).map(t=>`<span class="tag bad">${t}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+renderAgentGrid();
+
+// ============ RISK MATRIX ============
+function getRiskScore(a){ return a.crucial*4+a.unresolved*2+a.total+(a.w2>a.w1?3:0); }
+function getRiskLevel(s){ return s>=35?'r5':s>=20?'r4':s>=10?'r3':s>=5?'r2':'r1'; }
+const sortedRisk = [...AGENTS].sort((a,b)=>getRiskScore(b)-getRiskScore(a)).slice(0,15);
+document.getElementById('riskMatrix').innerHTML = sortedRisk.map(a => {
+  const score = getRiskScore(a), level = getRiskLevel(score);
+  const idx = AGENTS.findIndex(x=>x.name===a.name);
+  return `<div class="risk-dot ${level}" onclick="openModal(${idx})">
+    <div class="risk-name">${a.name.split(' ')[0]}</div>
+    <div class="risk-num">${score}</div>
+    <div class="risk-label">Risk Score</div>
+  </div>`;
+}).join('');
+
+// ============ MODAL ============
+function openModal(idx) {
+  const a = AGENTS[idx];
+  const critClass = c => c==='Crucial'?'crucial':c==='Neutral'?'neutral':'less';
+  const critBadge = c => c==='Crucial'?'<span class="modal-case-badge cb-crucial">Crucial</span>':c==='Neutral'?'<span class="modal-case-badge cb-neutral">Neutral</span>':'<span class="modal-case-badge cb-less">Less</span>';
+  const statLbl = { critical:'🔴 High Risk', escalating:'🟠 Escalating', 'new-flag':'🔵 New Flag' };
+  document.getElementById('modalContent').innerHTML = `
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div class="modal-status">${statLbl[a.status]||'Flagged'}</div>
+    <div class="modal-name">${a.name}</div>
+    <div class="modal-team">${a.team}</div>
+    <div class="modal-metrics">
+      <div class="mm"><div class="mm-num red">${a.crucial}</div><div class="mm-label">Crucial</div></div>
+      <div class="mm"><div class="mm-num amber">${a.neutral}</div><div class="mm-label">Neutral</div></div>
+      <div class="mm"><div class="mm-num blue">${a.less}</div><div class="mm-label">Less Sig</div></div>
+      <div class="mm"><div class="mm-num red">${a.unresolved}</div><div class="mm-label">Unresolved</div></div>
+      <div class="mm"><div class="mm-num" style="color:var(--ink)">${a.total}</div><div class="mm-label">Total W2</div></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
+      <span style="font-size:11px;color:var(--txt3)">Week-on-week:</span>
+      <span class="wk-pill wk1">W1: ${a.w1}</span>
+      <span class="wk-arrow">→</span>
+      <span class="wk-pill wk2">W2: ${a.w2}</span>
+      ${a.w2>a.w1?`<span style="color:var(--mag);font-size:11px;font-weight:700">▲ ${a.w2-a.w1} increase</span>`:a.w1===0?`<span style="color:var(--blue);font-size:11px">New this week</span>`:''}
+    </div>
+    <div class="modal-rc">
+      <div class="modal-rc-lbl">Root Cause Analysis</div>
+      <div class="modal-rc-txt">${a.rootCause}</div>
+    </div>
+    <div class="modal-section-lbl">Case Breakdown (${a.cases.length} cases)</div>
+    <div class="modal-cases">
+      ${a.cases.map(c=>`
+        <div class="modal-case ${critClass(c.crit)}">
+          <div class="modal-case-hd"><div class="modal-case-q">${c.q||'General'}</div>${critBadge(c.crit)}</div>
+          <div class="modal-dislike">⚑ ${c.dislike}</div>
+          <div class="modal-summary">${c.summary}</div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:6px">
+      ${a.tags.map(t=>`<span class="tag bad">${t}</span>`).join('')}
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModalBg(e){ if(e.target===document.getElementById('modal')){ document.getElementById('modal').classList.remove('open'); document.body.style.overflow=''; } }
+function closeModalBtn(){ document.getElementById('modal').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ document.getElementById('modal').classList.remove('open'); document.body.style.overflow=''; } });
+
+// ============ NAV ACTIVE STATE ============
+document.querySelectorAll('.ntab').forEach(tab => {
+  tab.addEventListener('click', () => { document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); });
+});
+
+// ============ SCROLL FADE ============
+const obs = new IntersectionObserver(entries => { entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold:0.08 });
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+</script>
+</body>
+</html>
