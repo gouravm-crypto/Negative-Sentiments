@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics · Sentiment Analysis · March 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;0,800;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mag:#C8005A;--mag-lt:#F0006E;--mag-dk:#8A003E;
+  --mag-pale:#FFF0F6;--mag-glow:rgba(200,0,90,.22);
+  --gold:#B8860B;--gold-lt:#E8B840;
+  --ink:#0F0A10;--ink2:#1E0E1A;
+  --body:#FAFAF8;--surface:#FFFFFF;
+  --bdr:#EEE4EC;--bdr2:#E0CCD8;
+  --txt:#1A0818;--txt2:#5A3048;--txt3:#9A7085;--txt4:#C4A8B8;
+  --sh-sm:0 2px 8px rgba(15,10,16,.08);--sh-md:0 4px 20px rgba(15,10,16,.10);--sh-lg:0 8px 36px rgba(15,10,16,.14);
+  --green:#1a7a4a;--blue:#1a4fa0;
+  --r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+@keyframes gpulse{0%,100%{box-shadow:0 0 10px rgba(184,134,11,.5)}50%{box-shadow:0 0 22px rgba(184,134,11,.9)}}
+@keyframes scan{0%,100%{top:-200px}50%{top:100%}}
+@keyframes sdwn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HEADER ── */
+.hdr{position:sticky;top:0;z-index:900;background:var(--ink2);border-bottom:2px solid transparent;border-image:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent) 1;display:flex;align-items:center;padding:0 56px;height:68px;}
+.hdr-brand{display:flex;align-items:center;gap:12px;flex-shrink:0;text-decoration:none;}
+.cl-logo{width:38px;height:38px;object-fit:cover;border-radius:8px;}
+.cl-name{font-size:14px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#fff;line-height:1;}
+.cl-sub{font-size:7px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,200,220,.4);}
+.hdr-sep{width:1px;height:30px;background:rgba(255,255,255,.1);margin:0 24px;flex-shrink:0;}
+.hdr-nav{display:flex;gap:0;flex:1;}
+.hnav{height:68px;padding:0 14px;display:flex;align-items:center;font-size:9.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:rgba(255,200,220,.35);text-decoration:none;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap;}
+.hnav:hover{color:rgba(255,200,220,.7);}
+.hnav.active{color:#fff;border-bottom-color:var(--mag);background:rgba(200,0,90,.08);}
+.hdr-badge{font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mag);border:1.5px solid rgba(200,0,90,.4);padding:5px 12px;border-radius:20px;background:rgba(200,0,90,.08);flex-shrink:0;}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;gap:16px;}
+.sg-4{grid-template-columns:repeat(4,1fr);}
+.sg-3{grid-template-columns:repeat(3,1fr);}
+.sg-2{grid-template-columns:repeat(2,1fr);}
+.sc{background:var(--surface);border:1.5px solid var(--bdr);border-radius:var(--r);padding:22px 24px;position:relative;overflow:hidden;box-shadow:var(--sh-sm);transition:all .25s cubic-bezier(.34,1.56,.64,1);}
+.sc:hover{transform:translateY(-4px);box-shadow:var(--sh-md);}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--bdr));}
+.sc.red{--accent:var(--mag);}.sc.amber{--accent:var(--gold);}.sc.green{--accent:var(--green);}.sc.blue{--accent:var(--blue);}.sc.navy{--accent:var(--blue);}
+.sc-label{font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:10px;}
+.sc-num{font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:800;line-height:1;margin-bottom:6px;}
+.sc.red .sc-num{color:var(--mag);}.sc.amber .sc-num{color:var(--gold);}.sc.green .sc-num{color:var(--green);}.sc.blue .sc-num,.sc.navy .sc-num{color:var(--blue);}
+.sc-sub{font-size:11px;color:var(--txt3);}
+
+/* ── CHART CARDS ── */
+.cc{background:var(--surface);border:1.5px solid var(--bdr);border-radius:var(--r);padding:28px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
+.cc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;opacity:.4;}
+.cc-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.cc-sub{font-size:11px;color:var(--txt3);margin-bottom:20px;}
+.ch{position:relative;}
+
+/* ── GAP BARS ── */
+.gap-row{display:grid;grid-template-columns:160px 1fr 40px;align-items:center;gap:12px;margin-bottom:10px;}
+.gap-label{font-size:11.5px;color:var(--txt2);}
+.gap-track{height:9px;background:rgba(200,0,90,.07);border-radius:5px;overflow:hidden;}
+.gap-fill{height:100%;border-radius:5px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.gap-fill.tgap{background:linear-gradient(90deg,var(--mag),var(--mag-lt));}
+.gap-fill.csgap{background:linear-gradient(90deg,var(--gold),var(--gold-lt));}
+.gap-fill.dis{background:linear-gradient(90deg,var(--blue),rgba(26,79,160,.6));}
+.gap-num{font-size:11px;font-weight:700;text-align:right;}
+.gap-num.tgap{color:var(--mag);}.gap-num.csgap{color:var(--gold);}.gap-num.dis{color:var(--blue);}
+
+/* ── TEAM CARDS ── */
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.team-card{border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:var(--sh-sm);transition:all .28s cubic-bezier(.34,1.56,.64,1);background:var(--surface);border:2px solid var(--bdr);}
+.team-card:hover{transform:translateY(-7px);box-shadow:var(--sh-lg);}
+.team-card.alarm-high{border-color:rgba(200,0,90,.3);background:linear-gradient(160deg,#fff5f9,#fff);}
+.team-card.alarm-high:hover{box-shadow:var(--sh-lg),0 0 32px rgba(200,0,90,.15);}
+.alarm-badge{display:inline-flex;align-items:center;gap:5px;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:4px;margin-bottom:8px;}
+.ab-critical{background:rgba(200,0,90,.12);color:var(--mag);border:1px solid rgba(200,0,90,.25);}
+.ab-high{background:rgba(200,0,90,.08);color:var(--mag);border:1px solid rgba(200,0,90,.15);}
+.ab-medium{background:rgba(184,134,11,.1);color:var(--gold);border:1px solid rgba(184,134,11,.2);}
+.ab-low{background:rgba(26,122,74,.08);color:var(--green);border:1px solid rgba(26,122,74,.18);}
+.ab-good{background:rgba(26,122,74,.1);color:var(--green);border:1px solid rgba(26,122,74,.2);}
+.team-card-hd{background:var(--ink2);padding:20px 22px 18px;position:relative;overflow:hidden;}
+.team-card-hd::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 3s linear infinite;}
+.team-rank{position:absolute;top:12px;right:16px;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:800;color:rgba(255,255,255,.07);line-height:1;}
+.team-card-name{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;color:#fff;margin-bottom:3px;}
+.team-card-agents{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,200,220,.4);}
+.team-card-body{padding:18px 22px 20px;}
+.team-metrics{display:flex;gap:14px;margin-bottom:14px;}
+.tm{text-align:center;}
+.tm-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:800;line-height:1;}
+.tm-num.red{color:var(--mag);}.tm-num.amber{color:var(--gold);}.tm-num.muted{color:var(--txt4);}.tm-num.dark{color:var(--ink);}
+.tm-lbl{font-size:7.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--txt3);}
+.team-div{height:1px;background:var(--bdr);margin:12px 0;}
+.team-gap-row{display:flex;justify-content:space-between;font-size:11px;color:var(--txt3);margin-bottom:4px;}
+.tv{color:var(--mag);font-weight:700;}.gv{color:var(--gold);font-weight:700;}
+.team-cta{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr);}
+.team-cta-txt{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mag);}
+.team-cta-arrow{font-size:14px;color:var(--mag);transition:transform .2s;}
+.team-card:hover .team-cta-arrow{transform:translateX(5px);}
+
+/* ── PASSWORD MODAL ── */
+.pw-overlay{position:fixed;inset:0;background:rgba(15,10,16,.75);backdrop-filter:blur(14px);z-index:998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.pw-overlay.open{opacity:1;pointer-events:all;}
+.pw-box{background:var(--surface);border:1.5px solid var(--bdr2);border-radius:22px;padding:44px;max-width:420px;width:90%;position:relative;box-shadow:var(--sh-lg),0 20px 60px rgba(200,0,90,.14);transform:scale(.94) translateY(12px);transition:transform .3s;}
+.pw-overlay.open .pw-box{transform:scale(1) translateY(0);}
+.pw-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:22px 22px 0 0;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent);background-size:200% 100%;animation:shimmer 3s linear infinite;}
+.pw-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:var(--body);border:1.5px solid var(--bdr2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--txt3);transition:all .2s;}
+.pw-close:hover{background:var(--mag-pale);color:var(--mag);}
+.pw-icon{font-size:34px;margin-bottom:16px;text-align:center;}
+.pw-title{font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.pw-sub{font-size:13px;color:var(--txt3);line-height:1.65;margin-bottom:24px;}
+.pw-input{width:100%;padding:14px 16px;border:1.5px solid var(--bdr2);border-radius:10px;font-size:15px;font-weight:600;letter-spacing:3px;background:var(--body);color:var(--ink);outline:none;transition:border-color .2s;margin-bottom:6px;text-transform:uppercase;}
+.pw-input:focus{border-color:var(--mag);}
+.pw-input.wrong{border-color:var(--mag);animation:shake .4s ease;}
+.pw-hint{font-size:10px;color:var(--txt4);margin-bottom:18px;}
+.pw-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--mag),var(--mag-lt));color:#fff;border:none;border-radius:10px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;}
+.pw-btn:hover{opacity:.85;}
+.pw-error{font-size:12px;color:var(--mag);font-weight:600;margin-top:10px;text-align:center;display:none;}
+
+/* ── FOOTER ── */
+.footer{background:var(--ink2);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent) 1;padding:36px 56px;display:flex;justify-content:space-between;align-items:center;}
+.ft-brand{display:flex;align-items:center;gap:10px;}
+.ft-gem{width:8px;height:8px;transform:rotate(45deg);background:var(--gold);animation:gpulse 2.5s ease-in-out infinite;}
+.ft-txt{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.8);}
+.ft-right{text-align:right;font-size:11px;color:rgba(255,200,220,.35);line-height:1.9;}
+.ft-right strong{color:rgba(255,200,220,.65);}
+
+/* ── UTILS ── */
+.fade-up{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--body);}::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:3px;}
+.sec-ey{font-size:8.5px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--mag);margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.sec-ey::before{content:'';width:20px;height:1.5px;background:var(--mag);border-radius:2px;flex-shrink:0;}
+.sec-ttl{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3.5vw,40px);font-weight:700;color:var(--ink);line-height:1.05;margin-bottom:8px;}
+.sec-sub{font-size:13px;color:var(--txt3);line-height:1.75;margin-bottom:32px;max-width:680px;}
+.sec-rule{height:1.5px;margin-bottom:36px;background:linear-gradient(90deg,var(--mag),var(--gold-lt),transparent);opacity:.2;border-radius:2px;}
+.erp-box{background:linear-gradient(135deg,rgba(184,134,11,.06),rgba(200,0,90,.05));border:1.5px solid rgba(184,134,11,.22);border-radius:16px;padding:22px 28px;margin-bottom:32px;position:relative;overflow:hidden;}
+.erp-box::before{content:'ERP';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-size:80px;font-weight:800;color:rgba(184,134,11,.06);pointer-events:none;line-height:1;}
+.erp-title{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;}
+.erp-body{font-size:13px;color:var(--txt3);line-height:1.7;max-width:700px;}
+@media(max-width:900px){
+  .hdr{padding:0 16px;}.footer{padding:28px 16px;flex-direction:column;gap:14px;text-align:center;}
+  .sg-4{grid-template-columns:1fr 1fr;}.sg-3{grid-template-columns:1fr 1fr;}.team-grid{grid-template-columns:1fr;}
+}
+</style>
+<style>
+.main{width:100%;max-width:1280px;margin:0 auto;padding:0 56px 100px;}
+.analytics-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;}
+.analytics-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-bottom:24px;}
+.analytics-grid-full{margin-bottom:24px;}
+section{padding:56px 0;}
+section+section{border-top:1.5px solid var(--bdr);}
+.insight-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;margin:4px;}
+.ip-red{background:rgba(200,0,90,.08);color:var(--mag);border:1px solid rgba(200,0,90,.18);}
+.ip-gold{background:rgba(184,134,11,.08);color:var(--gold);border:1px solid rgba(184,134,11,.18);}
+.ip-blue{background:rgba(26,79,160,.08);color:var(--blue);border:1px solid rgba(26,79,160,.18);}
+.ip-green{background:rgba(26,122,74,.08);color:var(--green);border:1px solid rgba(26,122,74,.18);}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <a href="index.html" class="hdr-brand">
+    <img src="data:image/webp;base64,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" class="cl-logo" alt="CaratLane">
+    <div><div class="cl-name">CaratLane</div><div class="cl-sub">A Tata Product</div></div>
+  </a>
+  <div class="hdr-sep"></div>
+  <nav class="hdr-nav">
+    <a href="index.html" class="hnav">Overview</a>
+    <a href="analytics.html" class="hnav active">Analytics</a>
+    <a href="team.html" class="hnav">Teams</a>
+  </nav>
+  <div class="hdr-badge">March 2026 Live</div>
+</header>
+
+<div class="main">
+
+  <!-- SECTION 1: Root Cause & Daily Trend -->
+  <section>
+    <div class="sec-ey fade-up">Root Cause · March 2026</div>
+    <div class="sec-ttl fade-up">What is driving negative sentiment?</div>
+    <div class="sec-sub fade-up">CCPT1 primary root cause classification across all 666 validated cases. Process failures dominate, followed by Consultant behaviour. Click chart bars for details.</div>
+    <div class="sec-rule"></div>
+    <div class="analytics-grid-2 fade-up">
+      <div class="cc">
+        <div class="cc-title">Primary Root Cause (CCPT1)</div>
+        <div class="cc-sub">Across 666 validated cases — data labels show count</div>
+        <div class="ch" style="height:300px"><canvas id="ccpt1Chart"></canvas></div>
+      </div>
+      <div class="cc">
+        <div class="cc-title">Secondary Root Cause (CCPT2)</div>
+        <div class="cc-sub">Top secondary failure patterns — horizontal for readability</div>
+        <div class="ch" style="height:300px"><canvas id="ccpt2Chart"></canvas></div>
+      </div>
+    </div>
+    <div class="analytics-grid-full fade-up">
+      <div class="cc">
+        <div class="cc-title">Daily Case Volume — March 2026</div>
+        <div class="cc-sub">Total cases vs Crucial cases per day — trend identifies audit-heavy periods</div>
+        <div class="ch" style="height:260px"><canvas id="trendChart"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: Team Analysis -->
+  <section>
+    <div class="sec-ey fade-up">Team Breakdown</div>
+    <div class="sec-ttl fade-up">Volume, Criticality & Gaps by Team</div>
+    <div class="sec-sub fade-up">Teams sorted highest to lowest. Colour coding: 🔴 critical volume, 🟡 medium, 🟢 low. Click any bar to jump to that team's leaderboard.</div>
+    <div class="sec-rule"></div>
+    <div class="analytics-grid-full fade-up">
+      <div class="cc">
+        <div class="cc-title">Case Volume by Team</div>
+        <div class="cc-sub">Sorted high → low · data labels show exact count · click to view team</div>
+        <div class="ch" style="height:280px"><canvas id="teamChart"></canvas></div>
+      </div>
+    </div>
+    <div class="analytics-grid-2 fade-up">
+      <div class="cc">
+        <div class="cc-title">Criticality Split by Team</div>
+        <div class="cc-sub">Crucial vs Neutral vs Less Significant — stacked</div>
+        <div class="ch" style="height:300px"><canvas id="critStackChart"></canvas></div>
+      </div>
+      <div class="cc">
+        <div class="cc-title">Unresolved Rate by Team</div>
+        <div class="cc-sub">% of cases still negative at call end</div>
+        <div class="ch" style="height:300px"><canvas id="unresolvedChart"></canvas></div>
+      </div>
+    </div>
+    <div class="analytics-grid-2 fade-up">
+      <div class="cc">
+        <div class="cc-title">Training Gaps by Team</div>
+        <div class="cc-sub">Cases flagged as training gap — total 111</div>
+        <div id="trainingGapBars" style="margin-top:4px;"></div>
+      </div>
+      <div class="cc">
+        <div class="cc-title">CS QA Gaps by Team</div>
+        <div class="cc-sub">Cases flagged as CS QA gap — total 148</div>
+        <div id="csqaGapBars" style="margin-top:4px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: Dislike Patterns -->
+  <section>
+    <div class="sec-ey fade-up">Failure Patterns</div>
+    <div class="sec-ttl fade-up">What are customers unhappy about?</div>
+    <div class="sec-sub fade-up">Primary and secondary dislike reasons ranked by frequency. These directly map to training interventions needed.</div>
+    <div class="sec-rule"></div>
+    <div class="analytics-grid-2 fade-up">
+      <div class="cc">
+        <div class="cc-title">Top Primary Dislike Reasons</div>
+        <div class="cc-sub">Ranked by frequency — data labels show count</div>
+        <div class="ch" style="height:340px"><canvas id="dislikeChart"></canvas></div>
+      </div>
+      <div class="cc">
+        <div class="cc-title">Resolution Outcome</div>
+        <div class="cc-sub">Final experience — Positive vs Negative at call end</div>
+        <div style="display:flex;gap:20px;height:300px;align-items:center;justify-content:center;">
+          <div style="position:relative;width:240px;height:240px;flex-shrink:0;"><canvas id="resolutionDonut"></canvas></div>
+          <div id="resolutionLegend" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="analytics-grid-full fade-up">
+      <div class="cc">
+        <div class="cc-title">Top Dislike Reason Frequency</div>
+        <div class="cc-sub">Combined primary + secondary patterns · all unique reasons · data labels show count</div>
+        <div id="topDislikeBars" style="margin-top:8px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: Key Insights -->
+  <section>
+    <div class="sec-ey fade-up">Key Insights</div>
+    <div class="sec-ttl fade-up">March 2026 Summary</div>
+    <div class="sec-sub fade-up">Auto-generated from validated audit data. These are systemic patterns, not individual performance judgements.</div>
+    <div class="sec-rule"></div>
+    <div id="insightsGrid" class="fade-up" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;"></div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  <div class="ft-brand"><div class="ft-gem"></div><div class="ft-txt">Sentiment Analysis · Analytics</div></div>
+  <div class="ft-right">CS Quality Audit · March 2026 · 666 Cases<br><strong>Made by Gourav M</strong> · QA | NS Project<br>Confidential — Internal Use Only</div>
+</footer>
+
+<script src="data.js"></script>
+<script>
+const D=DASHBOARD_DATA, O=D.overall, T=D.teams;
+const MAG='rgba(200,0,90,', GLD='rgba(184,134,11,', BLU='rgba(26,79,160,', GRN='rgba(26,122,74,';
+const TT={backgroundColor:'#fff',borderColor:'#EEE4EC',borderWidth:1.5,titleColor:'#1A0818',bodyColor:'#9A7085',padding:12,cornerRadius:10};
+const TX={color:'#9A7085',font:{family:'DM Sans',size:11}};
+const GR={color:'rgba(200,0,90,.05)'};
+
+// ── Data label plugin ──
+const DLP={
+  id:'dlp',
+  afterDatasetsDraw(chart){
+    if(chart.config.options._skipLabels) return;
+    const {ctx}=chart;
+    const isH=chart.config.options?.indexAxis==='y';
+    chart.data.datasets.forEach((ds,i)=>{
+      if(ds._noLabel) return;
+      const meta=chart.getDatasetMeta(i);
+      if(meta.hidden) return;
+      meta.data.forEach((bar,j)=>{
+        const v=ds.data[j]; if(!v||v===0) return;
+        ctx.save();
+        ctx.font='700 11px DM Sans,sans-serif';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        const pos=bar.tooltipPosition();
+        if(isH){
+          // Check if bar is wide enough for label inside
+          const bw=bar.width||0;
+          if(bw>32){ctx.fillStyle='rgba(255,255,255,0.95)';ctx.textAlign='center';ctx.fillText(v,pos.x-bw/2+bw/2,pos.y);}
+          else{ctx.fillStyle='#5A3048';ctx.textAlign='left';ctx.fillText(v,bar.x+5,pos.y);}
+        } else {
+          // Vertical bars — label above bar
+          ctx.fillStyle='#5A3048'; ctx.textBaseline='bottom';
+          ctx.fillText(v,pos.x,bar.y-3);
+        }
+        ctx.restore();
+      });
+    });
+  }
+};
+Chart.register(DLP);
+
+// ── CCPT1 Bar ──
+new Chart(document.getElementById('ccpt1Chart'),{
+  type:'bar',
+  data:{
+    labels:['Process','Consultant','Customer','Technology'],
+    datasets:[{
+      data:[O.ccpt1.Process,O.ccpt1.Consultant,O.ccpt1.Customer,O.ccpt1.Technology],
+      backgroundColor:[BLU+'0.85)',MAG+'0.85)',GLD+'0.85)',GRN+'0.85)'],
+      borderRadius:10,borderSkipped:false
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:TT},
+    scales:{x:{grid:GR,ticks:TX},y:{grid:GR,ticks:TX,beginAtZero:true}}
+  }
+});
+
+// ── CCPT2 Horizontal Bar ──
+(()=>{
+  const entries=Object.entries(O.ccpt2||{}).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  new Chart(document.getElementById('ccpt2Chart'),{
+    type:'bar',indexAxis:'y',
+    data:{
+      labels:entries.map(([k])=>k),
+      datasets:[{data:entries.map(([,v])=>v),backgroundColor:entries.map((_,i)=>MAG+(0.85-i*0.06)+')'),borderRadius:5,borderSkipped:false}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:TT},
+      scales:{
+        x:{grid:GR,ticks:TX,beginAtZero:true},
+        y:{grid:{display:false},ticks:{color:'#1A0818',font:{family:'DM Sans',size:10}}}
+      }
+    }
+  });
+})();
+
+// ── Daily Trend ──
+(()=>{
+  const trend=O.daily_trend||[];
+  const labels=trend.map(d=>d.date.slice(5));
+  new Chart(document.getElementById('trendChart'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Total Cases',data:trend.map(d=>d.count),borderColor:MAG+'0.7)',backgroundColor:MAG+'0.08)',borderWidth:2.5,pointRadius:4,fill:true,tension:0.4,_noLabel:true},
+        {label:'Crucial',data:trend.map(d=>d.crucial),borderColor:GLD+'0.85)',backgroundColor:GLD+'0.07)',borderWidth:2,pointRadius:3,fill:true,tension:0.4,borderDash:[5,3],_noLabel:true}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,_skipLabels:true,
+      plugins:{legend:{display:true,labels:{color:'#5A3048',font:{family:'DM Sans',size:11},padding:14,boxWidth:10,borderRadius:2}},tooltip:TT},
+      scales:{x:{grid:GR,ticks:{...TX,maxTicksLimit:14}},y:{grid:GR,ticks:TX,beginAtZero:true}}
+    }
+  });
+})();
+
+// ── Team Volume Bar ──
+(()=>{
+  const sorted=Object.entries(T).sort((a,b)=>b[1].total-a[1].total);
+  const labels=sorted.map(([n])=>n.replace('Post Sale - ','PS ').replace('Presale - ','Pre '));
+  const totals=sorted.map(([,d])=>d.total);
+  const maxT=Math.max(...totals);
+  const colors=totals.map(v=>{const p=v/maxT;return p>=0.7?MAG+'0.85)':p>=0.4?MAG+'0.6)':p>=0.2?GLD+'0.75)':GRN+'0.7)';});
+  new Chart(document.getElementById('teamChart'),{
+    type:'bar',
+    data:{labels,datasets:[{data:totals,backgroundColor:colors,borderRadius:8,borderSkipped:false}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{afterBody:items=>{const i=items[0].dataIndex;return [`Crucial: ${sorted[i][1].crucial}  |  Agents: ${sorted[i][1].agents_count}  |  Unresolved: ${sorted[i][1].unresolved}`];}}}},
+      scales:{x:{grid:GR,ticks:TX},y:{grid:GR,ticks:TX,beginAtZero:true}},
+      onClick:(evt,els)=>{if(els.length){const t=sorted[els[0].index][0];window.location.href=`team.html?team=${encodeURIComponent(t)}`;}}
+    }
+  });
+})();
+
+// ── Stacked Criticality by Team ──
+(()=>{
+  const sorted=Object.entries(T).sort((a,b)=>b[1].total-a[1].total);
+  const labels=sorted.map(([n])=>n.replace('Post Sale - ','PS ').replace('Presale - ','Pre '));
+  new Chart(document.getElementById('critStackChart'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'Crucial',data:sorted.map(([,d])=>d.crucial),backgroundColor:MAG+'0.85)',borderRadius:0,borderSkipped:false,stack:'s',_noLabel:true},
+        {label:'Neutral',data:sorted.map(([,d])=>d.neutral),backgroundColor:GLD+'0.75)',borderRadius:0,borderSkipped:false,stack:'s',_noLabel:true},
+        {label:'Less Sig',data:sorted.map(([,d])=>d.less),backgroundColor:'rgba(160,140,150,0.4)',borderRadius:4,borderSkipped:false,stack:'s',_noLabel:true}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,_skipLabels:true,
+      plugins:{legend:{display:true,labels:{color:'#5A3048',font:{family:'DM Sans',size:11},padding:14,boxWidth:10,borderRadius:2}},tooltip:TT},
+      scales:{x:{stacked:true,grid:GR,ticks:{...TX,maxRotation:30}},y:{stacked:true,grid:GR,ticks:TX,beginAtZero:true}}
+    }
+  });
+})();
+
+// ── Unresolved Rate by Team ──
+(()=>{
+  const sorted=Object.entries(T).sort((a,b)=>b[1].total-a[1].total);
+  const labels=sorted.map(([n])=>n.replace('Post Sale - ','PS ').replace('Presale - ','Pre '));
+  const rates=sorted.map(([,d])=>d.total>0?Math.round(d.unresolved/d.total*100):0);
+  new Chart(document.getElementById('unresolvedChart'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        label:'Unresolved %',
+        data:rates,
+        backgroundColor:rates.map(r=>r>=60?MAG+'0.85)':r>=40?GLD+'0.75)':GRN+'0.7)'),
+        borderRadius:6,borderSkipped:false
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:item=>`Unresolved: ${item.raw}%`}}},
+      scales:{x:{grid:GR,ticks:{...TX,maxRotation:30}},y:{grid:GR,ticks:TX,beginAtZero:true,max:100,callback:v=>v+'%'}}
+    }
+  });
+})();
+
+// ── Gap bars ──
+function renderGapBars(id,key,cls){
+  const rows=Object.entries(T).filter(([,d])=>(d[key]||0)>0).sort((a,b)=>b[1][key]-a[1][key]);
+  const mx=rows.length?rows[0][1][key]:1;
+  document.getElementById(id).innerHTML=rows.map(([n,d])=>`
+    <div class="gap-row">
+      <div class="gap-label">${n.replace('Post Sale - ','PS ').replace('Presale - ','Pre ')}</div>
+      <div class="gap-track"><div class="gap-fill ${cls}" style="width:${Math.round(d[key]/mx*100)}%"></div></div>
+      <div class="gap-num ${cls}">${d[key]}</div>
+    </div>`).join('');
+}
+renderGapBars('trainingGapBars','training_gap','tgap');
+renderGapBars('csqaGapBars','cs_qa_gap','csgap');
+
+// ── Primary Dislike horizontal bar ──
+(()=>{
+  const entries=Object.entries(O.top_dislikes||{}).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  new Chart(document.getElementById('dislikeChart'),{
+    type:'bar',indexAxis:'y',
+    data:{
+      labels:entries.map(([k])=>k.length>28?k.slice(0,25)+'…':k),
+      datasets:[{data:entries.map(([,v])=>v),backgroundColor:entries.map((_,i)=>BLU+(0.85-i*0.06)+')'),borderRadius:5,borderSkipped:false}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:TT},
+      scales:{
+        x:{grid:GR,ticks:TX,beginAtZero:true},
+        y:{grid:{display:false},ticks:{color:'#1A0818',font:{family:'DM Sans',size:10}}}
+      }
+    }
+  });
+})();
+
+// ── Resolution donut ──
+(()=>{
+  const resolved=O.resolved, unresolved=O.unresolved, nodata=O.total-resolved-unresolved;
+  new Chart(document.getElementById('resolutionDonut'),{
+    type:'doughnut',
+    data:{
+      labels:['Resolved','Unresolved','Pending'],
+      datasets:[{data:[resolved,unresolved,nodata],backgroundColor:[GRN+'0.8)',MAG+'0.8)','rgba(180,160,170,0.35)'],borderColor:'#fff',borderWidth:3,hoverOffset:8}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,_skipLabels:true,plugins:{legend:{display:false},tooltip:TT},cutout:'62%'}
+  });
+  document.getElementById('resolutionLegend').innerHTML=[
+    {c:'var(--green)',label:'Resolved',val:resolved},
+    {c:'var(--mag)',label:'Unresolved',val:unresolved},
+    {c:'rgba(180,160,170,0.6)',label:'No data',val:nodata}
+  ].map(x=>`<div style="display:flex;align-items:center;gap:10px;"><div style="width:12px;height:12px;border-radius:3px;background:${x.c};flex-shrink:0;"></div><div><div style="font-size:13px;font-weight:700;color:var(--ink);">${x.val}</div><div style="font-size:10px;color:var(--txt3);letter-spacing:.5px;text-transform:uppercase;">${x.label}</div></div></div>`).join('');
+})();
+
+// ── Top dislike combined bars ──
+(()=>{
+  const combined={};
+  Object.values(O.top_dislikes||{}).forEach(()=>{});
+  const all={...O.top_dislikes};
+  Object.entries(O.ccpt2||{}).forEach(([k,v])=>{all[k]=(all[k]||0)+v;});
+  const sorted=Object.entries(all).filter(([k])=>!['Process','Consultant','Customer','Technology','No Reason','NaN','nan'].includes(k)).sort((a,b)=>b[1]-a[1]).slice(0,15);
+  const mx=sorted[0]?.[1]||1;
+  document.getElementById('topDislikeBars').innerHTML=sorted.map(([name,count])=>{
+    const pct=Math.round(count/mx*100);
+    return `<div class="gap-row" style="grid-template-columns:220px 1fr 44px;">
+      <div class="gap-label" style="font-size:12px;">${name.length>30?name.slice(0,27)+'…':name}</div>
+      <div class="gap-track" style="height:10px;"><div class="gap-fill dis" style="width:${pct}%;"></div></div>
+      <div class="gap-num dis">${count}</div>
+    </div>`;
+  }).join('');
+})();
+
+// ── Key Insights ──
+(()=>{
+  const sorted=Object.entries(T).sort((a,b)=>b[1].total-a[1].total);
+  const topTeam=sorted[0];
+  const highestCrucialTeam=Object.entries(T).sort((a,b)=>b[1].crucial-a[1].crucial)[0];
+  const highestGapTeam=Object.entries(T).sort((a,b)=>b[1].training_gap-a[1].training_gap)[0];
+  const highestQATeam=Object.entries(T).sort((a,b)=>b[1].cs_qa_gap-a[1].cs_qa_gap)[0];
+  const topCCPT=Object.entries(O.ccpt1).sort((a,b)=>b[1]-a[1])[0];
+  const unresPct=O.total>0?Math.round(O.unresolved/(O.resolved+O.unresolved)*100):0;
+
+  const insights=[
+    {
+      title:'Process is the #1 root cause',
+      body:`${O.ccpt1.Process} of ${O.total} cases (${Math.round(O.ccpt1.Process/O.total*100)}%) are attributed to Process failures — the single largest CCPT1 category. This suggests SOP adherence gaps more than individual consultant skill issues.`,
+      tag:'Process',color:'blue'
+    },
+    {
+      title:'Post Sale Inbound carries the highest load',
+      body:`${topTeam[0]} recorded ${topTeam[1].total} cases — ${Math.round(topTeam[1].total/O.total*100)}% of all March audits — with ${topTeam[1].crucial} crucial cases and ${topTeam[1].training_gap} training gaps. Immediate coaching bandwidth review recommended.`,
+      tag:'Volume',color:'red'
+    },
+    {
+      title:`${unresPct}% of assessed calls end negatively`,
+      body:`Only ${O.resolved} of the ${O.resolved+O.unresolved} calls with final experience data were resolved positively. ${O.unresolved} interactions ended with the customer still dissatisfied — indicating systemic resolution gaps.`,
+      tag:'Resolution',color:'amber'
+    },
+    {
+      title:'Delivery delays remain the top customer pain point',
+      body:`Delivery-related failures (delayed dispatch, fake timestamps, RVP delays) appear across top dislike reasons — driven primarily by ERP migration impact, not consultant failure. Communications training could mitigate sentiment impact.`,
+      tag:'ERP Impact',color:'gold'
+    },
+    {
+      title:`${O.training_gap} training gap flags — highest in ${highestGapTeam[0]}`,
+      body:`${highestGapTeam[0]} accounts for ${highestGapTeam[1].training_gap} of ${O.training_gap} total training flags this month. Targeted knowledge cascade sessions for this team should be prioritised in April.`,
+      tag:'Training',color:'green'
+    },
+    {
+      title:`${O.cs_qa_gap} CS QA gaps — ${highestQATeam[0]} leading`,
+      body:`QA process adherence flags total ${O.cs_qa_gap} this month, with ${highestQATeam[0]} contributing ${highestQATeam[1].cs_qa_gap}. SOP clarity review and live monitoring may reduce repeat QA misses.`,
+      tag:'QA',color:'red'
+    }
+  ];
+  const colorMap={red:MAG+'0.08)',amber:GLD+'0.08)',blue:BLU+'0.08)',gold:GLD+'0.07)',green:'rgba(26,122,74,.08)'};
+  const borderMap={red:'rgba(200,0,90,.18)',amber:GLD+'0.18)',blue:BLU+'0.18)',gold:GLD+'0.18)',green:'rgba(26,122,74,.18)'};
+  const textMap={red:'var(--mag)',amber:'var(--gold)',blue:'var(--blue)',gold:'var(--gold)',green:'var(--green)'};
+  document.getElementById('insightsGrid').innerHTML=insights.map(ins=>`
+    <div style="background:var(--surface);border:1.5px solid var(--bdr);border-radius:18px;padding:26px 28px;box-shadow:var(--sh-sm);border-top:3px solid ${textMap[ins.color]};transition:all .25s cubic-bezier(.34,1.56,.64,1);" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='var(--sh-md)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--sh-sm)'">
+      <div style="display:inline-block;font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:4px;background:${colorMap[ins.color]};color:${textMap[ins.color]};border:1px solid ${borderMap[ins.color]};margin-bottom:12px;">${ins.tag}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.2;">${ins.title}</div>
+      <div style="font-size:13px;color:var(--txt3);line-height:1.75;">${ins.body}</div>
+    </div>`).join('');
+})();
+
+// Scroll fade
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.06});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
