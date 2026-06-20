@@ -381,9 +381,10 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
 
 <script src="data.js"></script>
 <script>
+// Global scope — needed by onclick handlers
+var D,O,T,P,pendingTeam=null,allCases=[];
 function _initDashboard(){
-const D=DASHBOARD_DATA, O=D.overall, T=D.teams, P=D.passwords;
-let pendingTeam=null;
+D=DASHBOARD_DATA; O=D.overall; T=D.teams; P=D.passwords;
 
 // LOGO
 if(D.logo){
@@ -605,7 +606,6 @@ document.getElementById('insightGrid').innerHTML=insights.map(ins=>`
   </div>`).join('');
 
 // ── CASE MODAL ──
-let allCases=[];
 Object.entries(T).forEach(([team,td])=>{
   Object.entries(td.agents||{}).forEach(([email,ad])=>{
     (ad.cases||[]).forEach((c,i)=>{
