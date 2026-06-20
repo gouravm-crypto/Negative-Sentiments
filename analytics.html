@@ -238,7 +238,6 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
 
 <script src="data.js"></script>
 <script>
-function _initAnalytics(){
 
 // Logo injection
 if(typeof DASHBOARD_DATA !== 'undefined' && DASHBOARD_DATA.logo){
@@ -417,8 +416,7 @@ function downloadCSV(){
 
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.06});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
-}
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_initAnalytics);}else{window.addEventListener('load',_initAnalytics);}
+
 </script>
 </body>
 </html>

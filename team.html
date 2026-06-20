@@ -293,7 +293,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 
 <script src="data.js"></script>
 <script>
-function _initTeam(){
 
 // Logo injection
 if(typeof DASHBOARD_DATA !== 'undefined' && DASHBOARD_DATA.logo){
@@ -559,8 +558,6 @@ function downloadTeamCSV(){
 // Scroll fade
 const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.06});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
-}
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_initTeam);}else{window.addEventListener('load',_initTeam);}
 </script>
 </body>
 </html>
