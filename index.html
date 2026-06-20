@@ -605,6 +605,11 @@ document.getElementById('insightGrid').innerHTML=insights.map(ins=>`
     <div class="ic-body">${ins.body}</div>
   </div>`).join('');
 
+// ── SCROLL FADE (inside init) ──
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.05});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+} // end _initDashboard
+
 // ── CASE MODAL ──
 Object.entries(T).forEach(([team,td])=>{
   Object.entries(td.agents||{}).forEach(([email,ad])=>{
@@ -686,50 +691,53 @@ function closeModal(){
 }
 document.getElementById('caseModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
 
-// ── TEAM PASSWORD ──
+
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_initDashboard);}else{window.addEventListener('load',_initDashboard);}
+
+// ── GLOBAL FUNCTIONS (accessible by onclick attributes) ──
 function openTeam(name){
   pendingTeam=name;
   document.getElementById('pwTitle').textContent=name;
-  document.getElementById('pwSub').textContent=`Enter password for ${name}, or use master password.`;
+  document.getElementById('pwSub').textContent='Enter password for '+name+', or use master password.';
   document.getElementById('pwInput').value='';
   document.getElementById('pwError').style.display='none';
   document.getElementById('pwModal').classList.add('open');
-  setTimeout(()=>document.getElementById('pwInput').focus(),300);
+  setTimeout(function(){document.getElementById('pwInput').focus();},300);
 }
-function closePw(){document.getElementById('pwModal').classList.remove('open');pendingTeam=null;}
+function closePw(){
+  document.getElementById('pwModal').classList.remove('open');
+  pendingTeam=null;
+}
 function checkPw(){
-  const val=document.getElementById('pwInput').value.trim().toUpperCase();
-  const tp=(P[pendingTeam]||'').toUpperCase();
-  const mp=(P['__master__']||'').toUpperCase();
+  var val=document.getElementById('pwInput').value.trim().toUpperCase();
+  var tp=(P[pendingTeam]||'').toUpperCase();
+  var mp=(P['__master__']||'').toUpperCase();
   if(val===tp||val===mp){
-    const t=pendingTeam; closePw();
+    var t=pendingTeam; closePw();
     sessionStorage.setItem('sa_unlocked_team',t);
-    window.location.href=`team.html?team=${encodeURIComponent(t)}`;
+    window.location.href='team.html?team='+encodeURIComponent(t);
   } else {
-    const inp=document.getElementById('pwInput');
+    var inp=document.getElementById('pwInput');
     inp.classList.add('wrong');
     document.getElementById('pwError').style.display='block';
-    setTimeout(()=>inp.classList.remove('wrong'),500);
+    setTimeout(function(){inp.classList.remove('wrong');},500);
   }
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closePw();}});
-
-// ── CSV ──
 function downloadCSV(){
-  const rows=[['Team','Agent','Criticality','Query L1','Query L2','Primary Dislike','Secondary Dislike','CCPT1','Team Responsible','Action Req','Training Gap','Auditor Insight','Repeat CX','Converted +ve','CX Email','CX Phone','Summary']];
-  allCases.forEach(c=>rows.push([c.team,c.agent_name,c.crit,c.query,c.query_l2||'',c.dislike,c.dislike2||'',c.ccpt1,c.team_resp,c.action_req,c.tgap,c.auditor_insight,c.repeat_cx,c.final_exp,c.cx_email||'',c.cx_phone||'',c.summary?.replace(/\n/g,' ')||'']));
-  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=document.createElement('a');
+  if(!allCases.length){alert('Data not loaded yet, please wait a moment.');return;}
+  var rows=[['Team','Agent','Criticality','Query L1','Query L2','Primary Dislike','Secondary Dislike','CCPT1','Team Responsible','Action Req','Training Gap','Auditor Insight','Repeat CX','Converted +ve','CX Email','CX Phone','Summary']];
+  allCases.forEach(function(c){rows.push([c.team,c.agent_name,c.crit,c.query,c.query_l2||'',c.dislike,c.dislike2||'',c.ccpt1,c.team_resp,c.action_req,c.tgap,c.auditor_insight,c.repeat_cx,c.final_exp,c.cx_email||'',c.cx_phone||'',(c.summary||'').replace(/\n/g,' ')]);});
+  var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
   a.download='NS_Audit_June2026.csv';
   a.click();
 }
-
-// ── SCROLL FADE ──
-const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.05});
-document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+function closeModal(){
+  document.getElementById('caseModal').classList.remove('open');
+  document.body.style.overflow='';
 }
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_initDashboard);}else{window.addEventListener('load',_initDashboard);}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closePw();}});
 </script>
 </body>
 </html>
