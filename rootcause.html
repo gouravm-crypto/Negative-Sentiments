@@ -221,6 +221,28 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
   <div class="ft-r">Prepared by <strong style="color:rgba(255,200,220,.6)">Gourav M</strong> · QA Team · Confidential</div>
 </footer>
 
+
+<!-- CASE DRILL-DOWN MODAL -->
+<div id="rcCaseModal" style="position:fixed;inset:0;background:rgba(15,10,16,.7);backdrop-filter:blur(12px);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;">
+  <div style="background:#FAFAF8;border-radius:24px 24px 0 0;width:100%;max-width:1200px;max-height:86vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.34,1.2,.64,1);" id="rcModalSheet">
+    <div style="padding:20px 26px 14px;border-bottom:1px solid #EEE4EC;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:#0F0A10;" id="rcModalTitle">Cases</div>
+        <div style="font-size:11px;color:#9A7085;" id="rcModalSub"></div>
+      </div>
+      <button onclick="closeRcModal()" style="width:34px;height:34px;border-radius:50%;background:#f0f0f0;border:none;cursor:pointer;font-size:16px;color:#9A7085;">✕</button>
+    </div>
+    <div style="padding:18px 26px;overflow-y:auto;flex:1;">
+      <div style="font-size:11px;color:#9A7085;margin-bottom:12px;" id="rcModalCount"></div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr id="rcModalTHead" style="background:#1E0E1A;color:#fff;"></tr></thead>
+          <tbody id="rcModalBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="data.js"></script>
 <script>
 // Inject logo from data.js
@@ -448,6 +470,8 @@ const CATS = [
   }
 ];
 
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.04});
+
 function renderCats(filter){
   const data = filter==='all' ? CATS : CATS.filter(c=>c.id===filter);
   document.getElementById('catBlocks').innerHTML = data.map(cat=>`
@@ -599,11 +623,9 @@ function rcCopy(txt){
   });
 }
 
-document.getElementById('rcCaseModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeRcModal();});
+var _rcm=document.getElementById('rcCaseModal');if(_rcm)_rcm.addEventListener('click',e=>{if(e.target===e.currentTarget)closeRcModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRcModal();});
 
-const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.04});
-document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
 // Render after DOM fully ready
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',()=>renderCats('all'));
@@ -611,27 +633,5 @@ if(document.readyState==='loading'){
   renderCats('all');
 }
 </script>
-
-<!-- CASE DRILL-DOWN MODAL -->
-<div id="rcCaseModal" style="position:fixed;inset:0;background:rgba(15,10,16,.7);backdrop-filter:blur(12px);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;">
-  <div style="background:#FAFAF8;border-radius:24px 24px 0 0;width:100%;max-width:1200px;max-height:86vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.34,1.2,.64,1);" id="rcModalSheet">
-    <div style="padding:20px 26px 14px;border-bottom:1px solid #EEE4EC;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-      <div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:#0F0A10;" id="rcModalTitle">Cases</div>
-        <div style="font-size:11px;color:#9A7085;" id="rcModalSub"></div>
-      </div>
-      <button onclick="closeRcModal()" style="width:34px;height:34px;border-radius:50%;background:#f0f0f0;border:none;cursor:pointer;font-size:16px;color:#9A7085;">✕</button>
-    </div>
-    <div style="padding:18px 26px;overflow-y:auto;flex:1;">
-      <div style="font-size:11px;color:#9A7085;margin-bottom:12px;" id="rcModalCount"></div>
-      <div style="overflow-x:auto;">
-        <table style="width:100%;border-collapse:collapse;font-size:12px;">
-          <thead><tr id="rcModalTHead" style="background:#1E0E1A;color:#fff;"></tr></thead>
-          <tbody id="rcModalBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
 </body>
 </html>
