@@ -202,6 +202,32 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 /* FOOTER */
 footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;justify-content:space-between;}
 .ft{font-size:11px;color:rgba(255,200,220,.3);}
+
+@media(max-width:900px){
+  .hdr{padding:0 16px;height:56px;}
+  .hdr-sep{display:none;}
+  .hnav{padding:0 8px;font-size:8px;letter-spacing:1px;}
+  .hero{padding:28px 16px 24px;}
+  .hero-kpis{grid-template-columns:repeat(4,1fr);gap:8px;}
+  .hk-num{font-size:22px;}
+  .page{padding:24px 16px 60px;}
+  .g4{grid-template-columns:repeat(2,1fr);}
+  .g3{grid-template-columns:repeat(2,1fr);}
+  .g2{grid-template-columns:1fr;}
+  .team-grid{grid-template-columns:repeat(2,1fr);}
+  .insight-grid{grid-template-columns:1fr;}
+  .modal-sheet{max-height:92vh;}
+  .hero-title{font-size:28px;}
+  .btn-sm{display:none;}
+}
+@media(max-width:500px){
+  .hero-kpis{grid-template-columns:repeat(2,1fr);}
+  .team-grid{grid-template-columns:1fr;}
+  .g4{grid-template-columns:1fr;}
+  .hk-lbl{font-size:7px;}
+  .hnav{font-size:7px;padding:0 6px;letter-spacing:.5px;}
+}
+
 </style>
 </head>
 <body>
@@ -240,6 +266,21 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
 </section>
 
 <div class="page">
+
+
+  <!-- MoM CONTEXT BANNER -->
+  <div style="background:linear-gradient(90deg,rgba(200,0,90,.05),rgba(184,134,11,.05));border:1px solid var(--bdr2);border-radius:12px;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;" class="fade-up">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--txt3);">📅 Period:</span>
+      <span style="font-size:12px;font-weight:600;color:var(--txt);">June 2026 · 363 NS Audited · Auditor: Gourav M</span>
+    </div>
+    <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
+      <div style="font-size:11px;color:var(--txt3);">Prev Month: <strong style="color:var(--txt2);">— (first report)</strong></div>
+      <div style="font-size:11px;color:var(--txt3);">Coverage: <strong style="color:var(--green);">100% of flagged NS cases</strong></div>
+      <div style="font-size:11px;color:var(--txt3);">ML Validated: <strong style="color:var(--txt2);">Cols A–S</strong> · Manual Audit: <strong style="color:var(--txt2);">Cols T onwards</strong></div>
+      <button onclick="window.print()" style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mag);background:rgba(200,0,90,.07);border:1.5px solid rgba(200,0,90,.2);padding:5px 12px;border-radius:20px;cursor:pointer;">🖨 Print / PDF</button>
+    </div>
+  </div>
 
   <!-- CORE METRICS -->
   <div class="spacer"></div>
@@ -340,6 +381,7 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
 
 <script src="data.js"></script>
 <script>
+window.addEventListener("load",function(){
 const D=DASHBOARD_DATA, O=D.overall, T=D.teams, P=D.passwords;
 let pendingTeam=null;
 
@@ -686,6 +728,7 @@ function downloadCSV(){
 // ── SCROLL FADE ──
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.05});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+}); // end window.onload
 </script>
 </body>
 </html>

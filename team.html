@@ -218,6 +218,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
     <a href="index.html" class="hnav">Overview</a>
     <a href="analytics.html" class="hnav">Analytics</a>
     <a href="team.html" class="hnav active">Teams</a>
+    <a href="rootcause.html" class="hnav">Root Cause</a>
   </nav>
   <div class="hdr-badge">June 2026 Live</div>
 </header>
@@ -292,6 +293,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 
 <script src="data.js"></script>
 <script>
+window.addEventListener("load",function(){
 
 // Logo injection
 if(typeof DASHBOARD_DATA !== 'undefined' && DASHBOARD_DATA.logo){
@@ -335,7 +337,7 @@ document.getElementById('teamGrid').innerHTML=teamsSorted.map(([name,data],idx)=
       </div>
       <div class="team-div"></div>
       <div class="team-gap-row">Training Gaps <span class="tv">${data.training_gap}</span></div>
-      <div class="team-gap-row">CS QA Gaps <span class="gv">${data.cs_qa_gap}</span></div>
+      <div class="team-gap-row">Auditor Insights <span class="gv">${data.auditor_insight||0}</span></div>
       <div class="team-cta"><span class="team-cta-txt">🔒 View Agents</span><span class="team-cta-arrow">→</span></div>
     </div>
   </div>`;
@@ -389,7 +391,7 @@ function loadTeamView(teamName){
     <div class="sc red"><div class="sc-label">Crucial</div><div class="sc-num">${data.crucial}</div><div class="sc-sub">${data.total?Math.round(data.crucial/data.total*100):0}% of team cases</div></div>
     <div class="sc amber"><div class="sc-label">Unresolved</div><div class="sc-num">${data.unresolved}</div><div class="sc-sub">Negative at call end</div></div>
     <div class="sc green"><div class="sc-label">Training Gaps</div><div class="sc-num">${data.training_gap}</div><div class="sc-sub">Flagged for training</div></div>
-    <div class="sc blue"><div class="sc-label">CS QA Gaps</div><div class="sc-num">${data.cs_qa_gap}</div><div class="sc-sub">Flagged for QA</div></div>
+    <div class="sc blue"><div class="sc-label">Auditor Insights</div><div class="sc-num">${data.auditor_insight||0}</div><div class="sc-sub">Flagged for QA</div></div>
   `;
 
   // Leaderboard list
@@ -557,6 +559,7 @@ function downloadTeamCSV(){
 // Scroll fade
 const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.06});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+});
 </script>
 </body>
 </html>
