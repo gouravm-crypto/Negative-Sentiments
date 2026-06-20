@@ -4,206 +4,211 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NS Audit Dashboard · CaratLane QA · June 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;0,800;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --mag:#C8005A;--mag-lt:#F0006E;--mag-dk:#8A003E;--mag-pale:#FFF0F6;--mag-glow:rgba(200,0,90,.22);
+  --mag:#C8005A;--mag-lt:#F0006E;--mag-dk:#8A003E;
   --gold:#B8860B;--gold-lt:#E8B840;
   --ink:#0F0A10;--ink2:#1E0E1A;
   --body:#FAFAF8;--surface:#FFFFFF;
   --bdr:#EEE4EC;--bdr2:#E0CCD8;
-  --txt:#1A0818;--txt2:#5A3048;--txt3:#9A7085;--txt4:#C4A8B8;
-  --sh-sm:0 2px 8px rgba(15,10,16,.08);--sh-md:0 4px 20px rgba(15,10,16,.10);--sh-lg:0 8px 36px rgba(15,10,16,.14);
-  --green:#1a7a4a;--blue:#1a4fa0;--r:18px;
+  --txt:#1A0818;--txt2:#5A3048;--txt3:#9A7085;
+  --sh-sm:0 2px 8px rgba(15,10,16,.08);--sh-md:0 4px 20px rgba(15,10,16,.12);--sh-lg:0 8px 40px rgba(15,10,16,.18);
+  --green:#1a7a4a;--blue:#1a4fa0;--r:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
 @keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-@keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:none;opacity:1}}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
 
-/* HEADER */
-.hdr{position:sticky;top:0;z-index:900;background:var(--ink2);border-bottom:2px solid transparent;border-image:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent) 1;display:flex;align-items:center;padding:0 48px;height:64px;gap:0;}
+/* ── HEADER ── */
+.hdr{position:sticky;top:0;z-index:900;background:var(--ink2);border-bottom:2px solid transparent;border-image:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent) 1;display:flex;align-items:center;padding:0 40px;height:62px;}
 .hdr-brand{display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none;}
-.cl-gem{width:32px;height:32px;background:linear-gradient(135deg,var(--mag),var(--gold));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
-.cl-logo{width:38px;height:38px;object-fit:cover;border-radius:8px;}
-.cl-name{font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#fff;line-height:1;}
+.cl-name{font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#fff;line-height:1;}
 .cl-sub{font-size:7px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,200,220,.4);}
-.hdr-sep{width:1px;height:28px;background:rgba(255,255,255,.1);margin:0 20px;flex-shrink:0;}
-.hdr-nav{display:flex;gap:0;flex:1;}
-.hnav{height:64px;padding:0 13px;display:flex;align-items:center;font-size:9.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:rgba(255,200,220,.35);text-decoration:none;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap;}
+.hdr-sep{width:1px;height:26px;background:rgba(255,255,255,.1);margin:0 18px;flex-shrink:0;}
+.hdr-nav{display:flex;flex:1;}
+.hnav{height:62px;padding:0 12px;display:flex;align-items:center;font-size:9px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:rgba(255,200,220,.35);text-decoration:none;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap;}
 .hnav:hover{color:rgba(255,200,220,.7);}
 .hnav.active{color:#fff;border-bottom-color:var(--mag);background:rgba(200,0,90,.08);}
-.hdr-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.hdr-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
 .hdr-badge{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mag);border:1.5px solid rgba(200,0,90,.4);padding:4px 10px;border-radius:20px;background:rgba(200,0,90,.08);}
-.csv-btn{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--mag),var(--mag-dk));border:none;padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;}
-.csv-btn:hover{transform:scale(1.05);box-shadow:0 4px 14px rgba(200,0,90,.35);}
+.btn-sm{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--mag),var(--mag-dk));border:none;padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;}
+.btn-sm:hover{opacity:.88;transform:scale(1.04);}
 
-/* HERO */
-.hero{background:linear-gradient(160deg,var(--ink2) 0%,#2A0E22 55%,#1A0E2A 100%);padding:52px 48px 44px;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(200,0,90,.12),transparent 70%);}
+/* ── HERO ── */
+.hero{background:linear-gradient(160deg,var(--ink2) 0%,#2A0E22 55%,#1A0E2A 100%);padding:46px 40px 38px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:380px;height:380px;background:radial-gradient(circle,rgba(200,0,90,.1),transparent 70%);pointer-events:none;}
 .hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;}
-.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mag);border:1px solid rgba(200,0,90,.3);padding:4px 12px;border-radius:4px;background:rgba(200,0,90,.07);margin-bottom:16px;}
-.hero-title{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:800;color:#fff;line-height:1.1;margin-bottom:8px;}
-.hero-sub{font-size:13px;color:rgba(255,200,220,.5);margin-bottom:32px;}
-.hero-kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:16px;}
-.hk{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px 14px;text-align:center;transition:all .2s;}
-.hk:hover{background:rgba(255,255,255,.07);border-color:rgba(200,0,90,.2);}
-.hk-num{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:800;line-height:1;color:#fff;}
-.hk-num.mag{color:var(--mag-lt);}
-.hk-num.gold{color:var(--gold-lt);}
-.hk-num.green{color:#4ade80;}
-.hk-num.blue{color:#93c5fd;}
-.hk-num.amber{color:#fbbf24;}
-.hk-lbl{font-size:8.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,200,220,.35);margin-top:4px;}
+.hero-logo-wrap{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.hero-logo-circle{width:60px;height:60px;border-radius:50%;overflow:hidden;box-shadow:0 0 28px rgba(200,0,90,.2);border:1.5px solid rgba(200,0,90,.22);}
+.hero-logo-circle img{width:100%;height:100%;object-fit:cover;}
+.hero-brand-txt{line-height:1;}
+.hero-brand-name{font-size:15px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#fff;}
+.hero-brand-sub{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,200,220,.4);}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mag);border:1px solid rgba(200,0,90,.3);padding:3px 10px;border-radius:4px;background:rgba(200,0,90,.07);margin-bottom:12px;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:800;color:#fff;line-height:1.1;margin-bottom:6px;}
+.hero-sub{font-size:12px;color:rgba(255,200,220,.45);margin-bottom:28px;}
+.hero-kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:12px;}
+.hk{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.hk:hover{background:rgba(200,0,90,.12);border-color:rgba(200,0,90,.35);transform:translateY(-3px);box-shadow:0 8px 24px rgba(200,0,90,.18);}
+.hk::after{content:'↗';position:absolute;top:6px;right:8px;font-size:8px;color:rgba(255,200,220,.2);opacity:0;transition:opacity .2s;}
+.hk:hover::after{opacity:1;}
+.hk-num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;line-height:1;color:#fff;}
+.hk-num.mag{color:#F0006E;}.hk-num.gold{color:#E8B840;}.hk-num.green{color:#4ade80;}.hk-num.blue{color:#93c5fd;}.hk-num.amber{color:#fbbf24;}
+.hk-lbl{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,200,220,.3);margin-top:3px;}
 
-/* PAGE BODY */
-.page{max-width:1400px;margin:0 auto;padding:40px 48px 80px;}
-.section-hd{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;}
-.section-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--ink);}
-.section-sub{font-size:12px;color:var(--txt3);}
-.fade-up{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+/* ── PAGE ── */
+.page{max-width:1380px;margin:0 auto;padding:36px 40px 80px;}
+.spacer{height:36px;}
+.section-hd{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--ink);}
+.section-sub{font-size:11px;color:var(--txt3);}
+.fade-up{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease;}
 .fade-up.visible{opacity:1;transform:none;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
 
-/* GRIDS */
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
-.g21{display:grid;grid-template-columns:2fr 1fr;gap:16px;}
-.g12{display:grid;grid-template-columns:1fr 2fr;gap:16px;}
-
-/* STAT CARDS */
-.sc{background:var(--surface);border:1.5px solid var(--bdr);border-radius:var(--r);padding:22px 24px;position:relative;overflow:hidden;box-shadow:var(--sh-sm);transition:all .25s cubic-bezier(.34,1.56,.64,1);}
-.sc:hover{transform:translateY(-4px);box-shadow:var(--sh-md);}
+/* ── STAT CARDS (clickable) ── */
+.sc{background:var(--surface);border:1.5px solid var(--bdr);border-radius:var(--r);padding:20px 22px;position:relative;overflow:hidden;box-shadow:var(--sh-sm);cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);}
+.sc:hover{transform:translateY(-5px);box-shadow:var(--sh-md);border-color:var(--accent,var(--bdr2));}
 .sc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--bdr));}
+.sc-click-hint{position:absolute;top:10px;right:12px;font-size:8px;color:var(--txt3);opacity:0;transition:opacity .2s;}
+.sc:hover .sc-click-hint{opacity:1;}
 .sc.red{--accent:var(--mag);}.sc.amber{--accent:var(--gold);}.sc.green{--accent:var(--green);}.sc.blue{--accent:var(--blue);}
-.sc-label{font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:10px;}
-.sc-num{font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:800;line-height:1;margin-bottom:6px;}
+.sc-label{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px;}
+.sc-num{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:800;line-height:1;margin-bottom:4px;}
 .sc.red .sc-num{color:var(--mag);}.sc.amber .sc-num{color:var(--gold);}.sc.green .sc-num{color:var(--green);}.sc.blue .sc-num{color:var(--blue);}
 .sc-sub{font-size:11px;color:var(--txt3);}
-.sc-pill{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:4px;margin-top:6px;}
+.sc-pill{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;margin-top:6px;}
 .pill-red{background:rgba(200,0,90,.08);color:var(--mag);}
 .pill-green{background:rgba(26,122,74,.08);color:var(--green);}
 .pill-amber{background:rgba(184,134,11,.08);color:var(--gold);}
 .pill-blue{background:rgba(26,79,160,.08);color:var(--blue);}
 
-/* CHART CARDS */
-.cc{background:var(--surface);border:1.5px solid var(--bdr);border-radius:var(--r);padding:26px 28px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
-.cc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;opacity:.3;}
-.cc-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;color:var(--ink);margin-bottom:3px;}
-.cc-sub{font-size:11px;color:var(--txt3);margin-bottom:18px;}
-
-/* BAR ROWS */
-.bar-row{display:grid;grid-template-columns:160px 1fr 44px;align-items:center;gap:12px;margin-bottom:10px;}
-.bar-label{font-size:11.5px;color:var(--txt2);}
+/* ── CHART CARDS ── */
+.cc{background:var(--surface);border:1.5px solid var(--bdr);border-radius:var(--r);padding:24px 26px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
+.cc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;opacity:.25;}
+.cc-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.cc-sub{font-size:11px;color:var(--txt3);margin-bottom:16px;}
+.bar-row{display:grid;grid-template-columns:160px 1fr 42px;align-items:center;gap:10px;margin-bottom:9px;}
+.bar-label{font-size:11px;color:var(--txt2);}
 .bar-track{height:8px;background:rgba(200,0,90,.07);border-radius:5px;overflow:hidden;}
 .bar-fill{height:100%;border-radius:5px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
 .bf-mag{background:linear-gradient(90deg,var(--mag),var(--mag-lt));}
 .bf-gold{background:linear-gradient(90deg,var(--gold),var(--gold-lt));}
 .bf-blue{background:linear-gradient(90deg,var(--blue),#4a90e2);}
 .bf-green{background:linear-gradient(90deg,var(--green),#2ecc71);}
-.bf-amber{background:linear-gradient(90deg,#d97706,#fbbf24);}
 .bar-val{font-size:11px;font-weight:700;text-align:right;color:var(--txt2);}
 
-/* CONVERSION VISUAL */
-.conv-wrap{display:flex;gap:20px;align-items:stretch;}
-.conv-box{flex:1;border-radius:16px;padding:28px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.conv-num{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:800;line-height:1;}
-.conv-lbl{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:4px;}
-.conv-sub{font-size:11px;margin-top:6px;opacity:.7;}
-.conv-neg{background:linear-gradient(135deg,#fff0f5,#fff5f8);border:2px solid rgba(200,0,90,.15);}
-.conv-neg .conv-num{color:var(--mag);}
-.conv-neg .conv-lbl{color:var(--mag);}
-.conv-pos{background:linear-gradient(135deg,#f0fdf4,#f5fff7);border:2px solid rgba(26,122,74,.18);}
-.conv-pos .conv-num{color:var(--green);}
-.conv-pos .conv-lbl{color:var(--green);}
-
-/* REPEAT CX */
-.repeat-flow{display:flex;gap:16px;}
-.rf-box{background:var(--surface);border:1.5px solid var(--bdr);border-radius:14px;padding:20px;flex:1;}
-.rf-title{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:14px;}
-.rf-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--bdr);font-size:12px;}
-.rf-item:last-child{border-bottom:none;}
-.rf-val{font-weight:700;color:var(--mag);}
-
-/* TEAM CARDS */
-.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
-.team-card{border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:var(--sh-sm);transition:all .28s cubic-bezier(.34,1.56,.64,1);background:var(--surface);border:2px solid var(--bdr);}
+/* ── TEAM CARDS ── */
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.team-card{border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:var(--sh-sm);transition:all .28s cubic-bezier(.34,1.56,.64,1);background:var(--surface);border:2px solid var(--bdr);}
 .team-card:hover{transform:translateY(-6px);box-shadow:var(--sh-lg);}
-.team-card.alarm{border-color:rgba(200,0,90,.3);background:linear-gradient(160deg,#fff5f9,#fff);}
-.team-card.alarm:hover{box-shadow:var(--sh-lg),0 0 28px rgba(200,0,90,.15);}
-.tc-hd{background:var(--ink2);padding:18px 20px 16px;position:relative;overflow:hidden;}
+.team-card.alarm{border-color:rgba(200,0,90,.3);}
+.tc-hd{background:var(--ink2);padding:16px 18px 14px;position:relative;overflow:hidden;}
 .tc-hd::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 3s linear infinite;}
-.tc-rank{position:absolute;top:10px;right:14px;font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:rgba(255,255,255,.06);line-height:1;}
-.alarm-badge{display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:4px;margin-bottom:7px;}
-.ab-crit{background:rgba(200,0,90,.12);color:var(--mag);border:1px solid rgba(200,0,90,.25);}
-.ab-high{background:rgba(200,0,90,.08);color:var(--mag);border:1px solid rgba(200,0,90,.15);}
-.ab-med{background:rgba(184,134,11,.1);color:var(--gold);border:1px solid rgba(184,134,11,.2);}
-.ab-low{background:rgba(26,122,74,.08);color:var(--green);border:1px solid rgba(26,122,74,.18);}
-.tc-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:3px;}
-.tc-agents{font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,200,220,.35);}
-.tc-body{padding:16px 20px 18px;}
-.tc-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.tc-rank{position:absolute;top:8px;right:12px;font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:800;color:rgba(255,255,255,.05);}
+.tc-badge{display:inline-flex;align-items:center;gap:4px;font-size:7px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;margin-bottom:6px;}
+.tbc-crit{background:rgba(200,0,90,.12);color:var(--mag-lt);border:1px solid rgba(200,0,90,.2);}
+.tbc-high{background:rgba(200,0,90,.08);color:var(--mag);border:1px solid rgba(200,0,90,.12);}
+.tbc-med{background:rgba(184,134,11,.1);color:#E8B840;border:1px solid rgba(184,134,11,.15);}
+.tbc-low{background:rgba(26,122,74,.08);color:#4ade80;border:1px solid rgba(26,122,74,.12);}
+.tc-name{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:2px;}
+.tc-agents{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,200,220,.3);}
+.tc-body{padding:14px 18px 16px;}
+.tc-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
 .tcm{text-align:center;}
-.tcm-num{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:800;line-height:1;}
-.tcm-num.r{color:var(--mag);}
-.tcm-num.a{color:var(--gold);}
-.tcm-num.g{color:var(--green);}
-.tcm-num.d{color:var(--ink);}
+.tcm-num{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:800;line-height:1;}
+.tcm-num.r{color:var(--mag);}.tcm-num.a{color:var(--gold);}.tcm-num.g{color:var(--green);}.tcm-num.d{color:var(--ink);}
 .tcm-lbl{font-size:7px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--txt3);}
-.tc-div{height:1px;background:var(--bdr);margin:10px 0;}
-.tc-row{display:flex;justify-content:space-between;font-size:10.5px;color:var(--txt3);margin-bottom:3px;}
-.tc-rv{color:var(--mag);font-weight:700;}
-.tc-gv{color:var(--gold);font-weight:700;}
-.tc-bv{color:var(--blue);font-weight:700;}
-.tc-grv{color:var(--green);font-weight:700;}
-.tc-cta{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr);}
-.tc-cta-txt{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mag);}
-.tc-arr{font-size:13px;color:var(--mag);transition:transform .2s;}
-.team-card:hover .tc-arr{transform:translateX(5px);}
+.tc-div{height:1px;background:var(--bdr);margin:8px 0;}
+.tc-row{display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-bottom:2px;}
+.tc-rv{color:var(--mag);font-weight:700;}.tc-gv{color:var(--gold);font-weight:700;}.tc-grv{color:var(--green);font-weight:700;}
+.tc-cta{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr);}
+.tc-cta-txt{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mag);}
 
-/* INSIGHT CARDS */
-.insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-.ic{background:var(--surface);border:1.5px solid var(--bdr);border-radius:16px;padding:24px 26px;box-shadow:var(--sh-sm);border-top:3px solid var(--acc,var(--bdr));transition:all .25s cubic-bezier(.34,1.56,.64,1);}
+/* ── INSIGHT CARDS ── */
+.insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.ic{background:var(--surface);border:1.5px solid var(--bdr);border-radius:14px;padding:22px 24px;box-shadow:var(--sh-sm);border-top:3px solid var(--acc,var(--bdr));transition:all .25s;}
 .ic:hover{transform:translateY(-4px);box-shadow:var(--sh-md);}
-.ic-tag{display:inline-block;font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:4px;margin-bottom:11px;}
-.ic-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:7px;line-height:1.25;}
-.ic-body{font-size:12.5px;color:var(--txt3);line-height:1.75;}
+.ic-tag{display:inline-block;font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:4px;margin-bottom:10px;}
+.ic-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1.3;}
+.ic-body{font-size:12px;color:var(--txt3);line-height:1.75;}
 
-/* DIVIDER */
-.spacer{height:40px;}
+/* ── MODAL OVERLAY ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,10,16,.7);backdrop-filter:blur(12px);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-sheet{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:1200px;max-height:88vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.34,1.2,.64,1);}
+.modal-overlay.open .modal-sheet{transform:none;}
+.modal-hd{padding:22px 28px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--ink);}
+.modal-meta{font-size:12px;color:var(--txt3);}
+.modal-close{width:34px;height:34px;border-radius:50%;background:var(--body);border:1.5px solid var(--bdr);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--txt3);transition:all .2s;flex-shrink:0;}
+.modal-close:hover{background:var(--mag);color:#fff;border-color:var(--mag);}
+.modal-body{padding:20px 28px;overflow-y:auto;flex:1;}
+.modal-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.mf{font-size:10px;font-weight:600;padding:5px 12px;border-radius:20px;border:1.5px solid var(--bdr2);cursor:pointer;background:var(--surface);color:var(--txt2);transition:all .2s;}
+.mf.active,.mf:hover{background:var(--mag);color:#fff;border-color:var(--mag);}
+.case-table{width:100%;border-collapse:collapse;}
+.case-table th{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);padding:9px 12px;border-bottom:2px solid var(--bdr);text-align:left;position:sticky;top:0;background:var(--surface);}
+.case-table td{padding:10px 12px;font-size:11.5px;border-bottom:1px solid var(--bdr);color:var(--txt2);vertical-align:top;}
+.case-table tr:hover td{background:#fdf5f8;}
+.case-table tr:last-child td{border-bottom:none;}
+.crit-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;}
+.cb-crucial{background:rgba(200,0,90,.1);color:var(--mag);}
+.cb-neutral{background:rgba(184,134,11,.1);color:var(--gold);}
+.cb-less{background:rgba(100,100,100,.1);color:#666;}
+.cx-contact{font-size:10px;color:var(--blue);text-decoration:none;display:block;}
+.cx-contact:hover{text-decoration:underline;}
+.summary-text{font-size:11px;color:var(--txt3);line-height:1.6;max-width:300px;}
+.modal-count{font-size:11px;color:var(--txt3);margin-bottom:12px;}
 
-/* PW MODAL */
-.pw-overlay{position:fixed;inset:0;background:rgba(15,10,16,.75);backdrop-filter:blur(14px);z-index:998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+/* ── PW MODAL ── */
+.pw-overlay{position:fixed;inset:0;background:rgba(15,10,16,.75);backdrop-filter:blur(14px);z-index:1010;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
 .pw-overlay.open{opacity:1;pointer-events:all;}
-.pw-box{background:var(--surface);border:1.5px solid var(--bdr2);border-radius:22px;padding:44px;max-width:400px;width:90%;position:relative;box-shadow:var(--sh-lg),0 20px 60px rgba(200,0,90,.14);transform:scale(.94) translateY(12px);transition:transform .3s;}
+.pw-box{background:var(--surface);border:1.5px solid var(--bdr2);border-radius:22px;padding:40px;max-width:380px;width:90%;position:relative;box-shadow:var(--sh-lg);transform:scale(.94) translateY(12px);transition:transform .3s;}
 .pw-overlay.open .pw-box{transform:scale(1) translateY(0);}
-.pw-close{position:absolute;top:18px;right:20px;font-size:18px;cursor:pointer;color:var(--txt3);transition:color .2s;}
+.pw-close{position:absolute;top:16px;right:18px;font-size:18px;cursor:pointer;color:var(--txt3);background:none;border:none;transition:color .2s;}
 .pw-close:hover{color:var(--mag);}
-.pw-icon{font-size:36px;text-align:center;margin-bottom:16px;}
-.pw-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:6px;}
-.pw-sub{font-size:12px;color:var(--txt3);text-align:center;margin-bottom:24px;}
-.pw-input{width:100%;border:1.5px solid var(--bdr2);border-radius:10px;padding:13px 16px;font-size:14px;color:var(--txt);background:var(--body);transition:border .2s;margin-bottom:8px;outline:none;}
+.pw-icon{font-size:32px;text-align:center;margin-bottom:14px;}
+.pw-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;text-align:center;margin-bottom:5px;}
+.pw-sub{font-size:12px;color:var(--txt3);text-align:center;margin-bottom:20px;}
+.pw-input{width:100%;border:1.5px solid var(--bdr2);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--txt);background:var(--body);transition:border .2s;margin-bottom:8px;outline:none;font-family:'DM Sans',sans-serif;}
 .pw-input:focus{border-color:var(--mag);}
 .pw-input.wrong{animation:shake .4s;border-color:var(--mag);}
-.pw-hint{font-size:10.5px;color:var(--txt3);text-align:center;margin-bottom:16px;}
-.pw-btn{width:100%;background:linear-gradient(135deg,var(--mag),var(--mag-dk));color:#fff;border:none;border-radius:10px;padding:14px;font-size:13px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:opacity .2s;}
-.pw-btn:hover{opacity:.9;}
-.pw-error{color:var(--mag);font-size:11.5px;text-align:center;margin-top:10px;display:none;}
+.pw-hint{font-size:10px;color:var(--txt3);text-align:center;margin-bottom:14px;}
+.pw-btn{width:100%;background:linear-gradient(135deg,var(--mag),var(--mag-dk));color:#fff;border:none;border-radius:10px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.pw-error{color:var(--mag);font-size:11px;text-align:center;margin-top:8px;display:none;}
+
+/* ── ACTION REQUIRED BREAKDOWN CARD ── */
+.ar-breakdown{background:var(--surface);border:1.5px solid var(--bdr);border-radius:var(--r);padding:24px 26px;box-shadow:var(--sh-sm);}
+.ar-bk-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.ar-bk-sub{font-size:11px;color:var(--txt3);margin-bottom:18px;}
+.ar-seg{display:flex;align-items:center;gap:12px;margin-bottom:10px;cursor:pointer;padding:10px;border-radius:10px;border:1.5px solid transparent;transition:all .2s;}
+.ar-seg:hover{background:rgba(200,0,90,.04);border-color:rgba(200,0,90,.12);}
+.ar-seg-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+.ar-seg-label{font-size:12px;color:var(--txt2);flex:1;}
+.ar-seg-track{flex:2;height:8px;background:var(--bdr);border-radius:5px;overflow:hidden;}
+.ar-seg-fill{height:100%;border-radius:5px;transition:width 1.2s;}
+.ar-seg-val{font-size:12px;font-weight:700;color:var(--txt2);width:80px;text-align:right;}
+.ar-explainer{background:#fff8e1;border:1px solid rgba(184,134,11,.2);border-radius:10px;padding:14px 16px;margin-top:14px;font-size:12px;color:var(--txt2);line-height:1.75;}
 
 /* FOOTER */
-footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;justify-content:space-between;}
-.ft-l{font-size:11px;color:rgba(255,200,220,.3);}
-.ft-r{font-size:11px;color:rgba(255,200,220,.3);text-align:right;}
+footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;justify-content:space-between;}
+.ft{font-size:11px;color:rgba(255,200,220,.3);}
 </style>
 </head>
 <body>
 
 <header class="hdr">
   <a class="hdr-brand" href="index.html">
-    <img src="data:image/webp;base64,UklGRi4UAABXRUJQVlA4WAoAAAAMAAAAHwMAVwIAVlA4IOwRAADwpgCdASogA1gCPnU6nUoko6MhoTPoMJAOiWlu4XdhH9Q9d51L3n9z9IGzO5H1hdo+jN5P/J+cb/M+oj9RewjznPMb51PqQ/xm+9b0l/h8kf8p/5jtc/4HnH1WPYDkONCtBfY7wAu/e8ngA/J/6H/wvWh+R8z9JToCeLHnK/Q/+D7B3SP/dAGYgvxU96SD3KcuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cKQGT7+82fnA9przDlY9ynLly5cuXLly5cuXLly5cuXE3TxyjGaaN9v+Hmmy1NKy7+Yz1oPhvBfpfZWW64Y6QX4qe9JB7lOXLly5cKaaF5//19OvJ3uO3oXbCRkxtG0Hg1VeBkkQkYNPc9f8yOdicwFZ1y7y7J8ULEcHmJ70kHuU5cuXLly5cuXLlwrua1X6Go863I7jPzAGoJd/xQdjH9wwuANDRB2zyAo27zlI2E1MXokIjI/xWkFaNMGQX4qe9JB7lOXLly5cuXLlZlt3jEo+DTfsmWEZ+fNfkYpQZCleyAplxq34qe9JB7lOXLly5cuXLlysfwT25zjr+/VnQ5X04H/7GUUltYbtLZ34qe9JB7lOXLly5cuXLly4QUK4AhTnsR66UWcBTWsY7W/Tt+4X4qe9JB7lOXLly5cuXLly5cuFUq3BQVtkqO1jonhIqdfTF+WGaxFZHg6QX4qe9JB7lOXLly5cuXLly5cyCdu6wUs+6s7OgfwQPX7srd+q9F4X4qe9JB7lOXLly5cuXLly5cuXMhH+llvoBtUQ9mxgXdGnbfrAGpN/pIPcpy5cuXLly5cuXLly5crEZcyEzs4OqHwEerJw4ugDBywIgzYwcHBIx2HuU5cuXLly5cuXLly5cuXKzxcXg3vpNUCOQkkliECndtduJi2Pa07UquUvBg3ZA6TZtXlAC5ut7/5RmpzpuOu9vnZ/TuTLhfip70kHuU5cuXLly5cuVmn8iVKQcg9N2AsQlsx6ZcOkCGR3B4CMYGIIBSbAQlPjLZc15Xs+bX0BiasbfgP9rNyv+4Y6QX4qe9JB7lOXLly5cyIPN2dSU55K/pgHMgVFcIUlJXMZEHBu835Ss5HjC07lOXLly5cuXLly5cuXLly5cuXCl4WIh/afP5H3+sGXrwkHuU5cuXLly5cuXLly5cuXLly53z05cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXLly5cuXKwAA/v+11v/x16LkXJ/0w0HoHswPNnEA0DiAAAAAAAAAAAAAAAAAEdl123aN1hZpzsn5+1esVeYx8MU+rIWBI3Y+xBjMtqtbGkk1fXGL8upPDtGVg9AiwqiLKmun2XSwqI4Wh7camqxzRBdX4s2E6l45bzvacXp3pqjqzCEIK+5Pi/AgkbgbRh/XkCVVQg0C65Oa8QDPJriOg6fWQVvNBVD9hQUs/tFWqD3xfFWYItd/MVni1fP4U9yca+7w2cjro1yY+iIWlzK3hUtDMq9Ei90NETDV4GFQgyHkJjbXZzh1bsDHIjR/tilXdZOedtMcEnEpsSX5ZU5ouScby3wl76xgekWc9VaLNT+olrwu+m/CrPoVVW7Hw5Wxj2VgHVeuSS0gDEaDYsHUGS8WR3S5Fo5qc1JecENop36/hd2X4pEpG8gsFIhDMIJyMzKk7cTcNHWXu1+YcMU+Uhp/3HvPV/p8yRN4YSFdim03DXwOtG9mXFflijtTByg+e4/sFjZnrG0ZrV5+2J/tSYBUUu8p9TTuopmHJOuhLCmph8mu4dvndJ1ZLmzf3zhN1XEo5yAR1GpjE8Ln1D2lTF1kfXxg4sHna3LouGIZRquvccB2AfuTR/2lYCmeseMJmXSanV5NiPDX9O33qOsdnSmOS+Lg9JJEJBm+Y6o03LdliofgWwmEGsReBzfszo8cbOX6USuK7BqqHiExGYBbhJUq2e2uenZNI31JAN8XW0gzTN7UyqmbfjHabjNz6cwidHaqmLxI7zYtKwgmttgNe+sSD1TPyS8qW47HHjklj/UPe16aa0Lh791AITXuRVgg6lqSIT44EQ7EqzAUsYw0/VgJa/td+HoClDb4s5sH5KnKmjN5heGDgMXCr5nqDgem4s8xDDTZayIJHMjB3cU09eflJVl1D5e3DJ77i670tfHTCU5LZGaDerf4itIcBaMhLsZXh2ZmonkdumV+bnualB4SBaZk1HLRTy+QR2MD5futCPybzmkAYfWzd7wGgiA41RQZYbkiF+3Lt9yAhY5Op6Pt58jCbYLD7b0k8LHFF8KkWHJfrEnIIQwVYH8KHVDbqI1qPiqahyqHzxLEhzvTRTgzWS17c0SqkHmfD93BHE7WEb5M6mhyIi6hQOmaqZ8/GMXD/mJNmlkccSKZIBbITqWU3C4sMVdwRTHO0STtbNRyXkwad2bEeCrH2iDXB1vC9GFRNGP4oSlUi8c087n5KjKhkNBH5OUPt+O834QiwyRsSVWPcCP++ois9Az3PuUVpJUWabtINRA86yJUuFYdNjviqhCuf/9YfUiv4HumFHIOZ+1QmDQ4liERi0TvKZ8l3k9K4XzTDJgPulSYfxUyPC6Adh8lM0jcrY8yOgylJP2pLRR6+vjxYkbixdXDJKhpwkOTXpm+vGzpGbnWr98SNiWsjMgJn3xJE2b6S/WJ3OQCdIFkIZl1cvkbDnMMmH8i+r0OltayaIZ3v3moK6zQJy2TSFSak1kx2Y8R+y4Ek9RDlEfIeziMii7ws8CWDQsKTmM8+1j+/5dCWI9A/ti4sfbWEuZtFsb0jrDEn4Ysb7Sc0jk5L0fJ/t3JJf+5vuJGCEFFDVavfX/uWXt4Pt/XDoQk2DSxMO22sO5/Bmvuj4Q8zRAzdar01eET+oK/1LRWu7XhZFcotA0DVkj1IrwFA7iGib55TkNaAiYADuXNx7rd/UAsQMh7+hF/QNihJizzs65ZckAFWuFhGgz3xBvD6S2BziBFiqvscNPWii8Zk3wEsFcc/RYN0PIagANqsq3Zr9F0GsZjH5E+Oymb80J3jD1VScKVQumMD3dS0S+BsAV6mG4kIJ8de4i2IVLD4qinMpybIf67kwe1vu3Ek7n22iZjMaVczHu4SsxLtaWGAqoy3m12AHarGpfoPgcs7kG/Yigckkf441N65nHEmg6VHqgGAACqM4LIb2f3RHGkEXtYJjb4dTt7oHDwLdKbPzVKo33TdTO4e6vinEFR3wqDVavinEE3Bwxs21S39ONDfygqSDluHkLOMkJTpMb8r07X3EJQjsNMhGSxi7plP5xm0FrRkQIUoFpV9ycnFWabXenX+K9xXKqmzZDcosufJaxijFQSxxblvZcnqCayhIaN7adutrjOxA58u/HFAADYPdcP0TeFS9HruE0+uAlfFJxngIGsWE8w5sMklwM2GYnDSBWOEuIPgfb/H4DlQ+Y7SvuQEDMbPw1GjtoUvlvCK1GmR18r0+2oejOykzeWP8BCv76S4MMEZPXOzcS08Xb9V+rVNUM5TUHccO4H6bASe+rYuHjFxXlatwklHrT5SarSa0n14xzG0mvKKTtiDg2uKmwBaW8cf0oUvlpUYVqls/RypetvA+Vop3VduQ/gMSBmT/jsCeLDWot7Eu3vtgCkQ9L+o0gqofptpX2SoxM2NYZ09JX49vSuCWyqul7rMyHoQwmuZUZrIEQSWWpEeUyr8UEvJPJDkICIT7PxVimI96DYh2XcHiKloYxvK63GFBM6xXgDOnEYDR7PgtfGdmH7gAFj6gQlajTuHLqAeH22AmBtzkJ7W+IyhgfYJPl0aDpccJ7ODFFVg3qd8lEpvXhDwg6z5/pzLmuQqpbedg3SS/pHR9Hq6btHAdPOau1aFhcP6Y/LB/yn60LvYRBOlZ3g7Z4f/yQmcZVeO+U2L4WJ0VUVWDTpK844h1RO46cnsqgYaQrv74W3qJfndJ02xU/+cIuY9AICIEGiNTeFqgipMn8yMmCyrpVj7oYKpxJmsEwyY1UcCzNTMSO21MnvbcSUoZRFUh/XJnwGrUaT9msp4Q/XXyXM5GXKSBorwDqVaMh0IO9wGsg+H34Hbs6xG+3e7wweFMWudZd4Wh0X+ztN7hHlHhAhWoFez6qV3zN7Hmn3rP+6HBnWPdro/xD/6vSfeEMapEdM1IjibPBtGtIB+/ZZrOdvX95TUjDcJekaHWcJalJibePTh+/Bzm0hKo8CPIMeZwHap06WR+AKZiGaVpZueCJYP6uQg6KiMr7IwxgJi5UlHYQvvDTmQKZTOYMfjVWT9NavsR/FrVDMHf/A/VUiPyv1DxTd1MM17p4qrFYyP/GWzMRUtGXSAXWkaKyFTJ7sRKVWdemGW9HmTBFrxynXgLWQvFztFgZ6JTsgH19dd3EqH/3m4XiieZqodU8B/n4xhYOsHesBHHraNdYj3sKnWVDcrsHNAJQ9igGqNjn5f6RnaK5FrG+ktqbpcp9zWGuFmqXYJvkMk5fAyDyEN2LO+syPknpqBZqh2V+/ZwvnZhK/NhuQAvgecVRF4F5aC8sVuKu+NHz5L8XkPAWgr3j4IvLGTMU+HQ78ctzVv5Kgb/A+BvvjEzzjqhMx2ue+x8bcuSShl+qfCft+W1KpnMbiwU+5xLUEAim5PoszW73Ic2wqYArtrfSp/dlpIjws9QYYIAWwG2wJnKoA/Qbr9WuB9ojSc6tpHTxUNTXjRptrfNShZaRK+vkhDwLjzxDnXNO/JWNcKbYA42F8ci67ZaqlLdREPCDVT2zTU9Bc71upeSSmLW/ZKaK91B0rol+/uywaU6mzjjmTEcKqI3njmE5AfXR+D5OS1vx95GTdQs5PrN6rCgxUgCpO98KpAJrDrHdJufYhmrDJpFq2nbK62MatNeO3qNkWw+yH8PH/mPeK5VUpUmqderQCTrViwC5cm5hfBHeBui7MzWh7AvjuoF7FB38My5fYBcwfhf7D0Noz2//CqeAG6MQcuDVL/AcruuiC4INweHlBoiH6nM39eUI5JiLeUeDumymVK7CfRhAl7/KZtIysBAqM5JdDKMXK3FXBkjIHTOZf2yxTCzM2CkRwyetqsJplgA9t062dMAhz/sMbEysHjG8hcn81hja8QQXHaPVmunEkIolg5rM3K6J2Ect5G6fxmMZPBS9QcyVC0mc4mxILDhAAAFAYbfbzpO8RXxVupmPvGcfsZgZzkJl6arl/HlNUCxYHplfKgjWNPXEHbYWxTZ5YrQa92eWtWVh52jo69X9rSuxV1qh1iKRENSldl+ub2TYG0AGtZYma/cRgLGsxLh6vTJYdVbkgUVTru0jy4Ev1MickNok6f7mnXavu1ndezaJ/xzckwEYppQr4HRyoYACTYBqpVqXRKXZUNt0yBnVO1V5V3iEG3nhUJ8z9xKAAACY/MXuKTsDZBu9ZSoxsyKOteW2TFMQ/+2XizacvGaAoCoW4d3J8udQhQTr4l9VbWCIeMgvY7zj3hqURDYF2ju1XP24mRY+2UvOC4WPMd3+7OHqKak1fOYepj2Z+EMaYORsv2i5J8syYAAAAAAAAAAAAAAAAAAAAAAAAAAAARVhJRroAAABFeGlmAABJSSoACAAAAAYAEgEDAAEAAAABAAAAGgEFAAEAAABWAAAAGwEFAAEAAABeAAAAKAEDAAEAAAACAAAAEwIDAAEAAAABAAAAaYcEAAEAAABmAAAAAAAAAEgAAAABAAAASAAAAAEAAAAGAACQBwAEAAAAMDIxMAGRBwAEAAAAAQIDAACgBwAEAAAAMDEwMAGgAwABAAAA//8AAAKgBAABAAAAIAMAAAOgBAABAAAAWAIAAAAAAABYTVAgWgEAADw/eHBhY2tldCBiZWdpbj0iIiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkdvIFhNUCBTREsgMS4wIj48cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPjxyZGY6RGVzY3JpcHRpb24geG1sbnM6eG1wUmlnaHRzPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvcmlnaHRzLyIgcmRmOmFib3V0PSIiIHhtcFJpZ2h0czpNYXJrZWQ9IkZhbHNlIj48L3JkZjpEZXNjcmlwdGlvbj48L3JkZjpSREY+PC94OnhtcG1ldGE+Cjw/eHBhY2tldCBlbmQ9InciPz4=" class="cl-logo" style="width:38px;height:38px;object-fit:cover;border-radius:8px;" alt="CaratLane">
+    <img id="hdrLogo" style="width:36px;height:36px;object-fit:cover;border-radius:8px;flex-shrink:0;" alt="CaratLane">
     <div><div class="cl-name">CaratLane</div><div class="cl-sub">NS Audit Dashboard</div></div>
   </a>
   <div class="hdr-sep"></div>
@@ -214,96 +219,115 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
     <a class="hnav" href="rootcause.html">Root Cause</a>
   </nav>
   <div class="hdr-right">
-    <button class="csv-btn" onclick="downloadCSV()">⬇ Export CSV</button>
+    <button class="btn-sm" onclick="downloadCSV()">⬇ Export CSV</button>
     <div class="hdr-badge">June 2026</div>
   </div>
 </header>
 
 <!-- HERO -->
 <section class="hero">
-  <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:24px;">
-    <div style="width:64px;height:64px;border-radius:50%;overflow:hidden;box-shadow:0 0 32px rgba(200,0,90,.18);border:1.5px solid rgba(200,0,90,.22);">
-      <img src="data:image/webp;base64,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" style="width:100%;height:100%;object-fit:cover;" alt="CaratLane">
+  <div class="hero-logo-wrap">
+    <div class="hero-logo-circle"><img id="heroLogo" alt="CaratLane"></div>
+    <div class="hero-brand-txt">
+      <div class="hero-brand-name">CaratLane</div>
+      <div class="hero-brand-sub">A Tata Product</div>
     </div>
-    <div><div style="font-size:16px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#fff;">CaratLane</div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,200,220,.4);">A Tata Product</div></div>
   </div>
   <div class="hero-tag">💎 Quality Audit · Negative Sentiment Report</div>
   <h1 class="hero-title">NS Audit Dashboard</h1>
-  <p class="hero-sub">June 2026 · Prepared by Gourav M · Quality Analyst Team · Confidential — Internal Use Only</p>
+  <p class="hero-sub">June 2026 · Prepared by Gourav M · Quality Analyst Team · Click any metric to drill into those cases</p>
   <div class="hero-kpis" id="heroKpis"></div>
 </section>
 
 <div class="page">
 
-  <!-- SECTION: Core Metrics -->
+  <!-- ACTION REQUIRED BREAKDOWN (new section) -->
+  <div class="spacer"></div>
+  <div class="section-hd fade-up">
+    <div class="section-title">Where Do the 111 Action Required Cases Go?</div>
+    <div class="section-sub">Not all action required cases are fixable by coaching — here's the full breakdown</div>
+  </div>
+  <div class="g2 fade-up" id="arBreakdownRow"></div>
+
+  <!-- CORE METRICS -->
   <div class="spacer"></div>
   <div class="section-hd fade-up">
     <div class="section-title">Core Metrics</div>
-    <div class="section-sub">High-level breakdown across all 363 audited NS cases</div>
+    <div class="section-sub">Click any card to view those specific cases</div>
   </div>
-  <div class="g4 fade-up" id="coreGrid1" style="margin-bottom:16px;"></div>
+  <div class="g4 fade-up" id="coreGrid1" style="margin-bottom:14px;"></div>
   <div class="g4 fade-up" id="coreGrid2"></div>
 
-  <!-- SECTION: Conversion & Repeat -->
+  <!-- CONVERSION & REPEAT -->
   <div class="spacer"></div>
   <div class="section-hd fade-up">
     <div class="section-title">Experience Recovery & Repeat Customers</div>
-    <div class="section-sub">How many NS were converted to positive — and how many customers came back</div>
+    <div class="section-sub">Recovery rate and repeat contact analysis</div>
   </div>
   <div class="g2 fade-up" id="convRepeatRow"></div>
 
-  <!-- SECTION: Root Cause -->
+  <!-- ROOT CAUSE QUICK VIEW -->
   <div class="spacer"></div>
   <div class="section-hd fade-up">
-    <div class="section-title">Root Cause Analysis</div>
-    <div class="section-sub">CCPT1 primary & CCPT2 secondary classification of all NS cases</div>
-  </div>
-  <div class="g2 fade-up" id="ccptRow"></div>
-
-  <!-- SECTION: Dislike Reasons -->
-  <div class="spacer"></div>
-  <div class="section-hd fade-up">
-    <div class="section-title">Customer Dislike Drivers</div>
-    <div class="section-sub">Top primary and secondary reasons customers were dissatisfied</div>
+    <div class="section-title">Root Cause Quick View</div>
+    <div class="section-sub">Top dislike drivers — <a href="rootcause.html" style="color:var(--mag);text-decoration:none;">Full analysis →</a></div>
   </div>
   <div class="g2 fade-up" id="dislikeRow"></div>
 
-  <!-- SECTION: Query Breakdown -->
-  <div class="spacer"></div>
-  <div class="section-hd fade-up">
-    <div class="section-title">Query Bifurcation</div>
-    <div class="section-sub">L1 category and L2 sub-type breakdown of NS case queries</div>
-  </div>
-  <div class="g2 fade-up" id="queryRow"></div>
-
-  <!-- SECTION: Teams -->
+  <!-- TEAMS -->
   <div class="spacer"></div>
   <div class="section-hd fade-up">
     <div class="section-title">Team Performance</div>
-    <div class="section-sub">Click any team card to drill into agent-level data</div>
+    <div class="section-sub">Click any team card to unlock agent-level data</div>
   </div>
   <div class="team-grid fade-up" id="teamGrid"></div>
 
-  <!-- SECTION: Key Insights -->
+  <!-- KEY INSIGHTS -->
   <div class="spacer"></div>
   <div class="section-hd fade-up">
     <div class="section-title">Management Insights</div>
-    <div class="section-sub">Auditor-derived findings and recommended actions</div>
+    <div class="section-sub">QA-derived findings and recommended actions</div>
   </div>
   <div class="insight-grid fade-up" id="insightGrid"></div>
 
 </div>
 
-<!-- FOOTER -->
 <footer>
-  <div class="ft-l">CaratLane Quality Audit · NS Dashboard · June 2026</div>
-  <div class="ft-r">Made by <strong style="color:rgba(255,200,220,.6)">Gourav M</strong> · QA Team · Confidential</div>
+  <div class="ft">CaratLane Quality Audit · NS Dashboard · June 2026</div>
+  <div class="ft">Made by <strong style="color:rgba(255,200,220,.55)">Gourav M</strong> · QA Team · Confidential</div>
 </footer>
 
-<!-- PW MODAL -->
+<!-- CASE DRILL-DOWN MODAL -->
+<div class="modal-overlay" id="caseModal">
+  <div class="modal-sheet">
+    <div class="modal-hd">
+      <div>
+        <div class="modal-title" id="modalTitle">Cases</div>
+        <div class="modal-meta" id="modalMeta"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-filters" id="modalFilters"></div>
+      <div class="modal-count" id="modalCount"></div>
+      <div style="overflow-x:auto;">
+        <table class="case-table">
+          <thead><tr>
+            <th>#</th><th>Criticality</th><th>Query L1</th><th>Primary Dislike</th>
+            <th>Team Responsible</th><th>CCPT1</th><th>Converted +ve</th>
+            <th>CX Contact</th><th>Auditor Summary</th>
+          </tr></thead>
+          <tbody id="modalTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PASSWORD MODAL -->
 <div class="pw-overlay" id="pwModal">
   <div class="pw-box">
-    <div class="pw-close" onclick="closePw()">✕</div>
+    <button class="pw-close" onclick="closePw()">✕</button>
     <div class="pw-icon">🔒</div>
     <div class="pw-title" id="pwTitle">Team Access</div>
     <div class="pw-sub" id="pwSub">Enter your team password to view agent data.</div>
@@ -319,161 +343,185 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
 const D=DASHBOARD_DATA, O=D.overall, T=D.teams, P=D.passwords;
 let pendingTeam=null;
 
-// ── HERO ──
-document.getElementById('heroKpis').innerHTML=[
-  {num:O.total,lbl:'Total NS Cases',cls:''},
-  {num:O.crucial,lbl:'Crucial',cls:'mag'},
-  {num:O.neutral,lbl:'Neutral',cls:'amber'},
-  {num:O.less,lbl:'Less Significant',cls:'gold'},
-  {num:O.action_required,lbl:'Action Required',cls:'blue'},
-  {num:O.training_gap,lbl:'Training Gaps',cls:'amber'},
-  {num:O.auditor_insights,lbl:'Auditor Insights',cls:'gold'},
-  {num:O.converted_pos,lbl:'Converted +ve',cls:'green'},
-].map(k=>`<div class="hk"><div class="hk-num ${k.cls}">${k.num}</div><div class="hk-lbl">${k.lbl}</div></div>`).join('');
+// LOGO
+if(D.logo){
+  document.getElementById('hdrLogo').src=D.logo;
+  document.getElementById('heroLogo').src=D.logo;
+}
 
-// ── CORE GRIDS ──
+// ── HERO KPIS ──
+const heroItems=[
+  {num:O.total,lbl:'Total NS',cls:'',filter:'all'},
+  {num:O.crucial,lbl:'Crucial',cls:'mag',filter:'crucial'},
+  {num:O.neutral,lbl:'Neutral',cls:'amber',filter:'neutral'},
+  {num:O.less,lbl:'Less Sig',cls:'gold',filter:'less'},
+  {num:O.action_required,lbl:'Action Req',cls:'blue',filter:'action_required'},
+  {num:O.training_gap,lbl:'Training Gap',cls:'amber',filter:'training_gap'},
+  {num:O.auditor_insights,lbl:'Auditor Insights',cls:'gold',filter:'auditor_insights'},
+  {num:O.converted_pos,lbl:'Converted +ve',cls:'green',filter:'converted_pos'},
+];
+document.getElementById('heroKpis').innerHTML=heroItems.map(k=>
+  `<div class="hk" onclick="openCaseModal('${k.filter}','${k.lbl}')">
+    <div class="hk-num ${k.cls}">${k.num}</div>
+    <div class="hk-lbl">${k.lbl}</div>
+  </div>`).join('');
+
+// ── ACTION REQUIRED BREAKDOWN ──
+document.getElementById('arBreakdownRow').innerHTML=`
+<div class="ar-breakdown">
+  <div class="ar-bk-title">Action Required — Full Breakdown (111 cases)</div>
+  <div class="ar-bk-sub">How the 111 action-required cases split across coaching, training and standalone process failures</div>
+  <div class="ar-seg" onclick="openCaseModal('ar_standalone','Standalone Action Required (no coaching/training)')">
+    <div class="ar-seg-dot" style="background:#E24B4A;"></div>
+    <div class="ar-seg-label"><strong>92 standalone</strong> — Process/Logistics/Tech failure, not a JC skill issue</div>
+    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:82.9%;background:#E24B4A;"></div></div>
+    <div class="ar-seg-val" style="color:#E24B4A;">92 · 82.9%</div>
+  </div>
+  <div class="ar-seg" onclick="openCaseModal('auditor_insights','Auditor Insights')">
+    <div class="ar-seg-dot" style="background:#B8860B;"></div>
+    <div class="ar-seg-label"><strong>7 also Auditor Insights</strong> — JC coaching can fix these</div>
+    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:6.3%;background:#B8860B;"></div></div>
+    <div class="ar-seg-val" style="color:#B8860B;">7 · 6.3%</div>
+  </div>
+  <div class="ar-seg" onclick="openCaseModal('training_gap','Training Gap')">
+    <div class="ar-seg-dot" style="background:#1a7a4a;"></div>
+    <div class="ar-seg-label"><strong>8 also Training Gap</strong> — Structured training needed</div>
+    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:7.2%;background:#1a7a4a;"></div></div>
+    <div class="ar-seg-val" style="color:#1a7a4a;">8 · 7.2%</div>
+  </div>
+  <div class="ar-seg" onclick="openCaseModal('ar_both','Both Auditor Insight + Training Gap')">
+    <div class="ar-seg-dot" style="background:#534AB7;"></div>
+    <div class="ar-seg-label"><strong>4 flagged both</strong> — Coaching + training required</div>
+    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:3.6%;background:#534AB7;"></div></div>
+    <div class="ar-seg-val" style="color:#534AB7;">4 · 3.6%</div>
+  </div>
+  <div class="ar-explainer">
+    💡 <strong>Key takeaway for management:</strong> 82.9% of Action Required cases are <strong>not fixable by coaching or training</strong> — they stem from Logistics SLA failures, Tech/ERP bugs, or process gaps. These 92 cases need to be <strong>escalated to Logistics, Tech, and Operations teams</strong>, not fed back to the JC.
+  </div>
+</div>
+<div class="cc">
+  <div class="cc-title">Who Owns the 92 Standalone Actions?</div>
+  <div class="cc-sub">Team responsible breakdown of standalone action-required cases</div>
+  ${[['Post Sale - Inbound',46],['Post Sale - Whatsapp',24],['Post Sale - Outbound',15],['Emails',7]].map(([k,v])=>`
+    <div class="bar-row">
+      <div class="bar-label">${k.replace('Post Sale - ','PS ')}</div>
+      <div class="bar-track"><div class="bar-fill bf-mag" style="width:${Math.round(v/46*100)}%"></div></div>
+      <div class="bar-val">${v}</div>
+    </div>`).join('')}
+  <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--bdr);">
+    <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:10px;">Criticality of standalone 92</div>
+    <div style="display:flex;gap:12px;">
+      <div style="flex:1;background:#fff5f8;border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(200,0,90,.1);">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--mag);">37</div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);">Crucial</div>
+      </div>
+      <div style="flex:1;background:#fffbf0;border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(184,134,11,.1);">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--gold);">49</div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);">Neutral</div>
+      </div>
+      <div style="flex:1;background:#f7f8fc;border-radius:10px;padding:12px;text-align:center;border:1px solid var(--bdr);">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--txt3);">6</div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);">Less Sig</div>
+      </div>
+    </div>
+  </div>
+</div>`;
+
+// ── CORE METRICS ──
 const crucPct=Math.round(O.crucial/O.total*100);
-const tgapPct=Math.round(O.training_gap/O.total*100);
 const arPct=Math.round(O.action_required/O.total*100);
 const aiPct=Math.round(O.auditor_insights/O.total*100);
+const tgPct=Math.round(O.training_gap/O.total*100);
 document.getElementById('coreGrid1').innerHTML=`
-  <div class="sc red"><div class="sc-label">Crucial Cases</div><div class="sc-num">${O.crucial}</div><div class="sc-sub">${crucPct}% of all NS · Immediate action needed</div><div class="sc-pill pill-red">↑ Priority</div></div>
-  <div class="sc amber"><div class="sc-label">Action Required</div><div class="sc-num">${O.action_required}</div><div class="sc-sub">${arPct}% of all NS · Direct follow-up pending</div><div class="sc-pill pill-amber">30.6%</div></div>
-  <div class="sc" style="--accent:var(--gold)"><div class="sc-label">Auditor Insights</div><div class="sc-num" style="color:var(--gold)">${O.auditor_insights}</div><div class="sc-sub">${aiPct}% · Coaching can fix these</div><div class="sc-pill pill-amber">${aiPct}%</div></div>
-  <div class="sc green"><div class="sc-label">Training Gaps</div><div class="sc-num">${O.training_gap}</div><div class="sc-sub">${tgapPct}% · Needs structured training</div><div class="sc-pill pill-green">Training team</div></div>
+  <div class="sc red" onclick="openCaseModal('crucial','Crucial Cases')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Crucial Cases</div><div class="sc-num">${O.crucial}</div><div class="sc-sub">${crucPct}% of all NS · Immediate action</div><div class="sc-pill pill-red">↑ Priority</div></div>
+  <div class="sc amber" onclick="openCaseModal('action_required','Action Required')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Action Required</div><div class="sc-num">${O.action_required}</div><div class="sc-sub">${arPct}% of NS · Escalation needed</div><div class="sc-pill pill-amber">${arPct}%</div></div>
+  <div class="sc" style="--accent:var(--gold);cursor:pointer;" onclick="openCaseModal('auditor_insights','Auditor Insights')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Auditor Insights</div><div class="sc-num" style="color:var(--gold)">${O.auditor_insights}</div><div class="sc-sub">${aiPct}% · Coaching can fix these</div><div class="sc-pill pill-amber">${aiPct}%</div></div>
+  <div class="sc green" onclick="openCaseModal('training_gap','Training Gap')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Training Gaps</div><div class="sc-num">${O.training_gap}</div><div class="sc-sub">${tgPct}% · For training team</div><div class="sc-pill pill-green">Training</div></div>
 `;
 document.getElementById('coreGrid2').innerHTML=`
-  <div class="sc red"><div class="sc-label">Remained Negative</div><div class="sc-num">${O.remained_neg}</div><div class="sc-sub">${Math.round(O.remained_neg/O.total*100)}% · Not resolved during interaction</div></div>
-  <div class="sc green"><div class="sc-label">Converted to +ve</div><div class="sc-num">${O.converted_pos}</div><div class="sc-sub">${O.converted_pos_pct}% recovery rate · Room to grow</div><div class="sc-pill pill-green">18.2%</div></div>
-  <div class="sc blue"><div class="sc-label">Repeat Customers</div><div class="sc-num">${O.repeat_cx}</div><div class="sc-sub">${O.repeat_cx_pct}% came back · Unresolved issues driving return</div><div class="sc-pill pill-blue">${O.repeat_cx_pct}%</div></div>
-  <div class="sc" style="--accent:#666"><div class="sc-label">Total Agents Audited</div><div class="sc-num" style="color:var(--ink)">${O.agents}</div><div class="sc-sub">Across ${O.teams} teams · June 2026</div></div>
+  <div class="sc red" onclick="openCaseModal('remained_neg','Remained Negative')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Remained Negative</div><div class="sc-num">${O.remained_neg}</div><div class="sc-sub">${Math.round(O.remained_neg/O.total*100)}% · Not resolved in interaction</div></div>
+  <div class="sc green" onclick="openCaseModal('converted_pos','Converted to +ve')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Converted to +ve</div><div class="sc-num">${O.converted_pos}</div><div class="sc-sub">${O.converted_pos_pct}% recovery rate</div><div class="sc-pill pill-green">${O.converted_pos_pct}%</div></div>
+  <div class="sc blue" onclick="openCaseModal('repeat_cx','Repeat Customers')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Repeat Customers</div><div class="sc-num">${O.repeat_cx}</div><div class="sc-sub">${O.repeat_cx_pct}% contacted more than once</div><div class="sc-pill pill-blue">${O.repeat_cx_pct}%</div></div>
+  <div class="sc" style="cursor:default;--accent:#888;"><div class="sc-label">Total Agents Audited</div><div class="sc-num" style="color:var(--ink)">${O.agents}</div><div class="sc-sub">Across ${O.teams} teams · June 2026</div></div>
 `;
 
 // ── CONVERSION & REPEAT ──
 const repeatByTeam=O.repeat_cx_by_team||{};
 const repeatReasons=O.repeat_cx_reasons||{};
-const rtEntries=Object.entries(repeatByTeam).sort((a,b)=>b[1]-a[1]).slice(0,6);
-const rrEntries=Object.entries(repeatReasons).sort((a,b)=>b[1]-a[1]).slice(0,6);
+const rtE=Object.entries(repeatByTeam).sort((a,b)=>b[1]-a[1]).slice(0,6);
+const rrE=Object.entries(repeatReasons).sort((a,b)=>b[1]-a[1]).slice(0,6);
+const rrMax=rrE[0]?.[1]||1;
 document.getElementById('convRepeatRow').innerHTML=`
   <div class="cc">
     <div class="cc-title">Experience Recovery</div>
-    <div class="cc-sub">Of ${O.total} NS cases — how many ended positively vs remained negative</div>
-    <div class="conv-wrap">
-      <div class="conv-box conv-neg">
-        <div class="conv-num">${O.remained_neg}</div>
-        <div class="conv-lbl">Remained Negative</div>
-        <div class="conv-sub">${Math.round(O.remained_neg/O.total*100)}% of all NS</div>
+    <div class="cc-sub">Of ${O.total} NS cases — how many ended positively</div>
+    <div style="display:flex;gap:16px;align-items:stretch;margin-bottom:18px;">
+      <div style="flex:1;background:#fff5f8;border-radius:14px;padding:22px;text-align:center;border:1.5px solid rgba(200,0,90,.12);cursor:pointer;" onclick="openCaseModal('remained_neg','Remained Negative')">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:800;color:var(--mag);">${O.remained_neg}</div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mag);">Remained Negative</div>
+        <div style="font-size:11px;color:var(--txt3);margin-top:3px;">${Math.round(O.remained_neg/O.total*100)}% of all NS</div>
       </div>
-      <div style="display:flex;align-items:center;font-size:24px;color:var(--bdr2);">→</div>
-      <div class="conv-box conv-pos">
-        <div class="conv-num">${O.converted_pos}</div>
-        <div class="conv-lbl">Converted to +ve</div>
-        <div class="conv-sub">${O.converted_pos_pct}% recovery rate</div>
+      <div style="display:flex;align-items:center;font-size:20px;color:var(--bdr2);">→</div>
+      <div style="flex:1;background:#f0fdf4;border-radius:14px;padding:22px;text-align:center;border:1.5px solid rgba(26,122,74,.14);cursor:pointer;" onclick="openCaseModal('converted_pos','Converted to +ve')">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:800;color:var(--green);">${O.converted_pos}</div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green);">Converted to +ve</div>
+        <div style="font-size:11px;color:var(--txt3);margin-top:3px;">${O.converted_pos_pct}% recovery rate</div>
       </div>
     </div>
-    <div style="margin-top:20px;padding:16px;background:#fffbf0;border-radius:12px;border:1px solid rgba(184,134,11,.2);">
-      <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">💡 Insight</div>
-      <div style="font-size:12.5px;color:var(--txt2);line-height:1.7;">Only <strong>1 in 5 NS cases</strong> is recovered to a positive experience. Training agents on in-call de-escalation and recovery techniques could significantly improve this metric.</div>
+    <div style="padding:14px 16px;background:#fffbf0;border-radius:10px;border:1px solid rgba(184,134,11,.18);font-size:12px;color:var(--txt2);line-height:1.7;">
+      💡 Only <strong>1 in 5 NS cases</strong> is recovered. In-call recovery scripting and de-escalation training could significantly improve this. <a href="rootcause.html" style="color:var(--mag);">See root causes →</a>
     </div>
   </div>
   <div class="cc">
     <div class="cc-title">Repeat Customer Analysis</div>
-    <div class="cc-sub">${O.repeat_cx} customers (${O.repeat_cx_pct}%) contacted more than once — unresolved first interactions</div>
-    <div class="g2" style="gap:12px;margin-bottom:16px;">
-      <div style="background:#fff5f8;border-radius:12px;padding:16px;text-align:center;border:1px solid rgba(200,0,90,.12);">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:800;color:var(--mag);">${O.repeat_cx}</div>
-        <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mag);margin-top:2px;">Repeat CX</div>
+    <div class="cc-sub">${O.repeat_cx} customers (${O.repeat_cx_pct}%) contacted us more than once — unresolved first interactions</div>
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
+      <div style="flex:1;background:#fff5f8;border-radius:10px;padding:14px;text-align:center;border:1px solid rgba(200,0,90,.1);cursor:pointer;" onclick="openCaseModal('repeat_cx','Repeat Customers')">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:800;color:var(--mag);">${O.repeat_cx}</div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mag);">Repeat CX</div>
       </div>
-      <div style="background:#f0fdf4;border-radius:12px;padding:16px;text-align:center;border:1px solid rgba(26,122,74,.12);">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:800;color:var(--green);">${O.total-O.repeat_cx}</div>
-        <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-top:2px;">First-Time</div>
-      </div>
-    </div>
-    <div class="g2" style="gap:12px;">
-      <div class="rf-box">
-        <div class="rf-title">Why Repeating (Query L1)</div>
-        ${rrEntries.map(([k,v])=>`<div class="rf-item"><span>${k}</span><span class="rf-val">${v}</span></div>`).join('')}
-      </div>
-      <div class="rf-box">
-        <div class="rf-title">Repeat CX by Team</div>
-        ${rtEntries.map(([k,v])=>`<div class="rf-item"><span>${k.replace('Post Sale - ','PS ')}</span><span class="rf-val">${v}</span></div>`).join('')}
+      <div style="flex:1;background:#f0fdf4;border-radius:10px;padding:14px;text-align:center;border:1px solid rgba(26,122,74,.1);">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:800;color:var(--green);">${O.total-O.repeat_cx}</div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--green);">First-Time</div>
       </div>
     </div>
-  </div>
-`;
+    <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px;">Why are they repeating?</div>
+    ${rrE.map(([k,v])=>`<div class="bar-row" style="grid-template-columns:150px 1fr 36px;">
+      <div class="bar-label">${k}</div>
+      <div class="bar-track"><div class="bar-fill bf-blue" style="width:${Math.round(v/rrMax*100)}%"></div></div>
+      <div class="bar-val">${v}</div>
+    </div>`).join('')}
+  </div>`;
 
-// ── CCPT ──
-const c1=Object.entries(O.ccpt1||{}).sort((a,b)=>b[1]-a[1]);
-const c2=Object.entries(O.ccpt2||{}).sort((a,b)=>b[1]-a[1]).slice(0,8);
-const c1max=c1[0]?.[1]||1;
-const c2max=c2[0]?.[1]||1;
-const c1colors=['bf-mag','bf-gold','bf-blue','bf-green','bf-amber'];
-document.getElementById('ccptRow').innerHTML=`
-  <div class="cc">
-    <div class="cc-title">CCPT1 — Primary Root Cause</div>
-    <div class="cc-sub">Who or what is primarily responsible for the NS</div>
-    ${c1.map(([k,v],i)=>`<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill ${c1colors[i%5]}" style="width:${Math.round(v/c1max*100)}%"></div></div><div class="bar-val">${v}</div></div>`).join('')}
-    <div style="margin-top:16px;padding:14px 16px;background:rgba(26,79,160,.05);border-radius:10px;border:1px solid rgba(26,79,160,.1);font-size:12px;color:var(--txt3);line-height:1.7;"><strong style="color:var(--blue);">Process is #1</strong> at ${c1[0]?.[1]||0} cases (${Math.round((c1[0]?.[1]||0)/O.total*100)}%) — indicating SOP failures more than individual agent issues.</div>
-  </div>
-  <div class="cc">
-    <div class="cc-title">CCPT2 — Secondary Root Cause</div>
-    <div class="cc-sub">Contributing factors beyond the primary cause</div>
-    ${c2.map(([k,v])=>`<div class="bar-row" style="grid-template-columns:200px 1fr 44px;"><div class="bar-label" style="font-size:11px;">${k.length>30?k.slice(0,28)+'…':k}</div><div class="bar-track"><div class="bar-fill bf-amber" style="width:${Math.round(v/c2max*100)}%"></div></div><div class="bar-val">${v}</div></div>`).join('')}
-  </div>
-`;
-
-// ── DISLIKES ──
-const pd=Object.entries(O.primary_dislike||{}).sort((a,b)=>b[1]-a[1]).slice(0,10);
-const sd=Object.entries(O.secondary_dislike||{}).sort((a,b)=>b[1]-a[1]).slice(0,10);
-const pdmax=pd[0]?.[1]||1, sdmax=sd[0]?.[1]||1;
+// ── DISLIKE ROWS ──
+const pd=Object.entries(O.primary_dislike||{}).sort((a,b)=>b[1]-a[1]).slice(0,8);
+const sd=Object.entries(O.secondary_dislike||{}).sort((a,b)=>b[1]-a[1]).slice(0,8);
+const pdMax=pd[0]?.[1]||1, sdMax=sd[0]?.[1]||1;
 document.getElementById('dislikeRow').innerHTML=`
-  <div class="cc">
-    <div class="cc-title">Top Primary Dislike Reasons</div>
-    <div class="cc-sub">Main reason customers were dissatisfied</div>
-    ${pd.map(([k,v])=>`<div class="bar-row" style="grid-template-columns:190px 1fr 44px;"><div class="bar-label" style="font-size:11px;">${k.length>30?k.slice(0,28)+'…':k}</div><div class="bar-track"><div class="bar-fill bf-mag" style="width:${Math.round(v/pdmax*100)}%"></div></div><div class="bar-val">${v}</div></div>`).join('')}
+  <div class="cc"><div class="cc-title">Top Primary Dislike Reasons</div><div class="cc-sub">Click <a href="rootcause.html" style="color:var(--mag);">Root Cause page</a> for full L1→L2 drill-down with fixes</div>
+    ${pd.map(([k,v])=>`<div class="bar-row" style="grid-template-columns:190px 1fr 38px;"><div class="bar-label" style="font-size:11px;">${k.length>30?k.slice(0,28)+'…':k}</div><div class="bar-track"><div class="bar-fill bf-mag" style="width:${Math.round(v/pdMax*100)}%"></div></div><div class="bar-val">${v}</div></div>`).join('')}
   </div>
-  <div class="cc">
-    <div class="cc-title">Top Secondary Dislike Reasons</div>
-    <div class="cc-sub">Contributing secondary dissatisfaction factors</div>
-    ${sd.map(([k,v])=>`<div class="bar-row" style="grid-template-columns:190px 1fr 44px;"><div class="bar-label" style="font-size:11px;">${k.length>30?k.slice(0,28)+'…':k}</div><div class="bar-track"><div class="bar-fill bf-blue" style="width:${Math.round(v/sdmax*100)}%"></div></div><div class="bar-val">${v}</div></div>`).join('')}
-  </div>
-`;
-
-// ── QUERY ──
-const ql1=Object.entries(O.query_l1||{}).sort((a,b)=>b[1]-a[1]).slice(0,10);
-const ql2=Object.entries(O.query_l2||{}).sort((a,b)=>b[1]-a[1]).slice(0,10);
-const ql1max=ql1[0]?.[1]||1, ql2max=ql2[0]?.[1]||1;
-document.getElementById('queryRow').innerHTML=`
-  <div class="cc">
-    <div class="cc-title">Customer Query L1</div>
-    <div class="cc-sub">Top-level category of what the customer contacted about</div>
-    ${ql1.map(([k,v])=>`<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill bf-green" style="width:${Math.round(v/ql1max*100)}%"></div></div><div class="bar-val">${v}</div></div>`).join('')}
-  </div>
-  <div class="cc">
-    <div class="cc-title">Customer Query L2</div>
-    <div class="cc-sub">Sub-type breakdown of NS queries</div>
-    ${ql2.map(([k,v])=>`<div class="bar-row" style="grid-template-columns:190px 1fr 44px;"><div class="bar-label" style="font-size:11px;">${k.length>30?k.slice(0,28)+'…':k}</div><div class="bar-track"><div class="bar-fill bf-gold" style="width:${Math.round(v/ql2max*100)}%"></div></div><div class="bar-val">${v}</div></div>`).join('')}
-  </div>
-`;
+  <div class="cc"><div class="cc-title">Top Secondary Dislike Reasons</div><div class="cc-sub">Contributing factors beyond the primary complaint</div>
+    ${sd.map(([k,v])=>`<div class="bar-row" style="grid-template-columns:190px 1fr 38px;"><div class="bar-label" style="font-size:11px;">${k.length>30?k.slice(0,28)+'…':k}</div><div class="bar-track"><div class="bar-fill bf-blue" style="width:${Math.round(v/sdMax*100)}%"></div></div><div class="bar-val">${v}</div></div>`).join('')}
+  </div>`;
 
 // ── TEAMS ──
 const teamsSorted=Object.entries(T).sort((a,b)=>b[1].total-a[1].total);
 const maxT=teamsSorted[0]?.[1]?.total||1;
 function alarmLevel(d){
-  const p=d.total/maxT;
-  const crucPct=d.total>0?d.crucial/d.total:0;
-  if(p>=0.8||crucPct>=0.25) return {cls:'alarm',badge:'ab-crit',label:'🔴 Critical'};
-  if(p>=0.5) return {cls:'alarm',badge:'ab-high',label:'🔴 High Volume'};
-  if(p>=0.2) return {cls:'',badge:'ab-med',label:'🟡 Medium'};
-  return {cls:'',badge:'ab-low',label:'🟢 Low'};
+  const p=d.total/maxT, cPct=d.total>0?d.crucial/d.total:0;
+  if(p>=.8||cPct>=.25) return{cls:'alarm',badge:'tbc-crit',label:'🔴 Critical'};
+  if(p>=.5) return{cls:'alarm',badge:'tbc-high',label:'🔴 High Volume'};
+  if(p>=.2) return{cls:'',badge:'tbc-med',label:'🟡 Medium'};
+  return{cls:'',badge:'tbc-low',label:'🟢 Low'};
 }
 document.getElementById('teamGrid').innerHTML=teamsSorted.map(([name,d],i)=>{
   const al=alarmLevel(d);
   const convPct=d.total>0?Math.round((d.converted_pos||0)/d.total*100):0;
-  return `<div class="team-card ${al.cls}" onclick="openTeam('${name.replace(/'/g,"\\'")}')">
+  return `<div class="team-card ${al.cls}" onclick="openTeam('${name.replace(/'/g,"\\'")}')" style="cursor:pointer;">
     <div class="tc-hd">
       <div class="tc-rank">${i+1}</div>
-      <div class="alarm-badge ${al.badge}">${al.label}</div>
+      <div class="tc-badge ${al.badge}">${al.label}</div>
       <div class="tc-name">${name}</div>
       <div class="tc-agents">${d.agents_count} agents · ${d.total} cases</div>
     </div>
@@ -481,45 +529,31 @@ document.getElementById('teamGrid').innerHTML=teamsSorted.map(([name,d],i)=>{
       <div class="tc-metrics">
         <div class="tcm"><div class="tcm-num r">${d.crucial}</div><div class="tcm-lbl">Crucial</div></div>
         <div class="tcm"><div class="tcm-num a">${d.action_required||0}</div><div class="tcm-lbl">Action</div></div>
-        <div class="tcm"><div class="tcm-num g">${d.converted_pos||0}</div><div class="tcm-lbl">+ve Conv</div></div>
-        <div class="tcm"><div class="tcm-num d">${d.repeat_cx||0}</div><div class="tcm-lbl">Repeat CX</div></div>
+        <div class="tcm"><div class="tcm-num g">${d.converted_pos||0}</div><div class="tcm-lbl">+ve</div></div>
+        <div class="tcm"><div class="tcm-num d">${d.repeat_cx||0}</div><div class="tcm-lbl">Repeat</div></div>
       </div>
       <div class="tc-div"></div>
       <div class="tc-row">Training Gaps <span class="tc-rv">${d.training_gap}</span></div>
       <div class="tc-row">Auditor Insights <span class="tc-gv">${d.auditor_insight||0}</span></div>
       <div class="tc-row">+ve Conversion <span class="tc-grv">${convPct}%</span></div>
-      <div class="tc-cta"><span class="tc-cta-txt">🔒 View Agents</span><span class="tc-arr">→</span></div>
+      <div class="tc-cta"><span class="tc-cta-txt">🔒 Unlock Agent Data</span><span style="color:var(--mag);font-size:14px;transition:transform .2s;">→</span></div>
     </div>
   </div>`;
 }).join('');
 
 // ── INSIGHTS ──
 const topTeam=teamsSorted[0];
-const topCrucTeam=Object.entries(T).sort((a,b)=>b[1].crucial-a[1].crucial)[0];
-const topTgapTeam=Object.entries(T).sort((a,b)=>b[1].training_gap-a[1].training_gap)[0];
-const topRepeatTeam=Object.entries(T).sort((a,b)=>(b[1].repeat_cx||0)-(a[1].repeat_cx||0))[0];
-const topConvTeam=Object.entries(T).sort((a,b)=>(b[1].converted_pos||0)/b[1].total-(a[1].converted_pos||0)/a[1].total)[0];
-const topActionTeam=Object.entries(T).sort((a,b)=>(b[1].action_required||0)-(a[1].action_required||0))[0];
 const c1top=Object.entries(O.ccpt1||{}).sort((a,b)=>b[1]-a[1])[0];
+const topTgapTeam=Object.entries(T).sort((a,b)=>b[1].training_gap-a[1].training_gap)[0];
+const topRepTeam=Object.entries(T).sort((a,b)=>(b[1].repeat_cx||0)-(a[1].repeat_cx||0))[0];
+const topAcTeam=Object.entries(T).sort((a,b)=>(b[1].action_required||0)-(a[1].action_required||0))[0];
 const insights=[
-  {tag:'Process',acc:'var(--blue)',col:'pill-blue',
-   title:'Process is the #1 Root Cause',
-   body:`${c1top?.[1]||0} of ${O.total} NS cases (${Math.round((c1top?.[1]||0)/O.total*100)}%) trace back to Process failures. This points to SOP adherence gaps rather than individual consultant skill issues — SOP clarity review and live monitoring recommended.`},
-  {tag:'Volume',acc:'var(--mag)',col:'pill-red',
-   title:`${topTeam[0]} Carries the Heaviest Load`,
-   body:`${topTeam[0]} recorded ${topTeam[1].total} cases — ${Math.round(topTeam[1].total/O.total*100)}% of all NS — with ${topTeam[1].crucial} crucial cases and ${topTeam[1].training_gap} training gaps. Immediate coaching bandwidth review is recommended.`},
-  {tag:'Recovery',acc:'var(--green)',col:'pill-green',
-   title:'Only 1 in 5 NS Ends Positively',
-   body:`${O.converted_pos} of ${O.total} NS cases (${O.converted_pos_pct}%) were recovered to a positive experience. ${O.remained_neg} interactions ended with the customer still dissatisfied. In-call recovery training could meaningfully improve this.`},
-  {tag:'Repeat CX',acc:'var(--gold)',col:'pill-amber',
-   title:`${O.repeat_cx_pct}% of NS Customers Contacted Again`,
-   body:`${O.repeat_cx} customers repeated their contact — a signal of failed first-contact resolution. ${topRepeatTeam[0]} handles the most repeat customers (${topRepeatTeam[1].repeat_cx||0}). Dedicated escalation paths for repeat-CX would reduce volume.`},
-  {tag:'Training',acc:'var(--green)',col:'pill-green',
-   title:`${O.training_gap} Training Gaps — ${topTgapTeam[0]} Leading`,
-   body:`${topTgapTeam[0]} accounts for ${topTgapTeam[1].training_gap} of ${O.training_gap} total training flags. Targeted refresher sessions on ownership, process adherence, and delivery communication should be prioritised immediately.`},
-  {tag:'Action',acc:'var(--mag)',col:'pill-red',
-   title:`${O.action_required} Cases Need Immediate Action`,
-   body:`30.6% of all NS cases are flagged Action Required. ${topActionTeam[0]} leads with ${topActionTeam[1].action_required||0} open actions. A 48-hour close-loop protocol with assigned team leads is recommended to clear the backlog.`},
+  {tag:'Process',acc:'var(--blue)',col:'pill-blue',title:'Process is the #1 Root Cause',body:`${c1top?.[1]||0} of ${O.total} cases (${Math.round((c1top?.[1]||0)/O.total*100)}%) trace back to Process failures — not individual JC skill issues. SOP gaps, Logistics SLA breaches, and ERP sync failures drive the majority of NS. <a href="rootcause.html" style="color:var(--mag);">See full RCA →</a>`},
+  {tag:'Volume',acc:'var(--mag)',col:'pill-red',title:`${topTeam[0]} Leads NS Volume`,body:`${topTeam[0]} recorded ${topTeam[1].total} cases — ${Math.round(topTeam[1].total/O.total*100)}% of all NS — with ${topTeam[1].crucial} crucial cases and ${topTeam[1].training_gap} training gaps. Immediate bandwidth review and coaching plan needed.`},
+  {tag:'Recovery',acc:'var(--green)',col:'pill-green',title:'Only 1 in 5 NS Ends Positively',body:`${O.converted_pos} of ${O.total} NS cases (${O.converted_pos_pct}%) were recovered. ${O.remained_neg} interactions ended with the customer still dissatisfied. In-call de-escalation training is the highest-ROI intervention.`},
+  {tag:'Repeat CX',acc:'var(--gold)',col:'pill-amber',title:`${O.repeat_cx_pct}% of NS Customers Came Back`,body:`${O.repeat_cx} customers contacted us more than once — a signal of failed first-contact resolution. ${topRepTeam[0]} handles the most repeat customers (${topRepTeam[1].repeat_cx||0}). Dedicated repeat-CX escalation path recommended.`},
+  {tag:'Training',acc:'var(--green)',col:'pill-green',title:`${O.training_gap} Training Gaps — ${topTgapTeam[0]} Leading`,body:`${topTgapTeam[0]} accounts for ${topTgapTeam[1].training_gap} of ${O.training_gap} total training flags. Refresher on ownership, process adherence, and delivery communication should be prioritised. These 28 cases should go directly to the training team with the auditor summaries.`},
+  {tag:'Action',acc:'var(--mag)',col:'pill-red',title:`92 of 111 Action Cases = Process Failures`,body:`82.9% of Action Required cases are NOT fixable by coaching — they're Logistics, Tech, or process failures. Only 19 cases (training + auditor) are consultant-behaviour issues. <strong>Don't feed process failures back to JCs as coaching.</strong>`},
 ];
 document.getElementById('insightGrid').innerHTML=insights.map(ins=>`
   <div class="ic" style="--acc:${ins.acc};">
@@ -528,11 +562,93 @@ document.getElementById('insightGrid').innerHTML=insights.map(ins=>`
     <div class="ic-body">${ins.body}</div>
   </div>`).join('');
 
-// ── PASSWORD ──
+// ── CASE MODAL ──
+let allCases=[];
+Object.entries(T).forEach(([team,td])=>{
+  Object.entries(td.agents||{}).forEach(([email,ad])=>{
+    (ad.cases||[]).forEach((c,i)=>{
+      allCases.push({...c, agent_name:ad.name, agent_email:email, team});
+    });
+  });
+});
+
+function getCasesForFilter(filter){
+  switch(filter){
+    case 'all': return allCases;
+    case 'crucial': return allCases.filter(c=>c.crit==='Crucial');
+    case 'neutral': return allCases.filter(c=>c.crit==='Netural');
+    case 'less': return allCases.filter(c=>c.crit==='Less significant');
+    case 'action_required': return allCases.filter(c=>c.action_req==='Yes');
+    case 'training_gap': return allCases.filter(c=>c.tgap==='Yes');
+    case 'auditor_insights': return allCases.filter(c=>c.auditor_insight==='Yes');
+    case 'converted_pos': return allCases.filter(c=>c.final_exp==='Yes');
+    case 'remained_neg': return allCases.filter(c=>c.final_exp!=='Yes');
+    case 'repeat_cx': return allCases.filter(c=>c.repeat_cx==='Yes');
+    case 'ar_standalone': return allCases.filter(c=>c.action_req==='Yes'&&c.auditor_insight!=='Yes'&&c.tgap!=='Yes');
+    case 'ar_both': return allCases.filter(c=>c.action_req==='Yes'&&c.auditor_insight==='Yes'&&c.tgap==='Yes');
+    default: return allCases;
+  }
+}
+
+function openCaseModal(filter, title){
+  const cases=getCasesForFilter(filter);
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalMeta').textContent=`${cases.length} cases · June 2026 · Click CX contact to copy`;
+  renderCaseTable(cases);
+  document.getElementById('caseModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function renderCaseTable(cases){
+  document.getElementById('modalCount').textContent=`Showing ${cases.length} case${cases.length!==1?'s':''}`;
+  document.getElementById('modalTableBody').innerHTML=cases.map((c,i)=>{
+    const cb=c.crit==='Crucial'?'cb-crucial':c.crit==='Netural'?'cb-neutral':'cb-less';
+    const contact=c.cx_phone&&c.cx_phone!='nan'&&c.cx_phone
+      ? `<a class="cx-contact" onclick="copyText('${c.cx_phone}')" title="Click to copy">${c.cx_phone}</a>`
+      : c.cx_email&&c.cx_email!='nan'&&c.cx_email
+      ? `<a class="cx-contact" onclick="copyText('${c.cx_email}')" title="Click to copy">${c.cx_email.split('@')[0]}@…</a>`
+      : '<span style="color:var(--txt3);font-size:10px;">—</span>';
+    const summ=c.summary&&c.summary.length>10
+      ? `<div class="summary-text">${c.summary.slice(0,120)}${c.summary.length>120?'…':''}</div>`
+      : '<span style="color:var(--txt3);font-size:10px;">—</span>';
+    const convBadge=c.final_exp==='Yes'
+      ? '<span style="color:var(--green);font-size:10px;font-weight:700;">✓ Yes</span>'
+      : '<span style="color:var(--mag);font-size:10px;">✗ No</span>';
+    return `<tr>
+      <td style="color:var(--txt3);font-size:10px;">${i+1}</td>
+      <td><span class="crit-badge ${cb}">${c.crit==='Netural'?'Neutral':c.crit||'—'}</span></td>
+      <td style="font-size:11px;">${c.query||'—'}</td>
+      <td style="font-size:11px;">${c.dislike||'—'}</td>
+      <td style="font-size:10px;color:var(--txt3);">${c.team_resp||'—'}</td>
+      <td style="font-size:10px;color:var(--txt3);">${c.ccpt1||'—'}</td>
+      <td>${convBadge}</td>
+      <td>${contact}</td>
+      <td>${summ}</td>
+    </tr>`;
+  }).join('');
+}
+
+function copyText(txt){
+  navigator.clipboard.writeText(txt).then(()=>{
+    const t=document.createElement('div');
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink2);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;z-index:9999;pointer-events:none;';
+    t.textContent='Copied: '+txt;
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(),2000);
+  });
+}
+
+function closeModal(){
+  document.getElementById('caseModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('caseModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+
+// ── TEAM PASSWORD ──
 function openTeam(name){
   pendingTeam=name;
   document.getElementById('pwTitle').textContent=name;
-  document.getElementById('pwSub').textContent=`Enter the password for ${name} team, or use the master password.`;
+  document.getElementById('pwSub').textContent=`Enter password for ${name}, or use master password.`;
   document.getElementById('pwInput').value='';
   document.getElementById('pwError').style.display='none';
   document.getElementById('pwModal').classList.add('open');
@@ -554,32 +670,21 @@ function checkPw(){
     setTimeout(()=>inp.classList.remove('wrong'),500);
   }
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closePw();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closePw();}});
 
-// ── CSV EXPORT ──
+// ── CSV ──
 function downloadCSV(){
-  const rows=[['Team','Total NS','Crucial','Neutral','Less Significant','Action Required','Training Gap','Auditor Insights','Repeat CX','Converted +ve','Unresolved','Agents']];
-  Object.entries(T).sort((a,b)=>b[1].total-a[1].total).forEach(([name,d])=>{
-    rows.push([name,d.total,d.crucial,d.neutral,d.less,d.action_required||0,d.training_gap,d.auditor_insight||0,d.repeat_cx||0,d.converted_pos||0,d.unresolved,d.agents_count]);
-  });
-  rows.push([]);
-  rows.push(['Overall','Total','Crucial','Action Required','Training Gap','Auditor Insights','Repeat CX','Converted +ve','Agents','Teams','','']);
-  rows.push(['',O.total,O.crucial,O.action_required,O.training_gap,O.auditor_insights,O.repeat_cx,O.converted_pos,O.agents,O.teams,'','']);
-  rows.push([]);
-  rows.push(['CCPT1 Breakdown','Category','Count','','','','','','','','','']);
-  Object.entries(O.ccpt1||{}).forEach(([k,v])=>rows.push(['',k,v,'','','','','','','','','']));
-  rows.push([]);
-  rows.push(['Top Primary Dislike Reasons','Reason','Count','','','','','','','','','']);
-  Object.entries(O.primary_dislike||{}).sort((a,b)=>b[1]-a[1]).slice(0,15).forEach(([k,v])=>rows.push(['',k,v,'','','','','','','','','']));
+  const rows=[['Team','Agent','Criticality','Query L1','Query L2','Primary Dislike','Secondary Dislike','CCPT1','Team Responsible','Action Req','Training Gap','Auditor Insight','Repeat CX','Converted +ve','CX Email','CX Phone','Summary']];
+  allCases.forEach(c=>rows.push([c.team,c.agent_name,c.crit,c.query,c.query_l2||'',c.dislike,c.dislike2||'',c.ccpt1,c.team_resp,c.action_req,c.tgap,c.auditor_insight,c.repeat_cx,c.final_exp,c.cx_email||'',c.cx_phone||'',c.summary?.replace(/\n/g,' ')||'']));
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
-  a.download='NS_Audit_Report_June2026.csv';
+  a.download='NS_Audit_June2026.csv';
   a.click();
 }
 
 // ── SCROLL FADE ──
-const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.06});
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.05});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
 </script>
 </body>

@@ -212,6 +212,13 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
 
 <script src="data.js"></script>
 <script>
+
+// Logo injection
+if(typeof DASHBOARD_DATA !== 'undefined' && DASHBOARD_DATA.logo){
+  const logoEls = document.querySelectorAll('img[alt="CaratLane"]');
+  logoEls.forEach(el=>{ el.src=DASHBOARD_DATA.logo; });
+}
+
 const D=DASHBOARD_DATA, O=D.overall, T=D.teams;
 const MAG='rgba(200,0,90,', GLD='rgba(184,134,11,', BLU='rgba(26,79,160,', GRN='rgba(26,122,74,', AMB='rgba(217,119,6,';
 const TT={callbacks:{label:ctx=>' '+ctx.dataset.label+': '+ctx.raw}};

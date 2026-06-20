@@ -125,7 +125,7 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
 <body>
 <header class="hdr">
   <a class="hdr-brand" href="index.html">
-    <img id="hdrLogo" style="width:38px;height:38px;object-fit:cover;border-radius:8px;" alt="CaratLane">
+    <img id="hdrLogo" style="width:38px;height:38px;object-fit:cover;border-radius:8px;flex-shrink:0;" alt="CaratLane">
     <div><div class="cl-name">CaratLane</div><div class="cl-sub">NS Audit Dashboard</div></div>
   </a>
   <div class="hdr-sep"></div>
@@ -511,9 +511,97 @@ function downloadCSV(){
 }
 
 // Scroll observer
+
+// ── CASE MODAL FOR ROOT CAUSE PAGE ──
+let allRcCases=[];
+if(typeof DASHBOARD_DATA !== 'undefined'){
+  const T=DASHBOARD_DATA.teams;
+  Object.entries(T).forEach(([team,td])=>{
+    Object.entries(td.agents||{}).forEach(([email,ad])=>{
+      (ad.cases||[]).forEach(c=>{
+        allRcCases.push({...c,agent_name:ad.name,agent_email:email,team});
+      });
+    });
+  });
+}
+
+function openRcModal(filterFn, title, sub){
+  const cases = allRcCases.filter(filterFn);
+  document.getElementById('rcModalTitle').textContent = title;
+  document.getElementById('rcModalSub').textContent = sub||(''+cases.length+' cases · Click CX contact to copy');
+  document.getElementById('rcModalCount').textContent = 'Showing '+cases.length+' case'+(cases.length!==1?'s':'');
+  document.getElementById('rcModalTHead').innerHTML='<th style="padding:8px 10px;text-align:left;font-size:8px;letter-spacing:1.5px;">#</th><th style="padding:8px 10px;text-align:left;font-size:8px;letter-spacing:1.5px;">Criticality</th><th style="padding:8px 10px;text-align:left;font-size:8px;letter-spacing:1.5px;">Team</th><th style="padding:8px 10px;text-align:left;font-size:8px;letter-spacing:1.5px;">Query L1</th><th style="padding:8px 10px;text-align:left;font-size:8px;letter-spacing:1.5px;">Primary Dislike</th><th style="padding:8px 10px;text-align:left;font-size:8px;letter-spacing:1.5px;">Converted +ve</th><th style="padding:8px 10px;text-align:left;font-size:8px;letter-spacing:1.5px;">CX Contact</th><th style="padding:8px 10px;text-align:left;font-size:8px;letter-spacing:1.5px;">Summary</th>';
+  document.getElementById('rcModalBody').innerHTML = cases.map((c,i)=>{
+    const critColor=c.crit==='Crucial'?'#C8005A':c.crit==='Netural'?'#B8860B':'#888';
+    const contact=c.cx_phone&&c.cx_phone!='nan'&&c.cx_phone
+      ? `<a style="font-size:10px;color:#1a4fa0;cursor:pointer;text-decoration:none;" onclick="rcCopy('${c.cx_phone}')" title="Click to copy">${c.cx_phone}</a>`
+      : c.cx_email&&c.cx_email!='nan'&&c.cx_email
+      ? `<a style="font-size:10px;color:#1a4fa0;cursor:pointer;text-decoration:none;" onclick="rcCopy('${c.cx_email}')" title="Click to copy">${c.cx_email.split('@')[0]}@…</a>`
+      : '<span style="color:#9A7085;font-size:10px;">—</span>';
+    const conv=c.final_exp==='Yes'?'<span style="color:#1a7a4a;font-size:10px;font-weight:700;">✓ Yes</span>':'<span style="color:#C8005A;font-size:10px;">✗ No</span>';
+    const summ=c.summary&&c.summary.length>10?c.summary.slice(0,110)+(c.summary.length>110?'…':''):'—';
+    return `<tr style="border-bottom:1px solid #EEE4EC;">
+      <td style="padding:9px 10px;color:#9A7085;font-size:10px;">${i+1}</td>
+      <td style="padding:9px 10px;"><span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:${critColor}18;color:${critColor};">${c.crit==='Netural'?'Neutral':c.crit||'—'}</span></td>
+      <td style="padding:9px 10px;font-size:10px;color:#9A7085;">${c.team||'—'}</td>
+      <td style="padding:9px 10px;font-size:11px;">${c.query||'—'}</td>
+      <td style="padding:9px 10px;font-size:11px;color:#5A3048;">${c.dislike||'—'}</td>
+      <td style="padding:9px 10px;">${conv}</td>
+      <td style="padding:9px 10px;">${contact}</td>
+      <td style="padding:9px 10px;font-size:10px;color:#9A7085;max-width:260px;">${summ}</td>
+    </tr>`;
+  }).join('');
+  const modal=document.getElementById('rcCaseModal');
+  modal.style.opacity='1';modal.style.pointerEvents='all';
+  document.getElementById('rcModalSheet').style.transform='none';
+  document.body.style.overflow='hidden';
+}
+
+function closeRcModal(){
+  const modal=document.getElementById('rcCaseModal');
+  modal.style.opacity='0';modal.style.pointerEvents='none';
+  document.getElementById('rcModalSheet').style.transform='translateY(100%)';
+  document.body.style.overflow='';
+}
+
+function rcCopy(txt){
+  navigator.clipboard.writeText(txt).then(()=>{
+    const t=document.createElement('div');
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1E0E1A;color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;z-index:9999;pointer-events:none;';
+    t.textContent='Copied: '+txt;
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(),2000);
+  });
+}
+
+document.getElementById('rcCaseModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeRcModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRcModal();});
+
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.04});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
 renderCats('all');
 </script>
+
+<!-- CASE DRILL-DOWN MODAL -->
+<div id="rcCaseModal" style="position:fixed;inset:0;background:rgba(15,10,16,.7);backdrop-filter:blur(12px);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;">
+  <div style="background:#FAFAF8;border-radius:24px 24px 0 0;width:100%;max-width:1200px;max-height:86vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.34,1.2,.64,1);" id="rcModalSheet">
+    <div style="padding:20px 26px 14px;border-bottom:1px solid #EEE4EC;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:#0F0A10;" id="rcModalTitle">Cases</div>
+        <div style="font-size:11px;color:#9A7085;" id="rcModalSub"></div>
+      </div>
+      <button onclick="closeRcModal()" style="width:34px;height:34px;border-radius:50%;background:#f0f0f0;border:none;cursor:pointer;font-size:16px;color:#9A7085;">✕</button>
+    </div>
+    <div style="padding:18px 26px;overflow-y:auto;flex:1;">
+      <div style="font-size:11px;color:#9A7085;margin-bottom:12px;" id="rcModalCount"></div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr id="rcModalTHead" style="background:#1E0E1A;color:#fff;"></tr></thead>
+          <tbody id="rcModalBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
