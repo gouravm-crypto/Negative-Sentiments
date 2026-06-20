@@ -381,10 +381,9 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
 
 <script src="data.js"></script>
 <script>
-// Global scope — needed by onclick handlers
-var D,O,T,P,pendingTeam=null,allCases=[];
-function _initDashboard(){
-D=DASHBOARD_DATA; O=D.overall; T=D.teams; P=D.passwords;
+// Run directly — script is at bottom of body so DOM is ready
+var D=DASHBOARD_DATA, O=D.overall, T=D.teams, P=D.passwords;
+var pendingTeam=null, allCases=[];
 
 // LOGO
 if(D.logo){
@@ -605,10 +604,9 @@ document.getElementById('insightGrid').innerHTML=insights.map(ins=>`
     <div class="ic-body">${ins.body}</div>
   </div>`).join('');
 
-// ── SCROLL FADE (inside init) ──
+// ── SCROLL FADE ──
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.05});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
-} // end _initDashboard
 
 // ── CASE MODAL ──
 Object.entries(T).forEach(([team,td])=>{
@@ -691,8 +689,6 @@ function closeModal(){
 }
 document.getElementById('caseModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
 
-
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_initDashboard);}else{window.addEventListener('load',_initDashboard);}
 
 // ── GLOBAL FUNCTIONS (accessible by onclick attributes) ──
 function openTeam(name){
