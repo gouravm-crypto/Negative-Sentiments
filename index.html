@@ -261,25 +261,40 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
   </div>
   <div class="hero-tag">💎 Quality Audit · Negative Sentiment Report</div>
   <h1 class="hero-title">NS Audit Dashboard</h1>
-  <p class="hero-sub">June 2026 · Prepared by Gourav M · Quality Analyst Team · Click any metric to drill into those cases</p>
+  <p class="hero-sub">June 2026 · CS Quality Team · Click any metric to drill into those cases</p>
   <div class="hero-kpis" id="heroKpis"></div>
 </section>
 
 <div class="page">
 
 
-  <!-- MoM CONTEXT BANNER -->
-  <div style="background:linear-gradient(90deg,rgba(200,0,90,.05),rgba(184,134,11,.05));border:1px solid var(--bdr2);border-radius:12px;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;" class="fade-up">
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--txt3);">📅 Period:</span>
-      <span style="font-size:12px;font-weight:600;color:var(--txt);">June 2026 · 363 NS Audited · Auditor: Gourav M</span>
+  <!-- CONTEXT BANNER -->
+  <div style="background:linear-gradient(135deg,#fff5f9,#fffbf0);border:1.5px solid var(--bdr2);border-radius:16px;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;box-shadow:var(--sh-sm);" class="fade-up">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;">📅</span>
+        <div>
+          <div style="font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);">Audit Period</div>
+          <div style="font-size:13px;font-weight:700;color:var(--txt);">June 2026</div>
+        </div>
+      </div>
+      <div style="width:1px;height:32px;background:var(--bdr2);"></div>
+      <div>
+        <div style="font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);">Total Audited</div>
+        <div style="font-size:13px;font-weight:700;color:var(--txt);">363 NS Cases</div>
+      </div>
+      <div style="width:1px;height:32px;background:var(--bdr2);"></div>
+      <div>
+        <div style="font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);">Audited By</div>
+        <div style="font-size:13px;font-weight:700;color:var(--txt);">CS Quality Team</div>
+      </div>
+      <div style="width:1px;height:32px;background:var(--bdr2);"></div>
+      <div>
+        <div style="font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);">Coverage</div>
+        <div style="font-size:13px;font-weight:700;color:var(--green);">100% of flagged NS</div>
+      </div>
     </div>
-    <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
-      <div style="font-size:11px;color:var(--txt3);">Prev Month: <strong style="color:var(--txt2);">— (first report)</strong></div>
-      <div style="font-size:11px;color:var(--txt3);">Coverage: <strong style="color:var(--green);">100% of flagged NS cases</strong></div>
-      <div style="font-size:11px;color:var(--txt3);">ML Validated: <strong style="color:var(--txt2);">Cols A–S</strong> · Manual Audit: <strong style="color:var(--txt2);">Cols T onwards</strong></div>
-      <button onclick="window.print()" style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mag);background:rgba(200,0,90,.07);border:1.5px solid rgba(200,0,90,.2);padding:5px 12px;border-radius:20px;cursor:pointer;">🖨 Print / PDF</button>
-    </div>
+    <button onclick="window.print()" style="display:flex;align-items:center;gap:6px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mag);background:rgba(200,0,90,.07);border:1.5px solid rgba(200,0,90,.25);padding:8px 16px;border-radius:20px;cursor:pointer;transition:all .2s;white-space:nowrap;" onmouseover="this.style.background='rgba(200,0,90,.15)'" onmouseout="this.style.background='rgba(200,0,90,.07)'">🖨 Print / PDF</button>
   </div>
 
   <!-- CORE METRICS -->
@@ -310,8 +325,8 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
   <!-- ACTION REQUIRED BREAKDOWN -->
   <div class="spacer"></div>
   <div class="section-hd fade-up">
-    <div class="section-title">Decoding the 111 Action Required Cases</div>
-    <div class="section-sub">Not all are fixable by coaching — understanding where each case goes helps the right team act on it</div>
+    <div class="section-title">Action Required — What Happens Next?</div>
+    <div class="section-sub">111 cases flagged for action — here's where each one goes and who needs to act on it</div>
   </div>
   <div class="g2 fade-up" id="arBreakdownRow"></div>
 
@@ -335,7 +350,7 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
 
 <footer>
   <div class="ft">CaratLane Quality Audit · NS Dashboard · June 2026</div>
-  <div class="ft">Made by <strong style="color:rgba(255,200,220,.55)">Gourav M</strong> · QA Team · Confidential</div>
+  <div class="ft">CS Quality Team · CaratLane · Confidential</div>
 </footer>
 
 <!-- CASE DRILL-DOWN MODAL -->
@@ -421,7 +436,7 @@ document.getElementById('arBreakdownRow').innerHTML=`
   </div>
   <div class="ar-seg" onclick="openCaseModal('auditor_insights','Auditor Insights')">
     <div class="ar-seg-dot" style="background:#B8860B;"></div>
-    <div class="ar-seg-label"><strong>7 also Auditor Insights</strong> — JC coaching can fix these</div>
+    <div class="ar-seg-label"><strong>7 also Auditor Insights</strong> — Auditor identified a coaching opportunity; feedback already provided to JC</div>
     <div class="ar-seg-track"><div class="ar-seg-fill" style="width:6.3%;background:#B8860B;"></div></div>
     <div class="ar-seg-val" style="color:#B8860B;">7 · 6.3%</div>
   </div>
@@ -433,12 +448,12 @@ document.getElementById('arBreakdownRow').innerHTML=`
   </div>
   <div class="ar-seg" onclick="openCaseModal('ar_both','Both Auditor Insight + Training Gap')">
     <div class="ar-seg-dot" style="background:#534AB7;"></div>
-    <div class="ar-seg-label"><strong>4 flagged both</strong> — Coaching + training required</div>
+    <div class="ar-seg-label"><strong>4 flagged both</strong> — Auditor insight given + structured training also required</div>
     <div class="ar-seg-track"><div class="ar-seg-fill" style="width:3.6%;background:#534AB7;"></div></div>
     <div class="ar-seg-val" style="color:#534AB7;">4 · 3.6%</div>
   </div>
   <div class="ar-explainer">
-    💡 <strong>Key takeaway for management:</strong> 82.9% of Action Required cases are <strong>not fixable by coaching or training</strong> — they stem from Logistics SLA failures, Tech/ERP bugs, or process gaps. These 92 cases need to be <strong>escalated to Logistics, Tech, and Operations teams</strong>, not fed back to the JC.
+    💡 <strong>Key takeaway for management:</strong> 82.9% of Action Required cases stem from Logistics SLA failures, Tech/ERP bugs, or process gaps — not JC behaviour. These 92 cases need escalation to <strong>Logistics, Tech, and Operations</strong>. The remaining 19 cases (Auditor Insights + Training Gap) are consultant-behaviour issues where <strong>coaching has already been provided by auditors</strong> and/or training interventions are underway.
   </div>
 </div>
 <div class="cc">
@@ -477,7 +492,7 @@ const tgPct=Math.round(O.training_gap/O.total*100);
 document.getElementById('coreGrid1').innerHTML=`
   <div class="sc red" onclick="openCaseModal('crucial','Crucial Cases')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Crucial Cases</div><div class="sc-num">${O.crucial}</div><div class="sc-sub">${crucPct}% of all NS · Immediate action</div><div class="sc-pill pill-red">↑ Priority</div></div>
   <div class="sc amber" onclick="openCaseModal('action_required','Action Required')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Action Required</div><div class="sc-num">${O.action_required}</div><div class="sc-sub">${arPct}% of NS · Escalation needed</div><div class="sc-pill pill-amber">${arPct}%</div></div>
-  <div class="sc" style="--accent:var(--gold);cursor:pointer;" onclick="openCaseModal('auditor_insights','Auditor Insights')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Auditor Insights</div><div class="sc-num" style="color:var(--gold)">${O.auditor_insights}</div><div class="sc-sub">${aiPct}% · Coaching can fix these</div><div class="sc-pill pill-amber">${aiPct}%</div></div>
+  <div class="sc" style="--accent:var(--gold);cursor:pointer;" onclick="openCaseModal('auditor_insights','Auditor Insights')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Auditor Insights</div><div class="sc-num" style="color:var(--gold)">${O.auditor_insights}</div><div class="sc-sub">${aiPct}% · Auditor identified & coaching provided</div><div class="sc-pill pill-amber">${aiPct}%</div></div>
   <div class="sc green" onclick="openCaseModal('training_gap','Training Gap')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Training Gaps</div><div class="sc-num">${O.training_gap}</div><div class="sc-sub">${tgPct}% · For training team</div><div class="sc-pill pill-green">Training</div></div>
 `;
 document.getElementById('coreGrid2').innerHTML=`
@@ -595,7 +610,7 @@ const insights=[
   {tag:'Recovery',acc:'var(--green)',col:'pill-green',title:'Only 1 in 5 NS Ends Positively',body:`${O.converted_pos} of ${O.total} NS cases (${O.converted_pos_pct}%) were recovered. ${O.remained_neg} interactions ended with the customer still dissatisfied. In-call de-escalation training is the highest-ROI intervention.`},
   {tag:'Repeat CX',acc:'var(--gold)',col:'pill-amber',title:`${O.repeat_cx_pct}% of NS Customers Came Back`,body:`${O.repeat_cx} customers contacted us more than once — a signal of failed first-contact resolution. ${topRepTeam[0]} handles the most repeat customers (${topRepTeam[1].repeat_cx||0}). Dedicated repeat-CX escalation path recommended.`},
   {tag:'Training',acc:'var(--green)',col:'pill-green',title:`${O.training_gap} Training Gaps — ${topTgapTeam[0]} Leading`,body:`${topTgapTeam[0]} accounts for ${topTgapTeam[1].training_gap} of ${O.training_gap} total training flags. Refresher on ownership, process adherence, and delivery communication should be prioritised. These 28 cases should go directly to the training team with the auditor summaries.`},
-  {tag:'Action',acc:'var(--mag)',col:'pill-red',title:`92 of 111 Action Cases = Process Failures`,body:`82.9% of Action Required cases are NOT fixable by coaching — they're Logistics, Tech, or process failures. Only 19 cases (training + auditor) are consultant-behaviour issues. <strong>Don't feed process failures back to JCs as coaching.</strong>`},
+  {tag:'Action',acc:'var(--mag)',col:'pill-red',title:`92 of 111 Action Cases = Process Failures`,body:`82.9% of Action Required cases are process/system failures — not JC skill gaps. Of the 19 consultant-behaviour cases, <strong>auditor coaching has already been delivered</strong> for all Auditor Insight cases. Training team to action the Training Gap cases.`},
 ];
 document.getElementById('insightGrid').innerHTML=insights.map(ins=>`
   <div class="ic" style="--acc:${ins.acc};">
