@@ -281,7 +281,7 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
       <div style="width:1px;height:32px;background:var(--bdr2);"></div>
       <div>
         <div style="font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);">Total Audited</div>
-        <div style="font-size:13px;font-weight:700;color:var(--txt);">363 NS Cases</div>
+        <div style="font-size:13px;font-weight:700;color:var(--txt);">456 NS Cases</div>
       </div>
       <div style="width:1px;height:32px;background:var(--bdr2);"></div>
       <div>
@@ -326,7 +326,7 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
   <div class="spacer"></div>
   <div class="section-hd fade-up">
     <div class="section-title">Action Required — What Happens Next?</div>
-    <div class="section-sub">111 cases flagged for action — here's where each one goes and who needs to act on it</div>
+    <div class="section-sub">125 cases flagged for action — here's where each one goes and who needs to act on it</div>
   </div>
   <div class="g2 fade-up" id="arBreakdownRow"></div>
 
@@ -426,31 +426,31 @@ document.getElementById('heroKpis').innerHTML=heroItems.map(k=>
 // ── ACTION REQUIRED BREAKDOWN ──
 document.getElementById('arBreakdownRow').innerHTML=`
 <div class="ar-breakdown">
-  <div class="ar-bk-title">Action Required — Full Breakdown (111 cases)</div>
-  <div class="ar-bk-sub">How the 111 action-required cases split across coaching, training and standalone process failures</div>
+  <div class="ar-bk-title">Action Required — Full Breakdown (125 cases)</div>
+  <div class="ar-bk-sub">How the 125 action-required cases split across coaching, training and standalone process failures</div>
   <div class="ar-seg" onclick="openCaseModal('ar_standalone','Standalone Action Required (no coaching/training)')">
     <div class="ar-seg-dot" style="background:#E24B4A;"></div>
-    <div class="ar-seg-label"><strong>92 standalone</strong> — Process/Logistics/Tech failure, not a JC skill issue</div>
-    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:82.9%;background:#E24B4A;"></div></div>
-    <div class="ar-seg-val" style="color:#E24B4A;">92 · 82.9%</div>
+    <div class="ar-seg-label"><strong>106 standalone</strong> — Process/Logistics/Tech failure, not a JC skill issue</div>
+    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:84.8%;background:#E24B4A;"></div></div>
+    <div class="ar-seg-val" style="color:#E24B4A;">106 · 84.8%</div>
   </div>
   <div class="ar-seg" onclick="openCaseModal('auditor_insights','Auditor Insights')">
     <div class="ar-seg-dot" style="background:#B8860B;"></div>
     <div class="ar-seg-label"><strong>7 also Auditor Insights</strong> — Auditor identified a coaching opportunity; feedback already provided to JC</div>
-    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:6.3%;background:#B8860B;"></div></div>
-    <div class="ar-seg-val" style="color:#B8860B;">7 · 6.3%</div>
+    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:5.6%;background:#B8860B;"></div></div>
+    <div class="ar-seg-val" style="color:#B8860B;">7 · 5.6%</div>
   </div>
   <div class="ar-seg" onclick="openCaseModal('training_gap','Training Gap')">
     <div class="ar-seg-dot" style="background:#1a7a4a;"></div>
     <div class="ar-seg-label"><strong>8 also Training Gap</strong> — Structured training needed</div>
-    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:7.2%;background:#1a7a4a;"></div></div>
-    <div class="ar-seg-val" style="color:#1a7a4a;">8 · 7.2%</div>
+    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:6.4%;background:#1a7a4a;"></div></div>
+    <div class="ar-seg-val" style="color:#1a7a4a;">8 · 6.4%</div>
   </div>
   <div class="ar-seg" onclick="openCaseModal('ar_both','Both Auditor Insight + Training Gap')">
     <div class="ar-seg-dot" style="background:#534AB7;"></div>
     <div class="ar-seg-label"><strong>4 flagged both</strong> — Auditor insight given + structured training also required</div>
-    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:3.6%;background:#534AB7;"></div></div>
-    <div class="ar-seg-val" style="color:#534AB7;">4 · 3.6%</div>
+    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:3.2%;background:#534AB7;"></div></div>
+    <div class="ar-seg-val" style="color:#534AB7;">4 · 3.2%</div>
   </div>
   <div class="ar-explainer">
     💡 <strong>Key takeaway for management:</strong> 82.9% of Action Required cases stem from Logistics SLA failures, Tech/ERP bugs, or process gaps — not JC behaviour. These 92 cases need escalation to <strong>Logistics, Tech, and Operations</strong>. The remaining 19 cases (Auditor Insights + Training Gap) are consultant-behaviour issues where <strong>coaching has already been provided by auditors</strong> and/or training interventions are underway.
@@ -459,7 +459,7 @@ document.getElementById('arBreakdownRow').innerHTML=`
 <div class="cc">
   <div class="cc-title">Who Owns the 92 Standalone Actions?</div>
   <div class="cc-sub">Team responsible breakdown of standalone action-required cases</div>
-  ${[['Post Sale - Inbound',46],['Post Sale - Whatsapp',24],['Post Sale - Outbound',15],['Emails',7]].map(([k,v])=>`
+  ${[['Post Sale - Inbound',53],['Post Sale - Whatsapp',31],['Post Sale - Outbound',15],['Emails',7]].map(([k,v])=>`
     <div class="bar-row">
       <div class="bar-label">${k.replace('Post Sale - ','PS ')}</div>
       <div class="bar-track"><div class="bar-fill bf-mag" style="width:${Math.round(v/46*100)}%"></div></div>
@@ -469,15 +469,15 @@ document.getElementById('arBreakdownRow').innerHTML=`
     <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:10px;">Criticality of standalone 92</div>
     <div style="display:flex;gap:12px;">
       <div style="flex:1;background:#fff5f8;border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(200,0,90,.1);">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--mag);">37</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--mag);">48</div>
         <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);">Crucial</div>
       </div>
       <div style="flex:1;background:#fffbf0;border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(184,134,11,.1);">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--gold);">49</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--gold);">51</div>
         <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);">Neutral</div>
       </div>
       <div style="flex:1;background:#f7f8fc;border-radius:10px;padding:12px;text-align:center;border:1px solid var(--bdr);">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--txt3);">6</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--txt3);">7</div>
         <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);">Less Sig</div>
       </div>
     </div>
