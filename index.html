@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NS Audit Dashboard · CaratLane QA · June 2026</title>
+<title>NS Audit Dashboard · CaratLane QA · July 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -61,6 +61,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 .hk-num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;line-height:1;color:#fff;}
 .hk-num.mag{color:#F0006E;}.hk-num.gold{color:#E8B840;}.hk-num.green{color:#4ade80;}.hk-num.blue{color:#93c5fd;}.hk-num.amber{color:#fbbf24;}
 .hk-lbl{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,200,220,.3);margin-top:3px;}
+.hk-trend{display:inline-flex;align-items:center;gap:3px;font-size:8.5px;font-weight:700;margin-top:6px;padding:2px 7px;border-radius:10px;}
+.hk-trend.up{background:rgba(240,0,110,.16);color:#ff6fa8;}
+.hk-trend.down{background:rgba(74,222,128,.14);color:#4ade80;}
+.hk-trend.flat{background:rgba(255,255,255,.06);color:rgba(255,200,220,.4);}
+.hk-trend.pending{background:rgba(255,255,255,.04);color:rgba(255,200,220,.25);font-style:italic;font-weight:500;}
 
 /* ── PAGE ── */
 .page{max-width:1380px;margin:0 auto;padding:36px 40px 80px;}
@@ -90,6 +95,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 .pill-green{background:rgba(26,122,74,.08);color:var(--green);}
 .pill-amber{background:rgba(184,134,11,.08);color:var(--gold);}
 .pill-blue{background:rgba(26,79,160,.08);color:var(--blue);}
+
+/* ── MoM TREND CARDS ── */
+.mom-card{background:var(--surface);border:1.5px solid var(--bdr);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;cursor:pointer;transition:all .25s;}
+.mom-card:hover{transform:translateY(-4px);box-shadow:var(--sh-md);}
+.mom-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.mom-card.worse::after{background:var(--mag);}
+.mom-card.better::after{background:var(--green);}
+.mom-card.flat::after{background:var(--bdr2);}
+.mom-lbl{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px;}
+.mom-nums{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
+.mom-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:800;line-height:1;color:var(--ink);}
+.mom-delta{font-size:12px;font-weight:700;padding:2px 9px;border-radius:10px;}
+.mom-delta.worse{background:rgba(200,0,90,.09);color:var(--mag);}
+.mom-delta.better{background:rgba(26,122,74,.09);color:var(--green);}
+.mom-delta.flat{background:rgba(154,112,133,.09);color:var(--txt3);}
+.mom-prior{font-size:10px;color:var(--txt3);margin-bottom:10px;}
+.mom-reason{font-size:11px;color:var(--txt2);line-height:1.6;padding-top:10px;border-top:1px solid var(--bdr);}
+.mom-reason .tag{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--txt3);display:block;margin-bottom:3px;}
 
 /* ── CHART CARDS ── */
 .cc{background:var(--surface);border:1.5px solid var(--bdr);border-radius:var(--r);padding:24px 26px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
@@ -241,12 +264,13 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
   <nav class="hdr-nav">
     <a class="hnav active" href="index.html">Overview</a>
     <a class="hnav" href="analytics.html">Analytics</a>
+    <a class="hnav" href="repeatcx.html">Repeat Customers</a>
     <a class="hnav" href="team.html">Teams</a>
     <a class="hnav" href="rootcause.html">Root Cause</a>
   </nav>
   <div class="hdr-right">
     <button class="btn-sm" onclick="downloadCSV()">⬇ Export CSV</button>
-    <div class="hdr-badge">June 2026</div>
+    <div class="hdr-badge">July 2026</div>
   </div>
 </header>
 
@@ -261,12 +285,19 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
   </div>
   <div class="hero-tag">💎 Quality Audit · Negative Sentiment Report</div>
   <h1 class="hero-title">NS Audit Dashboard</h1>
-  <p class="hero-sub">June 2026 · CS Quality Team · Click any metric to drill into those cases</p>
+  <p class="hero-sub">July 2026 · CS Quality Team · Click any metric to drill into those cases</p>
   <div class="hero-kpis" id="heroKpis"></div>
 </section>
 
 <div class="page">
 
+
+  <!-- MONTH-ON-MONTH TRENDS -->
+  <div class="section-hd fade-up">
+    <div class="section-title">Month-on-Month — July vs June</div>
+    <div class="section-sub">Auto-drafted "likely driver" reasoning — treat as a starting point for review, not a confirmed root cause</div>
+  </div>
+  <div class="g3 fade-up" id="momGrid" style="margin-bottom:8px;"></div>
 
   <!-- CONTEXT BANNER -->
   <div style="background:linear-gradient(135deg,#fff5f9,#fffbf0);border:1.5px solid var(--bdr2);border-radius:16px;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;box-shadow:var(--sh-sm);" class="fade-up">
@@ -275,7 +306,7 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
         <span style="font-size:18px;">📅</span>
         <div>
           <div style="font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);">Audit Period</div>
-          <div style="font-size:13px;font-weight:700;color:var(--txt);">June 2026</div>
+          <div style="font-size:13px;font-weight:700;color:var(--txt);">July 2026</div>
         </div>
       </div>
       <div style="width:1px;height:32px;background:var(--bdr2);"></div>
@@ -326,7 +357,7 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
   <div class="spacer"></div>
   <div class="section-hd fade-up">
     <div class="section-title">Action Required — What Happens Next?</div>
-    <div class="section-sub">125 cases flagged for action — here's where each one goes and who needs to act on it</div>
+    <div class="section-sub" id="arSectionSub">cases flagged for action — here's where each one goes and who needs to act on it</div>
   </div>
   <div class="g2 fade-up" id="arBreakdownRow"></div>
 
@@ -349,7 +380,7 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
 </div>
 
 <footer>
-  <div class="ft">CaratLane Quality Audit · NS Dashboard · June 2026</div>
+  <div class="ft">CaratLane Quality Audit · NS Dashboard · July 2026</div>
   <div class="ft">CS Quality Team · CaratLane · Confidential</div>
 </footer>
 
@@ -397,8 +428,10 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
 <script src="data.js"></script>
 <script>
 // Run directly — script is at bottom of body so DOM is ready
-var D=DASHBOARD_DATA, O=D.overall, T=D.teams, P=D.passwords;
-var pendingTeam=null, allCases=[];
+// ── DUAL-MONTH DATA ──
+// O/T = current month (July). OP/TP = prior month (June), used purely for MoM deltas.
+var D=DASHBOARD_DATA, O=D.july.overall, T=D.july.teams, OP=D.june.overall, TP=D.june.teams, P=D.passwords;
+var pendingTeam=null, allCases=[], juneCases=[];
 
 // LOGO
 if(D.logo){
@@ -406,78 +439,180 @@ if(D.logo){
   document.getElementById('heroLogo').src=D.logo;
 }
 
+// Build flat case lists for BOTH months up front so every section below
+// (trend reasoning, breakdowns, modal) can use them freely.
+function flattenCases(teams){
+  const out=[];
+  Object.entries(teams).forEach(([team,td])=>{
+    Object.entries(td.agents||{}).forEach(([email,ad])=>{
+      (ad.cases||[]).forEach(c=>out.push({...c, agent_name:ad.name, agent_email:email, team}));
+    });
+  });
+  return out;
+}
+allCases = flattenCases(T);
+juneCases = flattenCases(TP);
+
+// ── LOYALTY TIER COUNTS (Regal ⭐ / Imperial 💎 / Crown 👑) ──
+function loyaltyCounts(cases){
+  const lc={regal:0,imperial:0,crown:0};
+  cases.forEach(c=>{
+    const l=(c.loyalty||'').trim();
+    if(l.startsWith('1'))lc.regal++;
+    else if(l.startsWith('2'))lc.imperial++;
+    else if(l.startsWith('3'))lc.crown++;
+  });
+  return lc;
+}
+const loy=loyaltyCounts(allCases), loyPrior=loyaltyCounts(juneCases);
+
+// ── MoM TREND BADGE (real, computed) ──
+function trendBadge(current, prior, goodDirection){
+  // goodDirection: 'down' means a decrease is the desired/positive direction (e.g. Crucial, Training Gap).
+  // 'up' means an increase is positive (e.g. Converted +ve). Defaults to neutral color-by-direction only.
+  if(prior===undefined||prior===null) return `<div class="hk-trend pending">New this month — no June baseline</div>`;
+  const diff=current-prior;
+  if(diff===0) return `<div class="hk-trend flat">— flat vs June</div>`;
+  const pct=prior>0?Math.abs(Math.round((diff/prior)*100)):100;
+  const arrow=diff>0?'▲':'▼';
+  const rose=diff>0;
+  let cls;
+  if(!goodDirection) cls=rose?'up':'down';
+  else cls=(rose===(goodDirection==='up'))?'down':'up'; // reuse down=green(good)/up=pink(bad) styling
+  return `<div class="hk-trend ${cls}">${arrow} ${pct}% vs June</div>`;
+}
+
+// ── MoM REASONING GENERATOR (auto-drafted — flagged as a suggestion, not final) ──
+// Finds which team contributed most to the change in a given case-predicate between
+// June and July, and drafts a one-line explanation. This is pattern-matching on the
+// data, not a confirmed root cause — always presented as "Likely driver" to keep that honest.
+function momReason(predicate, label){
+  const byTeamJuly={}, byTeamJune={};
+  allCases.filter(predicate).forEach(c=>byTeamJuly[c.team]=(byTeamJuly[c.team]||0)+1);
+  juneCases.filter(predicate).forEach(c=>byTeamJune[c.team]=(byTeamJune[c.team]||0)+1);
+  const teams=new Set([...Object.keys(byTeamJuly),...Object.keys(byTeamJune)]);
+  let top=null, topDelta=0;
+  teams.forEach(t=>{
+    const d=(byTeamJuly[t]||0)-(byTeamJune[t]||0);
+    if(Math.abs(d)>Math.abs(topDelta)){topDelta=d; top=t;}
+  });
+  if(!top||topDelta===0) return `No single team stands out — the change in ${label} is spread fairly evenly across teams.`;
+  const dir=topDelta>0?'rose':'fell';
+  return `Likely driver: <strong>${top}</strong>, where ${label} ${dir} from ${byTeamJune[top]||0} to ${byTeamJuly[top]||0} cases.`;
+}
+
 // ── HERO KPIS ──
 const heroItems=[
-  {num:O.total,lbl:'Total NS',cls:'',filter:'all'},
-  {num:O.crucial,lbl:'Crucial',cls:'mag',filter:'crucial'},
-  {num:O.neutral,lbl:'Neutral',cls:'amber',filter:'neutral'},
-  {num:O.less,lbl:'Less Sig',cls:'gold',filter:'less'},
-  {num:O.action_required,lbl:'Action Req',cls:'blue',filter:'action_required'},
-  {num:O.training_gap,lbl:'Training Gap',cls:'amber',filter:'training_gap'},
-  {num:O.auditor_insights,lbl:'Auditor Insights',cls:'gold',filter:'auditor_insights'},
-  {num:O.converted_pos,lbl:'Converted +ve',cls:'green',filter:'converted_pos'},
+  {num:O.total,prior:OP.total,lbl:'NS Validated',cls:'',filter:'all'},
+  {num:O.crucial,prior:OP.crucial,lbl:'Crucial',cls:'mag',filter:'crucial',good:'down'},
+  {num:loy.regal,prior:loyPrior.regal,lbl:'Regal ⭐',cls:'blue',filter:'loyalty_regal'},
+  {num:loy.imperial,prior:loyPrior.imperial,lbl:'Imperial 💎',cls:'blue',filter:'loyalty_imperial'},
+  {num:loy.crown,prior:loyPrior.crown,lbl:'Crown 👑',cls:'gold',filter:'loyalty_crown'},
+  {num:O.action_required,prior:OP.action_required,lbl:'Action Req',cls:'amber',filter:'action_required',good:'down'},
+  {num:O.training_gap,prior:OP.training_gap,lbl:'Training Gap',cls:'amber',filter:'training_gap',good:'down'},
+  {num:O.auditor_insights,prior:OP.auditor_insights,lbl:'Auditor Feedback',cls:'gold',filter:'auditor_insights'},
 ];
 document.getElementById('heroKpis').innerHTML=heroItems.map(k=>
   `<div class="hk" onclick="openCaseModal('${k.filter}','${k.lbl}')">
     <div class="hk-num ${k.cls}">${k.num}</div>
     <div class="hk-lbl">${k.lbl}</div>
+    ${trendBadge(k.num, k.prior, k.good)}
   </div>`).join('');
 
-// ── ACTION REQUIRED BREAKDOWN ──
+// ── MONTH-ON-MONTH TRENDS GRID ──
+function momCard(cfg){
+  const {current,prior,label,filter,predicate,good}=cfg;
+  const diff=current-prior;
+  const pct=prior>0?Math.round(Math.abs(diff)/prior*100):(current>0?100:0);
+  const rose=diff>0;
+  let status; // 'better' | 'worse' | 'flat'
+  if(diff===0) status='flat';
+  else if(good==='down') status = rose? 'worse':'better';
+  else if(good==='up') status = rose? 'better':'worse';
+  else status = rose? 'worse':'better'; // default: up=bad framing (most of these are negative-sentiment counts)
+  const arrow = diff===0?'—':(rose?'▲':'▼');
+  const reason = diff===0 ? 'No material change vs June.' : momReason(predicate, label);
+  return `<div class="mom-card ${status}" onclick="openCaseModal('${filter}','${label}')">
+    <div class="mom-lbl">${label}</div>
+    <div class="mom-nums"><div class="mom-num">${current}</div><div class="mom-delta ${status}">${arrow} ${pct}%</div></div>
+    <div class="mom-prior">vs ${prior} in June</div>
+    <div class="mom-reason"><span class="tag">Likely driver (auto-drafted — verify)</span>${reason}</div>
+  </div>`;
+}
+document.getElementById('momGrid').innerHTML = [
+  momCard({current:O.total,prior:OP.total,label:'NS Validated',filter:'all',predicate:c=>true,good:'down'}),
+  momCard({current:O.crucial,prior:OP.crucial,label:'Crucial',filter:'crucial',predicate:c=>c.crit==='Crucial',good:'down'}),
+  momCard({current:O.action_required,prior:OP.action_required,label:'Action Required',filter:'action_required',predicate:c=>c.action_req==='Yes',good:'down'}),
+  momCard({current:O.training_gap,prior:OP.training_gap,label:'Training Gap',filter:'training_gap',predicate:c=>c.tgap==='Yes',good:'down'}),
+  momCard({current:O.auditor_insights,prior:OP.auditor_insights,label:'Auditor Feedback',filter:'auditor_insights',predicate:c=>c.auditor_insight==='Yes',good:'down'}),
+  momCard({current:O.repeat_cx,prior:OP.repeat_cx,label:'Repeat Customers',filter:'repeat_cx',predicate:c=>c.repeat_cx==='Yes',good:'down'}),
+].join('');
+
+// ── ACTION REQUIRED BREAKDOWN (fully dynamic) ──
+document.getElementById('arSectionSub').textContent = `${O.action_required} cases flagged for action — here's where each one goes and who needs to act on it`;
+const standaloneCases = allCases.filter(c=>c.action_req==='Yes'&&c.auditor_insight!=='Yes'&&c.tgap!=='Yes');
+const arTotal = O.action_required||1;
+const arPctOf = n => Math.round(n/arTotal*1000)/10;
 document.getElementById('arBreakdownRow').innerHTML=`
 <div class="ar-breakdown">
-  <div class="ar-bk-title">Action Required — Full Breakdown (125 cases)</div>
-  <div class="ar-bk-sub">How the 125 action-required cases split across coaching, training and standalone process failures</div>
+  <div class="ar-bk-title">Action Required — Full Breakdown (${O.action_required} cases)</div>
+  <div class="ar-bk-sub">How the ${O.action_required} action-required cases split across coaching, training and standalone process failures</div>
   <div class="ar-seg" onclick="openCaseModal('ar_standalone','Standalone Action Required (no coaching/training)')">
     <div class="ar-seg-dot" style="background:#E24B4A;"></div>
-    <div class="ar-seg-label"><strong>106 standalone</strong> — Process/Logistics/Tech failure, not a JC skill issue</div>
-    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:84.8%;background:#E24B4A;"></div></div>
-    <div class="ar-seg-val" style="color:#E24B4A;">106 · 84.8%</div>
+    <div class="ar-seg-label"><strong>${O.ar_standalone} standalone</strong> — Process/Logistics/Tech failure, not a JC skill issue</div>
+    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:${arPctOf(O.ar_standalone)}%;background:#E24B4A;"></div></div>
+    <div class="ar-seg-val" style="color:#E24B4A;">${O.ar_standalone} · ${arPctOf(O.ar_standalone)}%</div>
   </div>
-  <div class="ar-seg" onclick="openCaseModal('auditor_insights','Auditor Insights')">
+  <div class="ar-seg" onclick="openCaseModal('auditor_insights','Auditor Feedback')">
     <div class="ar-seg-dot" style="background:#B8860B;"></div>
-    <div class="ar-seg-label"><strong>7 also Auditor Insights</strong> — Auditor identified a coaching opportunity; feedback already provided to JC</div>
-    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:5.6%;background:#B8860B;"></div></div>
-    <div class="ar-seg-val" style="color:#B8860B;">7 · 5.6%</div>
+    <div class="ar-seg-label"><strong>${O.ar_ai_only} also Auditor Feedback</strong> — Auditor identified a coaching opportunity; feedback already provided to JC</div>
+    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:${arPctOf(O.ar_ai_only)}%;background:#B8860B;"></div></div>
+    <div class="ar-seg-val" style="color:#B8860B;">${O.ar_ai_only} · ${arPctOf(O.ar_ai_only)}%</div>
   </div>
   <div class="ar-seg" onclick="openCaseModal('training_gap','Training Gap')">
     <div class="ar-seg-dot" style="background:#1a7a4a;"></div>
-    <div class="ar-seg-label"><strong>8 also Training Gap</strong> — Structured training needed</div>
-    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:6.4%;background:#1a7a4a;"></div></div>
-    <div class="ar-seg-val" style="color:#1a7a4a;">8 · 6.4%</div>
+    <div class="ar-seg-label"><strong>${O.ar_tg_only} also Training Gap</strong> — Structured training needed</div>
+    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:${arPctOf(O.ar_tg_only)}%;background:#1a7a4a;"></div></div>
+    <div class="ar-seg-val" style="color:#1a7a4a;">${O.ar_tg_only} · ${arPctOf(O.ar_tg_only)}%</div>
   </div>
-  <div class="ar-seg" onclick="openCaseModal('ar_both','Both Auditor Insight + Training Gap')">
+  <div class="ar-seg" onclick="openCaseModal('ar_both','Both Auditor Feedback + Training Gap')">
     <div class="ar-seg-dot" style="background:#534AB7;"></div>
-    <div class="ar-seg-label"><strong>4 flagged both</strong> — Auditor insight given + structured training also required</div>
-    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:3.2%;background:#534AB7;"></div></div>
-    <div class="ar-seg-val" style="color:#534AB7;">4 · 3.2%</div>
+    <div class="ar-seg-label"><strong>${O.ar_both} flagged both</strong> — Auditor insight given + structured training also required</div>
+    <div class="ar-seg-track"><div class="ar-seg-fill" style="width:${arPctOf(O.ar_both)}%;background:#534AB7;"></div></div>
+    <div class="ar-seg-val" style="color:#534AB7;">${O.ar_both} · ${arPctOf(O.ar_both)}%</div>
   </div>
   <div class="ar-explainer">
-    💡 <strong>Key takeaway for management:</strong> 82.9% of Action Required cases stem from Logistics SLA failures, Tech/ERP bugs, or process gaps — not JC behaviour. These 92 cases need escalation to <strong>Logistics, Tech, and Operations</strong>. The remaining 19 cases (Auditor Insights + Training Gap) are consultant-behaviour issues where <strong>coaching has already been provided by auditors</strong> and/or training interventions are underway.
+    💡 <strong>Key takeaway for management:</strong> ${arPctOf(O.ar_standalone)}% of Action Required cases stem from Logistics SLA failures, Tech/ERP bugs, or process gaps — not JC behaviour. These ${O.ar_standalone} cases need escalation to <strong>Logistics, Tech, and Operations</strong>. The remaining ${O.ar_ai_only+O.ar_tg_only+O.ar_both} cases (Auditor Feedback + Training Gap) are consultant-behaviour issues where <strong>coaching has already been provided by auditors</strong> and/or training interventions are underway.
   </div>
 </div>
 <div class="cc">
-  <div class="cc-title">Who Owns the 92 Standalone Actions?</div>
+  <div class="cc-title">Who Owns the ${O.ar_standalone} Standalone Actions?</div>
   <div class="cc-sub">Team responsible breakdown of standalone action-required cases</div>
-  ${[['Post Sale - Inbound',53],['Post Sale - Whatsapp',31],['Post Sale - Outbound',15],['Emails',7]].map(([k,v])=>`
+  ${(()=>{
+    const byTeam={};
+    standaloneCases.forEach(c=>byTeam[c.team]=(byTeam[c.team]||0)+1);
+    const entries=Object.entries(byTeam).sort((a,b)=>b[1]-a[1]).slice(0,4);
+    const mx=entries[0]?.[1]||1;
+    return entries.map(([k,v])=>`
     <div class="bar-row">
       <div class="bar-label">${k.replace('Post Sale - ','PS ')}</div>
-      <div class="bar-track"><div class="bar-fill bf-mag" style="width:${Math.round(v/46*100)}%"></div></div>
+      <div class="bar-track"><div class="bar-fill bf-mag" style="width:${Math.round(v/mx*100)}%"></div></div>
       <div class="bar-val">${v}</div>
-    </div>`).join('')}
+    </div>`).join('');
+  })()}
   <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--bdr);">
-    <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:10px;">Criticality of standalone 92</div>
+    <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:10px;">Criticality of standalone ${O.ar_standalone}</div>
     <div style="display:flex;gap:12px;">
       <div style="flex:1;background:#fff5f8;border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(200,0,90,.1);">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--mag);">48</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--mag);">${standaloneCases.filter(c=>c.crit==='Crucial').length}</div>
         <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);">Crucial</div>
       </div>
       <div style="flex:1;background:#fffbf0;border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(184,134,11,.1);">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--gold);">51</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--gold);">${standaloneCases.filter(c=>c.crit==='Netural').length}</div>
         <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);">Neutral</div>
       </div>
       <div style="flex:1;background:#f7f8fc;border-radius:10px;padding:12px;text-align:center;border:1px solid var(--bdr);">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--txt3);">7</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;color:var(--txt3);">${standaloneCases.filter(c=>c.crit==='Less significant').length}</div>
         <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);">Less Sig</div>
       </div>
     </div>
@@ -492,14 +627,14 @@ const tgPct=Math.round(O.training_gap/O.total*100);
 document.getElementById('coreGrid1').innerHTML=`
   <div class="sc red" onclick="openCaseModal('crucial','Crucial Cases')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Crucial Cases</div><div class="sc-num">${O.crucial}</div><div class="sc-sub">${crucPct}% of all NS · Immediate action</div><div class="sc-pill pill-red">↑ Priority</div></div>
   <div class="sc amber" onclick="openCaseModal('action_required','Action Required')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Action Required</div><div class="sc-num">${O.action_required}</div><div class="sc-sub">${arPct}% of NS · Escalation needed</div><div class="sc-pill pill-amber">${arPct}%</div></div>
-  <div class="sc" style="--accent:var(--gold);cursor:pointer;" onclick="openCaseModal('auditor_insights','Auditor Insights')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Auditor Insights</div><div class="sc-num" style="color:var(--gold)">${O.auditor_insights}</div><div class="sc-sub">${aiPct}% · Auditor identified & coaching provided</div><div class="sc-pill pill-amber">${aiPct}%</div></div>
+  <div class="sc" style="--accent:var(--gold);cursor:pointer;" onclick="openCaseModal('auditor_insights','Auditor Feedback')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Auditor Feedback</div><div class="sc-num" style="color:var(--gold)">${O.auditor_insights}</div><div class="sc-sub">${aiPct}% · Auditor identified & coaching provided</div><div class="sc-pill pill-amber">${aiPct}%</div></div>
   <div class="sc green" onclick="openCaseModal('training_gap','Training Gap')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Training Gaps</div><div class="sc-num">${O.training_gap}</div><div class="sc-sub">${tgPct}% · For training team</div><div class="sc-pill pill-green">Training</div></div>
 `;
 document.getElementById('coreGrid2').innerHTML=`
   <div class="sc red" onclick="openCaseModal('remained_neg','Remained Negative')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Remained Negative</div><div class="sc-num">${O.remained_neg}</div><div class="sc-sub">${Math.round(O.remained_neg/O.total*100)}% · Not resolved in interaction</div></div>
   <div class="sc green" onclick="openCaseModal('converted_pos','Converted to +ve')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Converted to +ve</div><div class="sc-num">${O.converted_pos}</div><div class="sc-sub">${O.converted_pos_pct}% recovery rate</div><div class="sc-pill pill-green">${O.converted_pos_pct}%</div></div>
   <div class="sc blue" onclick="openCaseModal('repeat_cx','Repeat Customers')"><span class="sc-click-hint">View cases ↗</span><div class="sc-label">Repeat Customers</div><div class="sc-num">${O.repeat_cx}</div><div class="sc-sub">${O.repeat_cx_pct}% contacted more than once</div><div class="sc-pill pill-blue">${O.repeat_cx_pct}%</div></div>
-  <div class="sc" style="cursor:default;--accent:#888;"><div class="sc-label">Total Agents Audited</div><div class="sc-num" style="color:var(--ink)">${O.agents}</div><div class="sc-sub">Across ${O.teams} teams · June 2026</div></div>
+  <div class="sc" style="cursor:default;--accent:#888;"><div class="sc-label">Total Agents Audited</div><div class="sc-num" style="color:var(--ink)">${O.agents}</div><div class="sc-sub">Across ${O.teams} teams · July 2026</div></div>
 `;
 
 // ── CONVERSION & REPEAT ──
@@ -591,7 +726,7 @@ document.getElementById('teamGrid').innerHTML=teamsSorted.map(([name,d],i)=>{
       </div>
       <div class="tc-div"></div>
       <div class="tc-row">Training Gaps <span class="tc-rv">${d.training_gap}</span></div>
-      <div class="tc-row">Auditor Insights <span class="tc-gv">${d.auditor_insight||0}</span></div>
+      <div class="tc-row">Auditor Feedback <span class="tc-gv">${d.auditor_insight||0}</span></div>
       <div class="tc-row">+ve Conversion <span class="tc-grv">${convPct}%</span></div>
       <div class="tc-cta"><span class="tc-cta-txt">🔒 Unlock Agent Data</span><span style="color:var(--mag);font-size:14px;transition:transform .2s;">→</span></div>
     </div>
@@ -609,8 +744,8 @@ const insights=[
   {tag:'Volume',acc:'var(--mag)',col:'pill-red',title:`${topTeam[0]} Leads NS Volume`,body:`${topTeam[0]} recorded ${topTeam[1].total} cases — ${Math.round(topTeam[1].total/O.total*100)}% of all NS — with ${topTeam[1].crucial} crucial cases and ${topTeam[1].training_gap} training gaps. Immediate bandwidth review and coaching plan needed.`},
   {tag:'Recovery',acc:'var(--green)',col:'pill-green',title:'Only 1 in 5 NS Ends Positively',body:`${O.converted_pos} of ${O.total} NS cases (${O.converted_pos_pct}%) were recovered. ${O.remained_neg} interactions ended with the customer still dissatisfied. In-call de-escalation training is the highest-ROI intervention.`},
   {tag:'Repeat CX',acc:'var(--gold)',col:'pill-amber',title:`${O.repeat_cx_pct}% of NS Customers Came Back`,body:`${O.repeat_cx} customers contacted us more than once — a signal of failed first-contact resolution. ${topRepTeam[0]} handles the most repeat customers (${topRepTeam[1].repeat_cx||0}). Dedicated repeat-CX escalation path recommended.`},
-  {tag:'Training',acc:'var(--green)',col:'pill-green',title:`${O.training_gap} Training Gaps — ${topTgapTeam[0]} Leading`,body:`${topTgapTeam[0]} accounts for ${topTgapTeam[1].training_gap} of ${O.training_gap} total training flags. Refresher on ownership, process adherence, and delivery communication should be prioritised. These 28 cases should go directly to the training team with the auditor summaries.`},
-  {tag:'Action',acc:'var(--mag)',col:'pill-red',title:`92 of 111 Action Cases = Process Failures`,body:`82.9% of Action Required cases are process/system failures — not JC skill gaps. Of the 19 consultant-behaviour cases, <strong>auditor coaching has already been delivered</strong> for all Auditor Insight cases. Training team to action the Training Gap cases.`},
+  {tag:'Training',acc:'var(--green)',col:'pill-green',title:`${O.training_gap} Training Gaps — ${topTgapTeam[0]} Leading`,body:`${topTgapTeam[0]} accounts for ${topTgapTeam[1].training_gap} of ${O.training_gap} total training flags. Refresher on ownership, process adherence, and delivery communication should be prioritised. These ${topTgapTeam[1].training_gap} cases should go directly to the training team with the auditor summaries.`},
+  {tag:'Action',acc:'var(--mag)',col:'pill-red',title:`${O.ar_standalone} of ${O.action_required} Action Cases = Process Failures`,body:`${arPctOf(O.ar_standalone)}% of Action Required cases are process/system failures — not JC skill gaps. Of the ${O.ar_ai_only+O.ar_tg_only+O.ar_both} consultant-behaviour cases, <strong>auditor coaching has already been delivered</strong> for all Auditor Feedback cases. Training team to action the Training Gap cases.`},
 ];
 document.getElementById('insightGrid').innerHTML=insights.map(ins=>`
   <div class="ic" style="--acc:${ins.acc};">
@@ -624,14 +759,6 @@ const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.targ
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
 
 // ── CASE MODAL ──
-Object.entries(T).forEach(([team,td])=>{
-  Object.entries(td.agents||{}).forEach(([email,ad])=>{
-    (ad.cases||[]).forEach((c,i)=>{
-      allCases.push({...c, agent_name:ad.name, agent_email:email, team});
-    });
-  });
-});
-
 function getCasesForFilter(filter){
   switch(filter){
     case 'all': return allCases;
@@ -644,6 +771,9 @@ function getCasesForFilter(filter){
     case 'converted_pos': return allCases.filter(c=>c.final_exp==='Yes');
     case 'remained_neg': return allCases.filter(c=>c.final_exp!=='Yes');
     case 'repeat_cx': return allCases.filter(c=>c.repeat_cx==='Yes');
+    case 'loyalty_regal': return allCases.filter(c=>(c.loyalty||'').trim().startsWith('1'));
+    case 'loyalty_imperial': return allCases.filter(c=>(c.loyalty||'').trim().startsWith('2'));
+    case 'loyalty_crown': return allCases.filter(c=>(c.loyalty||'').trim().startsWith('3'));
     case 'ar_standalone': return allCases.filter(c=>c.action_req==='Yes'&&c.auditor_insight!=='Yes'&&c.tgap!=='Yes');
     case 'ar_both': return allCases.filter(c=>c.action_req==='Yes'&&c.auditor_insight==='Yes'&&c.tgap==='Yes');
     default: return allCases;
@@ -653,7 +783,7 @@ function getCasesForFilter(filter){
 function openCaseModal(filter, title){
   const cases=getCasesForFilter(filter);
   document.getElementById('modalTitle').textContent=title;
-  document.getElementById('modalMeta').textContent=`${cases.length} cases · June 2026 · Click CX contact to copy`;
+  document.getElementById('modalMeta').textContent=`${cases.length} cases · July 2026 · Click CX contact to copy`;
   renderCaseTable(cases);
   document.getElementById('caseModal').classList.add('open');
   document.body.style.overflow='hidden';
@@ -736,12 +866,12 @@ function checkPw(){
 }
 function downloadCSV(){
   if(!allCases.length){alert('Data not loaded yet, please wait a moment.');return;}
-  var rows=[['Team','Agent','Criticality','Query L1','Query L2','Primary Dislike','Secondary Dislike','CCPT1','Team Responsible','Action Req','Training Gap','Auditor Insight','Repeat CX','Converted +ve','CX Email','CX Phone','Summary']];
+  var rows=[['Team','Agent','Criticality','Query L1','Query L2','Primary Dislike','Secondary Dislike','CCPT1','Team Responsible','Action Req','Training Gap','Auditor Feedback','Repeat CX','Converted +ve','CX Email','CX Phone','Summary']];
   allCases.forEach(function(c){rows.push([c.team,c.agent_name,c.crit,c.query,c.query_l2||'',c.dislike,c.dislike2||'',c.ccpt1,c.team_resp,c.action_req,c.tgap,c.auditor_insight,c.repeat_cx,c.final_exp,c.cx_email||'',c.cx_phone||'',(c.summary||'').replace(/\n/g,' ')]);});
   var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
   var a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
-  a.download='NS_Audit_June2026.csv';
+  a.download='NS_Audit_July2026.csv';
   a.click();
 }
 function closeModal(){

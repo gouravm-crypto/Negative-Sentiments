@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Root Cause Analysis · NS Audit · June 2026</title>
+<title>Root Cause Analysis · NS Audit · July 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;0,800;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -158,12 +158,13 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
   <nav class="hdr-nav">
     <a class="hnav" href="index.html">Overview</a>
     <a class="hnav" href="analytics.html">Analytics</a>
+    <a class="hnav" href="repeatcx.html">Repeat Customers</a>
     <a class="hnav" href="team.html">Teams</a>
     <a class="hnav active" href="rootcause.html">Root Cause</a>
   </nav>
   <div class="hdr-right">
     <button class="csv-btn" onclick="downloadCSV()">⬇ Export CSV</button>
-    <div class="hdr-badge">June 2026</div>
+    <div class="hdr-badge">July 2026</div>
   </div>
 </header>
 
@@ -171,15 +172,7 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
   <div class="hero-tag">🔍 Pinpointed Root Cause Analysis</div>
   <h1 class="hero-title">Why Are Customers Dissatisfied?</h1>
   <p class="hero-sub">Every NS mapped to its exact cause, responsible team, and recommended fix — drill down from L1 → L2 → Root Cause → Owner → Action</p>
-  <div class="hero-pills">
-    <div class="hpill active" onclick="filterCat('all')"><span class="dot" style="background:#C8005A"></span>All Issues (363)</div>
-    <div class="hpill" onclick="filterCat('order_management')"><span class="dot" style="background:#C8005A"></span>Order Management (114)</div>
-    <div class="hpill" onclick="filterCat('delivery_delay')"><span class="dot" style="background:#d97706"></span>Delivery Delays (44)</div>
-    <div class="hpill" onclick="filterCat('lack_of_ownership')"><span class="dot" style="background:#1a4fa0"></span>Lack of Ownership (41)</div>
-    <div class="hpill" onclick="filterCat('returns')"><span class="dot" style="background:#1a7a4a"></span>Returns (39)</div>
-    <div class="hpill" onclick="filterCat('tech_issues')"><span class="dot" style="background:#7c3aed"></span>Tech / App Issues (36)</div>
-    <div class="hpill" onclick="filterCat('repair_charges')"><span class="dot" style="background:#B8860B"></span>Repair Charges (19)</div>
-  </div>
+  <div class="hero-pills" id="heroPills"></div>
 </div>
 
 <div class="page">
@@ -217,7 +210,7 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
 </div>
 
 <footer>
-  <div class="ft-l">CaratLane Quality Audit · Root Cause Analysis · June 2026</div>
+  <div class="ft-l">CaratLane Quality Audit · Root Cause Analysis · July 2026</div>
   <div class="ft-r">Prepared by <strong style="color:rgba(255,200,220,.6)">CS Quality Team</strong> · QA Team · Confidential</div>
 </footer>
 
@@ -251,729 +244,7 @@ if(typeof DASHBOARD_DATA!=='undefined' && DASHBOARD_DATA.logo){
   if(logoEl) logoEl.src=DASHBOARD_DATA.logo;
 }
 
-const CATS = [
-  {
-    id:'order_management',
-    icon:'📦', color:'var(--mag)', tagCls:'pill-red',
-    title:'Order Management',
-    total:144, share:31.6,
-    team:'Logistics · Tech · Post Sale IB/WA/OB',
-    ccpt:'Process-driven (65% of cases)',
-    desc:'The single largest NS driver at 144 cases (31.6%). Delivery delays, order tracking failures and physical delivery breakdowns account for the majority. Logistics owns the SLA; JC owns the communication.',
-    subtypes:[
-      {
-        l2:'Order Tracking / Status', count:50, maxCount:144,
-        badge:'🔎 Tracking Failure', badgeColor:'rgba(200,0,90,.08)', badgeTxt:'var(--mag)',
-        causes:[
-          {cause:'Logistics SLA breach — delivery delayed, no proactive alert sent to cx', count:8, owner:'Logistics', color:'var(--mag)', fix:'Auto-trigger WhatsApp/SMS alert the moment a delay is detected. JC must call cx before cx contacts us.'},
-          {cause:'JC gave vague update without checking system; lack of ownership on follow-up', count:3, owner:'Post Sale IB/WA', color:'var(--blue)', fix:'JC must check OneView before every status update. T+24hr mandatory callback for all cases where concern was raised with Logistics.'},
-          {cause:'Order status not reflecting on app — ERP sync delay confusing cx', count:1, owner:'Tech', color:'#7c3aed', fix:'ERP-to-app sync to be under 1hr. Manual force-refresh option for CS team in live interactions.'},
-        ]
-      },
-      {
-        l2:'Order Cancellation', count:39, maxCount:144,
-        badge:'❌ Delay-Triggered Cancellation', badgeColor:'rgba(200,0,90,.06)', badgeTxt:'var(--mag)',
-        causes:[
-          {cause:'Delivery delayed → cx cancelled — delay not communicated proactively', count:12, owner:'Logistics + Post Sale IB/OB', color:'var(--mag)', fix:'Proactive delay communication SOP. If cx is calling us about a delay, we have already failed. Alert cx before they escalate.'},
-          {cause:'JC accepted cancellation without retention attempt', count:4, owner:'Post Sale IB/OB', color:'var(--blue)', fix:'Mandatory retention script before any cancellation. Escalate to TL if cx is firm. Document every attempt.'},
-        ]
-      },
-      {
-        l2:'Physical Delivery Request', count:32, maxCount:144,
-        badge:'🚚 Physical Delivery Failure', badgeColor:'rgba(200,0,90,.06)', badgeTxt:'var(--mag)',
-        causes:[
-          {cause:'Physical delivery slot not fulfilled on committed date', count:16, owner:'Logistics', color:'var(--mag)', fix:'Reconfirm delivery slot T-1 day. If slot cannot be kept, inform cx 4hrs prior with revised slot.'},
-          {cause:'JC provided incorrect delivery TAT / incomplete information', count:2, owner:'Post Sale IB/WA', color:'var(--blue)', fix:'JC must verify with Logistics before committing any delivery date. No self-estimated TAT allowed.'},
-          {cause:'JC failed to follow through end-to-end on physical delivery case', count:2, owner:'Post Sale IB', color:'var(--blue)', fix:'Physical delivery cases to be tagged and owned by JC until delivery confirmed.'},
-        ]
-      }
-    ],
-    actions:['Share delivery delay report with Logistics team lead','Escalate ERP sync issue to Tech as P1 ticket','Mandate retention scripting for Post Sale IB/OB','Implement T+24hr follow-up SOP for all delivery concern cases']
-  },
-  {
-    id:'lack_of_ownership',
-    icon:'🤝', color:'var(--blue)', tagCls:'pill-blue',
-    title:'Lack of Ownership',
-    total:23, share:5.0,
-    team:'Post Sale IB · Post Sale OB · Post Sale WA · Presales IB',
-    ccpt:'Consultant-driven — appears in both Primary & Secondary dislike',
-    desc:'23 cases directly flagged as "Lack of Ownership" as primary dislike. Additional ownership failures appear in secondary dislike across many other categories. This is the most recurring behavioural pattern across all teams.',
-    subtypes:[
-      {
-        l2:'Order Tracking / Follow-up Miss', count:3, maxCount:23,
-        badge:'📵 No Proactive Follow-up', badgeColor:'rgba(26,79,160,.07)', badgeTxt:'var(--blue)',
-        causes:[
-          {cause:'JC raised concern but never followed up with cx', count:2, owner:'Post Sale IB/WA', color:'var(--blue)', fix:'T+24hr mandatory follow-up call for every case where a concern was raised. Auditor to flag closure without follow-up.'},
-          {cause:'JC gave generic response without checking actual system status', count:1, owner:'Post Sale IB', color:'var(--blue)', fix:'OneView check mandatory before every status update. No generic "will be delivered soon" responses.'},
-        ]
-      },
-      {
-        l2:'Payments — Lack of Ownership', count:2, maxCount:23,
-        badge:'💳 Ownership Gap on Payment Cases', badgeColor:'rgba(26,79,160,.07)', badgeTxt:'var(--blue)',
-        causes:[
-          {cause:'JC did not own payment query end-to-end — transferred or deflected', count:2, owner:'Presales IB', color:'var(--blue)', fix:'First-contact ownership policy. Payment queries must be owned fully by JC unless genuinely out of scope with TL approval.'},
-        ]
-      },
-      {
-        l2:'Refund / Returns — No Follow-up', count:4, maxCount:23,
-        badge:'⏰ Refund & Return Follow-up Missed', badgeColor:'rgba(26,79,160,.07)', badgeTxt:'var(--blue)',
-        causes:[
-          {cause:'Refund status not updated, cx waited 15+ days, JC never followed up', count:2, owner:'Post Sale IB', color:'var(--blue)', fix:'Refund cases >7 days auto-flagged. JC to update cx every 3 days until resolved.'},
-          {cause:'JC closed chat/call without confirming resolution with cx', count:2, owner:'All Teams', color:'var(--mag)', fix:'Chat closure SOP — cx must confirm resolution before JC closes. Audit to penalise premature closures.'},
-        ]
-      }
-    ],
-    actions:['Share ownership scorecard with all TLs','Add T+24hr follow-up SOP to all team playbooks','Training: Retention scripting & first-contact ownership','Audit scoring to penalise closure without cx confirmation']
-  },
-  {
-    id:'delivery_delay',
-    icon:'🚚', color:'#d97706', tagCls:'pill-amber',
-    title:'Delivery Delays',
-    total:51, share:11.2,
-    team:'Logistics (primary) · Post Sale IB/OB (secondary)',
-    ccpt:'Process-driven — Logistics SLA failures',
-    desc:'51 cases (11.2%) directly caused by delivery delays — the single largest primary dislike reason. Logistics owns the SLA failure; Post Sale IB/OB own the communication failure when delays happen.',
-    subtypes:[
-      {
-        l2:'Order Tracking → Delivery Delayed', count:8, maxCount:51,
-        badge:'📍 Delay Not Communicated', badgeColor:'rgba(217,119,6,.07)', badgeTxt:'#d97706',
-        causes:[
-          {cause:'Logistics SLA breach — order not dispatched within promised TAT', count:8, owner:'Logistics', color:'#d97706', fix:'Daily SLA breach report. Auto-escalation to Logistics manager if dispatch not done by T+1. No exceptions.'},
-        ]
-      },
-      {
-        l2:'Order Cancellation → Triggered by Delay', count:12, maxCount:51,
-        badge:'💥 Delay Caused Cancellation', badgeColor:'rgba(217,119,6,.07)', badgeTxt:'#d97706',
-        causes:[
-          {cause:'Cx not informed of delay proactively — called us because they found out themselves', count:12, owner:'Logistics + Post Sale IB', color:'var(--mag)', fix:'Proactive WhatsApp alert the moment delay is detected. JC must reach out to cx before cx contacts us.'},
-        ]
-      },
-      {
-        l2:'Physical Delivery → Slot Not Fulfilled', count:16, maxCount:51,
-        badge:'📅 Committed Slot Missed', badgeColor:'rgba(217,119,6,.07)', badgeTxt:'#d97706',
-        causes:[
-          {cause:'Physical delivery slot missed without advance notice to cx', count:16, owner:'Logistics', color:'#d97706', fix:'Reconfirmation call T-1 day. If slot cannot be kept, cx informed 4hrs prior with new slot and apology.'},
-        ]
-      },
-      {
-        l2:'Shaya Order Tracking → Delayed', count:3, maxCount:51,
-        badge:'🛍 Shaya Delivery Delay', badgeColor:'rgba(217,119,6,.07)', badgeTxt:'#d97706',
-        causes:[
-          {cause:'Shaya orders delayed — same Logistics SLA issue, separate tracking system', count:3, owner:'Logistics', color:'#d97706', fix:'Shaya orders to be included in the same Logistics SLA monitoring. Separate Shaya delay alert SOP needed.'},
-        ]
-      }
-    ],
-    actions:['Share Delivery Delay breakdown directly with Logistics head','Proactive delay alert to be built into Logistics SOP','Post Sale IB mandatory T+24hr follow-up for all delivery concern cases','Monthly Logistics SLA vs NS correlation review']
-  },
-  {
-    id:'returns',
-    icon:'↩', color:'var(--green)', tagCls:'pill-green',
-    title:'Returns',
-    total:54, share:11.8,
-    team:'Logistics · Post Sale IB/WA · Tech',
-    ccpt:'Process-driven',
-    desc:'54 NS cases across return pick-up scheduling, LTE/LTB requests, return initiations and refund delays. Logistics RVP SLA and Tech system issues are the two primary failure points.',
-    subtypes:[
-      {
-        l2:'Return Pick-up Scheduling', count:20, maxCount:54,
-        badge:'📬 RVP Delayed / Not Scheduled', badgeColor:'rgba(26,122,74,.07)', badgeTxt:'var(--green)',
-        causes:[
-          {cause:'Reverse pickup delayed — Logistics not scheduling within 24hr SLA', count:4, owner:'Logistics', color:'var(--green)', fix:'RVP to be auto-scheduled within 24hrs. System alert if not actioned. Cx to be informed of pickup date proactively.'},
-          {cause:'JC did not follow up on pending RVP case', count:2, owner:'Post Sale IB/WA', color:'var(--blue)', fix:'T+48hr mandatory JC follow-up for all pending RVP cases. Escalate to Logistics manager if still pending at T+72hr.'},
-          {cause:'Cx provided incorrect/incomplete pickup details — JC did not verify', count:1, owner:'Post Sale IB/WA', color:'var(--blue)', fix:'JC to verify pickup address and contact details at time of scheduling. Confirmation message to cx mandatory.'},
-        ]
-      },
-      {
-        l2:'Return Initiation / Request', count:8, maxCount:54,
-        badge:'🔁 Return Not Initiated', badgeColor:'rgba(26,122,74,.07)', badgeTxt:'var(--green)',
-        causes:[
-          {cause:'Unable to raise return request on app — Tech issue', count:1, owner:'Tech', color:'#7c3aed', fix:'App return initiation flow to be QA tested weekly. Hotfix SLA <24hrs for return-blocking bugs.'},
-          {cause:'Store return issue — cx returned at store but not updated in system', count:1, owner:'Store/Logistics', color:'#d97706', fix:'Store return acknowledgement to be updated in system within 2hrs of physical return.'},
-        ]
-      },
-      {
-        l2:'15-Day Exchange', count:8, maxCount:54,
-        badge:'🔄 Exchange Process Issues', badgeColor:'rgba(26,122,74,.07)', badgeTxt:'var(--green)',
-        causes:[
-          {cause:'Credit balance not visible after exchange — system not updating', count:1, owner:'Tech', color:'#7c3aed', fix:'Post-exchange credit balance to reflect within 2hrs. Manual trigger available for CS team.'},
-          {cause:'JC transferred cx unnecessarily instead of owning exchange query', count:1, owner:'Post Sale IB', color:'var(--blue)', fix:'Exchange queries within scope must be owned end-to-end by JC.'},
-        ]
-      },
-      {
-        l2:'Refund Status / Delay (post-return)', count:3, maxCount:54,
-        badge:'💰 Refund Not Triggered', badgeColor:'rgba(26,122,74,.07)', badgeTxt:'var(--green)',
-        causes:[
-          {cause:'Refund not processed after successful return pickup scan', count:3, owner:'Post Sale IB', color:'var(--blue)', fix:'Auto-trigger refund immediately after RVP pickup scan confirmation. JC to communicate refund TAT at time of pickup.'},
-        ]
-      }
-    ],
-    actions:['RVP SLA breach data to Logistics head','App return initiation bug to Tech as P1','JC T+48hr follow-up SOP for pending RVP','Refund auto-trigger post RVP scan — Tech ticket']
-  },
-  {
-    id:'repair',
-    icon:'🔧', color:'var(--gold)', tagCls:'pill-amber',
-    title:'Repair',
-    total:41, share:9.0,
-    team:'Repair Team · Post Sale OB · Logistics',
-    ccpt:'Process + Customer — repair charges, quality, logistics',
-    desc:'41 NS cases covering repair charge disputes, quality issues, status delays, and logistics failures during repair. Entirely preventable with upfront charge communication and proactive status updates.',
-    subtypes:[
-      {
-        l2:'Repair Charges Dispute', count:21, maxCount:41,
-        badge:'💸 Charge Felt Unexpected', badgeColor:'rgba(184,134,11,.08)', badgeTxt:'var(--gold)',
-        causes:[
-          {cause:'Repair cost estimate not shared with cx before repair began — felt blindsided', count:8, owner:'Repair Team', color:'var(--gold)', fix:'Non-negotiable SOP: cx must receive cost estimate via WhatsApp before any repair begins. No repair without written cx approval.'},
-          {cause:'Cx unhappy with repair charges — not happy with pricing policy', count:4, owner:'Repair Team', color:'var(--gold)', fix:'Transparent repair pricing breakdown to be sent before billing. Any deviation from estimate needs cx approval.'},
-          {cause:'JC used poor empathy when communicating repair charges', count:3, owner:'Post Sale OB', color:'var(--blue)', fix:'Empathy scripting for repair charge conversations. Train JC on delivering financial news with sensitivity.'},
-        ]
-      },
-      {
-        l2:'Repair Status / Logistics', count:11, maxCount:41,
-        badge:'📦 Repair Logistics Delay', badgeColor:'rgba(184,134,11,.08)', badgeTxt:'var(--gold)',
-        causes:[
-          {cause:'Repair item delayed in logistics — no proactive update to cx', count:2, owner:'Logistics', color:'#d97706', fix:'Repair logistics to follow same SLA as order delivery. Proactive status alert when repair item is in transit.'},
-          {cause:'Incorrect information given to cx about repair timeline', count:1, owner:'Post Sale OB/WA', color:'var(--blue)', fix:'JC to check actual repair status before committing any timeline. No estimated TATs without system verification.'},
-        ]
-      },
-      {
-        l2:'Repair Quality / Process Issue', count:5, maxCount:41,
-        badge:'⚠️ Quality Not Met', badgeColor:'rgba(184,134,11,.08)', badgeTxt:'var(--gold)',
-        causes:[
-          {cause:'Cx unhappy with repair quality — product not repaired to satisfaction', count:2, owner:'Repair Team', color:'var(--gold)', fix:'Post-repair quality check SOP before dispatch. Cx satisfaction confirmation call after delivery of repaired item.'},
-          {cause:'Cx unhappy with repair process / policy', count:1, owner:'Repair Team', color:'var(--gold)', fix:'Repair policy to be communicated upfront. JC to set clear expectations on what the repair process involves.'},
-        ]
-      }
-    ],
-    actions:['Pre-repair cost estimate mandatory — share policy with Repair Team','Empathy scripting for repair charge conversations — Training team','Repair logistics to follow same SLA monitoring as orders','Post-repair quality check SOP — Repair Team']
-  },
-  {
-    id:'presale',
-    icon:'🛍', color:'#7c3aed', tagCls:'',
-    title:'Presale & Tech Issues',
-    total:29, share:6.4,
-    team:'Tech Team · Presales WA/Chat/IB',
-    ccpt:'Technology + Process',
-    desc:'29 NS cases in presale — primarily website errors, app issues, credit balance problems and customisation limitations. Tech owns the system failures; Presales teams own the communication gaps.',
-    subtypes:[
-      {
-        l2:'General Purchase — Tech Failures', count:20, maxCount:29,
-        badge:'🌐 Website / App Error', badgeColor:'rgba(124,58,237,.07)', badgeTxt:'#7c3aed',
-        causes:[
-          {cause:'Website error during purchase journey causing cx to drop off or get frustrated', count:4, owner:'Tech', color:'#7c3aed', fix:'Weekly checkout error log review. Critical path errors (checkout, payment) fixed within 24hrs. Automated spike alerts.'},
-          {cause:'App issues during purchase — freezing, errors, incorrect loading', count:2, owner:'Tech', color:'#7c3aed', fix:'QA regression on purchase flow every deployment. Hotfix SLA <4hrs for purchase-blocking bugs.'},
-          {cause:'Credit balance not visible to cx during purchase', count:2, owner:'Tech', color:'#7c3aed', fix:'Real-time credit balance sync. Fallback display with retry if sync fails. CS team to have manual override option.'},
-        ]
-      },
-      {
-        l2:'Customization Query', count:5, maxCount:29,
-        badge:'✏️ Customization Not Possible', badgeColor:'rgba(124,58,237,.07)', badgeTxt:'#7c3aed',
-        causes:[
-          {cause:'Cx wanted customisation that is not possible — MTO & CAD limitation', count:5, owner:'MTO & CAD + Presales', color:'var(--gold)', fix:'JC to proactively inform cx of customisation limitations before the cx proposes it. Manage expectations early in conversation.'},
-        ]
-      }
-    ],
-    actions:['Weekly Tech NS impact review with QA team','P1 SLA for checkout/payment bugs — 4hrs','MTO & CAD to share updated customisation capability list with Presales','ERP sync for credit balance — raise as Tech engineering ticket']
-  },
-  {
-    id:'refunds',
-    icon:'💰', color:'#1a4fa0', tagCls:'pill-blue',
-    title:'Refunds',
-    total:37, share:8.1,
-    team:'Post Sale IB · Presales IB · Tech',
-    ccpt:'Process-driven',
-    desc:'37 NS cases on refund delays, credit balance issues and PoP refund policy dissatisfaction. Refund delays are the biggest driver — most caused by process gaps between return confirmation and refund trigger.',
-    subtypes:[
-      {
-        l2:'Refund Status / Delay', count:23, maxCount:37,
-        badge:'⏳ Refund Taking Too Long', badgeColor:'rgba(26,79,160,.07)', badgeTxt:'var(--blue)',
-        causes:[
-          {cause:'Refund delayed beyond committed TAT — cx following up repeatedly', count:4, owner:'Post Sale IB', color:'var(--blue)', fix:'Refund TAT to be communicated at time of return confirmation. Auto-flag cases >7 days for mandatory JC follow-up.'},
-          {cause:'JC lack of ownership — refund raised but no follow-up with cx', count:2, owner:'Post Sale IB', color:'var(--blue)', fix:'Refund cases to have T+3 day check-in. If refund not processed by T+7, escalate to senior with cx notification.'},
-          {cause:'Refund delay due to Tech/system issue — not processed automatically', count:2, owner:'Post Sale IB + Tech', color:'#7c3aed', fix:'Auto-trigger refund post return scan. Manual trigger option for CS if auto-process fails.'},
-        ]
-      },
-      {
-        l2:'Payment Failure / Credit Balance', count:3, maxCount:37,
-        badge:'💳 Credit Balance Invisible', badgeColor:'rgba(26,79,160,.07)', badgeTxt:'var(--blue)',
-        causes:[
-          {cause:'Credit balance not reflecting after return/refund transaction', count:1, owner:'Tech', color:'#7c3aed', fix:'Real-time balance update after every refund transaction. Visible within 2hrs.'},
-          {cause:'Refund delay due to Presales IB not initiating correctly', count:2, owner:'Presales IB', color:'var(--blue)', fix:'Presales team to be trained on correct refund initiation process in OneView.'},
-        ]
-      }
-    ],
-    actions:['Auto-refund trigger post return scan — Tech ticket','Refund status SOP: communicate TAT + T+7 escalation path','Presales IB training on refund initiation in OneView','Flag refund cases >7 days in system for mandatory JC action']
-  }
-];!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Root Cause Analysis · NS Audit · June 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;0,800;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --mag:#C8005A;--mag-lt:#F0006E;--mag-dk:#8A003E;--mag-pale:#FFF0F6;
-  --gold:#B8860B;--gold-lt:#E8B840;
-  --ink:#0F0A10;--ink2:#1E0E1A;
-  --body:#FAFAF8;--surface:#FFFFFF;
-  --bdr:#EEE4EC;--bdr2:#E0CCD8;
-  --txt:#1A0818;--txt2:#5A3048;--txt3:#9A7085;
-  --sh-sm:0 2px 8px rgba(15,10,16,.08);--sh-md:0 4px 20px rgba(15,10,16,.10);--sh-lg:0 8px 36px rgba(15,10,16,.14);
-  --green:#1a7a4a;--blue:#1a4fa0;--orange:#c2590a;--r:16px;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-webkit-font-smoothing:antialiased;}
-@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-
-/* HEADER */
-.hdr{position:sticky;top:0;z-index:900;background:var(--ink2);border-bottom:2px solid transparent;border-image:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent) 1;display:flex;align-items:center;padding:0 48px;height:64px;}
-.hdr-brand{display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none;}
-.cl-name{font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#fff;line-height:1;}
-.cl-sub{font-size:7px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,200,220,.4);}
-.hdr-sep{width:1px;height:28px;background:rgba(255,255,255,.1);margin:0 20px;flex-shrink:0;}
-.hdr-nav{display:flex;gap:0;flex:1;}
-.hnav{height:64px;padding:0 13px;display:flex;align-items:center;font-size:9.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:rgba(255,200,220,.35);text-decoration:none;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap;}
-.hnav:hover{color:rgba(255,200,220,.7);}
-.hnav.active{color:#fff;border-bottom-color:var(--mag);background:rgba(200,0,90,.08);}
-.hdr-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
-.hdr-badge{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mag);border:1.5px solid rgba(200,0,90,.4);padding:4px 10px;border-radius:20px;background:rgba(200,0,90,.08);}
-.csv-btn{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--mag),var(--mag-dk));border:none;padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;}
-.csv-btn:hover{transform:scale(1.05);}
-
-/* HERO */
-.hero{background:linear-gradient(160deg,var(--ink2) 0%,#2A0E22 55%,#1A0E2A 100%);padding:44px 48px 38px;position:relative;overflow:hidden;}
-.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;}
-.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mag);border:1px solid rgba(200,0,90,.3);padding:4px 12px;border-radius:4px;background:rgba(200,0,90,.07);margin-bottom:14px;}
-.hero-title{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:800;color:#fff;line-height:1.1;margin-bottom:6px;}
-.hero-sub{font-size:13px;color:rgba(255,200,220,.45);margin-bottom:28px;}
-.hero-pills{display:flex;gap:10px;flex-wrap:wrap;}
-.hpill{display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:600;padding:6px 14px;border-radius:20px;cursor:pointer;border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);background:rgba(255,255,255,.04);transition:all .2s;}
-.hpill:hover,.hpill.active{color:#fff;background:rgba(200,0,90,.15);border-color:rgba(200,0,90,.4);}
-.hpill .dot{width:7px;height:7px;border-radius:50%;}
-
-/* PAGE */
-.page{max-width:1300px;margin:0 auto;padding:40px 48px 80px;}
-.spacer{height:36px;}
-.fade-up{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
-.fade-up.visible{opacity:1;transform:none;}
-
-/* CATEGORY BLOCK */
-.cat-block{background:var(--surface);border:1.5px solid var(--bdr);border-radius:20px;overflow:hidden;box-shadow:var(--sh-sm);margin-bottom:28px;transition:box-shadow .2s;}
-.cat-block:hover{box-shadow:var(--sh-md);}
-.cat-hd{padding:26px 32px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;border-bottom:1.5px solid var(--bdr);}
-.cat-hd-left{flex:1;}
-.cat-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.cat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
-.cat-tag{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:4px;}
-.cat-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:800;color:var(--ink);margin-bottom:5px;}
-.cat-desc{font-size:12.5px;color:var(--txt3);line-height:1.7;max-width:640px;}
-.cat-stats{display:flex;gap:16px;flex-shrink:0;}
-.cs-box{text-align:center;background:var(--body);border:1.5px solid var(--bdr);border-radius:12px;padding:14px 20px;}
-.cs-num{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:800;line-height:1;}
-.cs-lbl{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--txt3);margin-top:2px;}
-
-/* SUBTYPES */
-.subtypes{padding:0;}
-.subtype-row{padding:22px 32px;border-bottom:1px solid var(--bdr);display:grid;grid-template-columns:220px 1fr;gap:24px;align-items:start;}
-.subtype-row:last-child{border-bottom:none;}
-.st-left{}
-.st-badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.5px;padding:5px 12px;border-radius:6px;margin-bottom:8px;}
-.st-count{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:800;line-height:1;color:var(--ink);}
-.st-count-lbl{font-size:9px;color:var(--txt3);margin-top:1px;}
-.st-bar-wrap{margin-top:10px;}
-.st-bar-track{height:6px;background:var(--bdr);border-radius:4px;overflow:hidden;}
-.st-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--mag),var(--mag-lt));transition:width 1.4s cubic-bezier(.4,0,.2,1);}
-.st-pct{font-size:9px;color:var(--txt3);margin-top:4px;}
-
-/* ROOT CAUSE CARDS */
-.rc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
-.rc-card{border-radius:12px;padding:16px 18px;border:1.5px solid var(--bdr);background:var(--body);position:relative;transition:all .2s;}
-.rc-card:hover{transform:translateY(-2px);box-shadow:var(--sh-sm);background:var(--surface);}
-.rc-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;border-radius:12px 0 0 12px;background:var(--rc-color,var(--bdr));}
-.rc-num-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.rc-count{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:800;color:var(--rc-color,var(--ink));}
-.rc-owner-pill{font-size:8px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:4px;background:rgba(200,0,90,.07);color:var(--mag);}
-.rc-cause{font-size:12.5px;font-weight:600;color:var(--txt);margin-bottom:7px;line-height:1.4;}
-.rc-fix-label{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:4px;}
-.rc-fix{font-size:11.5px;color:var(--txt3);line-height:1.6;border-top:1px dashed var(--bdr);padding-top:7px;margin-top:4px;}
-
-/* ACTION BOX */
-.action-box{background:linear-gradient(135deg,#fffbf0,#fff9f0);border:1.5px solid rgba(184,134,11,.2);border-radius:14px;padding:18px 22px;margin-top:16px;margin-left:32px;margin-right:32px;margin-bottom:24px;}
-.ab-title{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.ab-items{display:flex;flex-wrap:wrap;gap:8px;}
-.ab-item{font-size:11.5px;color:var(--txt2);background:rgba(255,255,255,.7);border:1px solid rgba(184,134,11,.2);border-radius:6px;padding:5px 12px;display:flex;align-items:center;gap:6px;}
-.ab-item::before{content:'→';color:var(--gold);font-weight:700;}
-
-/* OWNER LEGEND */
-.owner-legend{display:flex;flex-wrap:wrap;gap:10px;padding:18px 32px;background:#f7f5fc;border-top:1px solid var(--bdr);}
-.ol-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--txt3);}
-.ol-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
-
-/* SUMMARY TABLE */
-.sum-table{width:100%;border-collapse:collapse;font-size:12px;}
-.sum-table th{font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);padding:10px 14px;border-bottom:2px solid var(--bdr);text-align:left;}
-.sum-table td{padding:10px 14px;border-bottom:1px solid var(--bdr);color:var(--txt2);vertical-align:top;}
-.sum-table tr:last-child td{border-bottom:none;}
-.sum-table tr:hover td{background:#fdf5f8;}
-.sum-table .n{color:var(--mag);font-weight:700;}
-.sum-table .owner{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(200,0,90,.07);color:var(--mag);}
-.fix-chip{display:inline-block;font-size:10px;background:#f0fdf4;border:1px solid rgba(26,122,74,.2);color:var(--green);border-radius:4px;padding:2px 8px;}
-
-/* FOOTER */
-footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;justify-content:space-between;}
-.ft-l{font-size:11px;color:rgba(255,200,220,.3);}
-.ft-r{font-size:11px;color:rgba(255,200,220,.3);}
-
-@media(max-width:900px){
-  .hdr{padding:0 16px;height:56px;}
-  .hdr-sep{display:none;}
-  .hnav{padding:0 8px;font-size:8px;letter-spacing:1px;}
-  .hero{padding:28px 16px 24px;}
-  .hero-kpis{grid-template-columns:repeat(4,1fr);gap:8px;}
-  .hk-num{font-size:22px;}
-  .page{padding:24px 16px 60px;}
-  .g4{grid-template-columns:repeat(2,1fr);}
-  .g3{grid-template-columns:repeat(2,1fr);}
-  .g2{grid-template-columns:1fr;}
-  .team-grid{grid-template-columns:repeat(2,1fr);}
-  .insight-grid{grid-template-columns:1fr;}
-  .modal-sheet{max-height:92vh;}
-  .hero-title{font-size:28px;}
-  .btn-sm{display:none;}
-}
-@media(max-width:500px){
-  .hero-kpis{grid-template-columns:repeat(2,1fr);}
-  .team-grid{grid-template-columns:1fr;}
-  .g4{grid-template-columns:1fr;}
-  .hk-lbl{font-size:7px;}
-  .hnav{font-size:7px;padding:0 6px;letter-spacing:.5px;}
-}
-
-</style>
-</head>
-<body>
-<header class="hdr">
-  <a class="hdr-brand" href="index.html">
-    <img id="hdrLogo" style="width:38px;height:38px;object-fit:cover;border-radius:8px;flex-shrink:0;" alt="CaratLane">
-    <div><div class="cl-name">CaratLane</div><div class="cl-sub">NS Audit Dashboard</div></div>
-  </a>
-  <div class="hdr-sep"></div>
-  <nav class="hdr-nav">
-    <a class="hnav" href="index.html">Overview</a>
-    <a class="hnav" href="analytics.html">Analytics</a>
-    <a class="hnav" href="team.html">Teams</a>
-    <a class="hnav active" href="rootcause.html">Root Cause</a>
-  </nav>
-  <div class="hdr-right">
-    <button class="csv-btn" onclick="downloadCSV()">⬇ Export CSV</button>
-    <div class="hdr-badge">June 2026</div>
-  </div>
-</header>
-
-<div class="hero">
-  <div class="hero-tag">🔍 Pinpointed Root Cause Analysis</div>
-  <h1 class="hero-title">Why Are Customers Dissatisfied?</h1>
-  <p class="hero-sub">Every NS mapped to its exact cause, responsible team, and recommended fix — drill down from L1 → L2 → Root Cause → Owner → Action</p>
-  <div class="hero-pills">
-    <div class="hpill active" onclick="filterCat('all')"><span class="dot" style="background:#C8005A"></span>All Issues (363)</div>
-    <div class="hpill" onclick="filterCat('order_management')"><span class="dot" style="background:#C8005A"></span>Order Management (114)</div>
-    <div class="hpill" onclick="filterCat('delivery_delay')"><span class="dot" style="background:#d97706"></span>Delivery Delays (44)</div>
-    <div class="hpill" onclick="filterCat('lack_of_ownership')"><span class="dot" style="background:#1a4fa0"></span>Lack of Ownership (41)</div>
-    <div class="hpill" onclick="filterCat('returns')"><span class="dot" style="background:#1a7a4a"></span>Returns (39)</div>
-    <div class="hpill" onclick="filterCat('tech_issues')"><span class="dot" style="background:#7c3aed"></span>Tech / App Issues (36)</div>
-    <div class="hpill" onclick="filterCat('repair_charges')"><span class="dot" style="background:#B8860B"></span>Repair Charges (19)</div>
-  </div>
-</div>
-
-<div class="page">
-
-  <!-- QUICK SUMMARY TABLE -->
-  <div class="spacer"></div>
-  <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:18px;" class="fade-up">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--ink);">Executive Summary</div>
-    <div style="font-size:11px;color:var(--txt3);">Top root causes ranked by impact with owner & recommended action</div>
-  </div>
-  <div class="cat-block fade-up" style="overflow:auto;">
-    <table class="sum-table">
-      <thead><tr><th>#</th><th>Root Cause</th><th>Cases</th><th>% of NS</th><th>Primary Owner</th><th>Category</th><th>Recommended Fix</th></tr></thead>
-      <tbody>
-        <tr><td>1</td><td><strong>Delivery Delayed</strong></td><td class="n">51</td><td>11.2%</td><td><span class="owner">Logistics</span></td><td>Order Management / Delivery</td><td><span class="fix-chip">Proactive delay alert SOP</span></td></tr>
-        <tr><td>2</td><td><strong>Order Tracking Status Not Reflecting</strong></td><td class="n">11</td><td>3.0%</td><td><span class="owner">Tech</span></td><td>Order Management</td><td><span class="fix-chip">ERP-to-app sync fix &lt;1hr</span></td></tr>
-        <tr><td>3</td><td><strong>JC No Follow-up After Raising Concern</strong></td><td class="n">16</td><td>4.4%</td><td><span class="owner">Post Sale IB/WA</span></td><td>Lack of Ownership</td><td><span class="fix-chip">Mandatory T+24hr callback SOP</span></td></tr>
-        <tr><td>4</td><td><strong>JC Accepted Cancellation Without Retention</strong></td><td class="n">6</td><td>1.7%</td><td><span class="owner">Post Sale IB/OB</span></td><td>Lack of Ownership</td><td><span class="fix-chip">Retention script before cancel</span></td></tr>
-        <tr><td>5</td><td><strong>Reverse Pickup Delayed / Not Scheduled</strong></td><td class="n">11</td><td>3.0%</td><td><span class="owner">Logistics</span></td><td>Returns</td><td><span class="fix-chip">RVP SLA within 24hrs</span></td></tr>
-        <tr><td>6</td><td><strong>Website Error During Purchase</strong></td><td class="n">8</td><td>2.2%</td><td><span class="owner">Tech</span></td><td>Tech / App</td><td><span class="fix-chip">Weekly error log review</span></td></tr>
-        <tr><td>7</td><td><strong>Repair Charges Not Communicated Upfront</strong></td><td class="n">8</td><td>2.2%</td><td><span class="owner">Repair Team</span></td><td>Repair Charges</td><td><span class="fix-chip">Pre-repair cost estimate mandatory</span></td></tr>
-        <tr><td>8</td><td><strong>JC Transferred / Deflected Instead of Owning</strong></td><td class="n">10</td><td>2.8%</td><td><span class="owner">Presales IB/WA/Chat</span></td><td>Lack of Ownership</td><td><span class="fix-chip">FCO policy — no deflection SOP</span></td></tr>
-        <tr><td>9</td><td><strong>Incorrect Information / Wrong TAT Given by JC</strong></td><td class="n">9</td><td>2.5%</td><td><span class="owner">Post Sale IB/WA</span></td><td>Consultant Error</td><td><span class="fix-chip">JC to verify before committing</span></td></tr>
-        <tr><td>10</td><td><strong>Credit Balance / Payment Not Visible on App</strong></td><td class="n">5</td><td>1.4%</td><td><span class="owner">Tech</span></td><td>Tech / App</td><td><span class="fix-chip">Real-time balance sync</span></td></tr>
-        <tr><td>11</td><td><strong>Refund Not Processed Post Return</strong></td><td class="n">3</td><td>0.8%</td><td><span class="owner">Post Sale IB</span></td><td>Returns / Refunds</td><td><span class="fix-chip">Auto-trigger refund after RVP scan</span></td></tr>
-        <tr><td>12</td><td><strong>JC Closed Chat Without Confirming Resolution</strong></td><td class="n">5</td><td>1.4%</td><td><span class="owner">All Teams</span></td><td>Ownership / Process</td><td><span class="fix-chip">Chat closure SOP — cx must confirm</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- CATEGORY BLOCKS -->
-  <div class="spacer"></div>
-  <div id="catBlocks"></div>
-
-</div>
-
-<footer>
-  <div class="ft-l">CaratLane Quality Audit · Root Cause Analysis · June 2026</div>
-  <div class="ft-r">Prepared by <strong style="color:rgba(255,200,220,.6)">CS Quality Team</strong> · QA Team · Confidential</div>
-</footer>
-
-
-<!-- CASE DRILL-DOWN MODAL -->
-<div id="rcCaseModal" style="position:fixed;inset:0;background:rgba(15,10,16,.7);backdrop-filter:blur(12px);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;">
-  <div style="background:#FAFAF8;border-radius:24px 24px 0 0;width:100%;max-width:1200px;max-height:86vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.34,1.2,.64,1);" id="rcModalSheet">
-    <div style="padding:20px 26px 14px;border-bottom:1px solid #EEE4EC;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-      <div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:#0F0A10;" id="rcModalTitle">Cases</div>
-        <div style="font-size:11px;color:#9A7085;" id="rcModalSub"></div>
-      </div>
-      <button onclick="closeRcModal()" style="width:34px;height:34px;border-radius:50%;background:#f0f0f0;border:none;cursor:pointer;font-size:16px;color:#9A7085;">✕</button>
-    </div>
-    <div style="padding:18px 26px;overflow-y:auto;flex:1;">
-      <div style="font-size:11px;color:#9A7085;margin-bottom:12px;" id="rcModalCount"></div>
-      <div style="overflow-x:auto;">
-        <table style="width:100%;border-collapse:collapse;font-size:12px;">
-          <thead><tr id="rcModalTHead" style="background:#1E0E1A;color:#fff;"></tr></thead>
-          <tbody id="rcModalBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-<script src="data.js"></script>
-<script>
-// Inject logo from data.js
-if(typeof DASHBOARD_DATA!=='undefined' && DASHBOARD_DATA.logo){
-  var logoEl=document.getElementById('hdrLogo');
-  if(logoEl) logoEl.src=DASHBOARD_DATA.logo;
-}
-
-const CATS = [
-  {
-    id:'order_management',
-    icon:'📦', color:'var(--mag)', tagCls:'pill-red',
-    title:'Order Management',
-    total:114, share:31.4,
-    team:'Logistics · Tech · Post Sale IB/WA',
-    ccpt:'Process-driven (64% of cases)',
-    desc:'The single largest NS driver. 114 cases (31.4%) stem from order management issues — primarily delivery delays, order status not reflecting, cancellations triggered by delays, and physical delivery failures.',
-    subtypes:[
-      {
-        l2:'Order Tracking / Status', count:45, maxCount:114,
-        badge:'🔎 Tracking Failure', badgeColor:'rgba(200,0,90,.08)', badgeTxt:'var(--mag)',
-        causes:[
-          {cause:'Delivery delayed — Logistics SLA breach', count:8, owner:'Logistics', color:'var(--mag)', fix:'Auto-escalation if order not dispatched by T+1. Real-time delay alert to cx via WhatsApp before they contact us.'},
-          {cause:'Order status not reflecting on app / ERP sync delay', count:4, owner:'Tech', color:'#7c3aed', fix:'ERP-to-app sync must be under 1hr. Manual refresh trigger to be given to CS team for use during cx interactions.'},
-          {cause:'JC gave generic update without checking OneView', count:4, owner:'Post Sale IB', color:'var(--blue)', fix:'JC must check OneView/ERP before every status response. No generic "it\'ll be delivered soon" allowed.'},
-          {cause:'JC did not follow up after raising logistics concern', count:3, owner:'Post Sale IB/WA', color:'var(--blue)', fix:'T+24hr mandatory callback SOP for all cases where a concern has been raised with Logistics.'},
-        ]
-      },
-      {
-        l2:'Order Cancellation', count:32, maxCount:114,
-        badge:'❌ Cancellation Driven by Delay', badgeColor:'rgba(200,0,90,.06)', badgeTxt:'var(--mag)',
-        causes:[
-          {cause:'Delivery delayed → Customer initiated cancellation', count:12, owner:'Logistics', color:'var(--mag)', fix:'Proactive WhatsApp/SMS alert the moment delay is detected. JC to call cx before cx contacts us — prevent the escalation.'},
-          {cause:'JC accepted cancellation without attempting retention', count:4, owner:'Post Sale IB/OB', color:'var(--blue)', fix:'Mandatory retention script before any cancellation is processed. Escalate to TL if cx is firm. No straight accept.'},
-          {cause:'JC failed to probe root cause of cancellation', count:2, owner:'Post Sale IB/OB', color:'var(--blue)', fix:'Probing checklist mandatory — identify WHY cx wants to cancel before proceeding. Document root cause in every case.'},
-          {cause:'App / system not reflecting status (triggers doubt)', count:2, owner:'Tech', color:'#7c3aed', fix:'Fix prepaid order status sync on app — a cx who can see their order status is less likely to cancel.'},
-        ]
-      },
-      {
-        l2:'Physical Delivery Request', count:21, maxCount:114,
-        badge:'🚚 Physical Delivery Failure', badgeColor:'rgba(200,0,90,.06)', badgeTxt:'var(--mag)',
-        causes:[
-          {cause:'Delivery slot not fulfilled on committed date', count:10, owner:'Logistics', color:'var(--mag)', fix:'Physical delivery slots to have a 2-hour confirmation window. JC to reconfirm with cx 1 day prior.'},
-          {cause:'JC gave incorrect delivery TAT commitment', count:2, owner:'Post Sale IB/WA', color:'var(--blue)', fix:'JC must verify with Logistics before quoting any delivery date. No self-estimated TAT.'},
-          {cause:'Order details not visible on app (cx can\'t track)', count:2, owner:'Tech', color:'#7c3aed', fix:'Fix order detail rendering for physical delivery orders on the app.'},
-          {cause:'JC did not follow through end-to-end on delivery request', count:2, owner:'Post Sale IB', color:'var(--blue)', fix:'Physical delivery cases to be tagged in system — JC responsible until delivery confirmed.'},
-        ]
-      }
-    ],
-    actions:['Send this report to Logistics Team lead','Escalate ERP sync issue to Tech as P1','Mandate retention scripting training for Post Sale IB/OB','Add proactive delay alert process to Logistics SOP']
-  },
-  {
-    id:'lack_of_ownership',
-    icon:'🤝', color:'var(--blue)', tagCls:'pill-blue',
-    title:'Lack of Ownership',
-    total:41, share:11.3,
-    team:'Post Sale IB · Post Sale OB · Presales IB/WA/Chat',
-    ccpt:'Consultant-driven (appears in both Primary & Secondary dislike)',
-    desc:'The most pervasive behavioural failure across all teams. Ownership issues appear as both primary and secondary dislike — making it the single most recurring agent-behaviour problem. 41 cases across 9 query types.',
-    subtypes:[
-      {
-        l2:'Order Tracking / Status (No Follow-up)', count:10, maxCount:41,
-        badge:'📵 No Proactive Follow-up', badgeColor:'rgba(26,79,160,.07)', badgeTxt:'var(--blue)',
-        causes:[
-          {cause:'JC raised a concern with Logistics but never followed up with cx', count:6, owner:'Post Sale IB/WA', color:'var(--blue)', fix:'Mandatory T+24hr follow-up call for any case where a concern has been raised. Not optional.'},
-          {cause:'JC gave a generic update — did not check actual system status', count:4, owner:'Post Sale IB', color:'var(--blue)', fix:'OneView check before every status update. Audit to score JC zero on ownership if generic update is given without system check.'},
-        ]
-      },
-      {
-        l2:'Order Cancellation (No Retention Attempt)', count:6, maxCount:41,
-        badge:'🚫 No Retention Attempt', badgeColor:'rgba(26,79,160,.07)', badgeTxt:'var(--blue)',
-        causes:[
-          {cause:'JC processed cancellation without trying to retain cx', count:4, owner:'Post Sale IB/OB', color:'var(--blue)', fix:'Retention scripting mandatory. If cx insists, escalate to TL/senior before accepting. Log the attempt.'},
-          {cause:'JC did not probe WHY cx wanted to cancel', count:2, owner:'Post Sale IB/OB', color:'var(--blue)', fix:'Root cause probing checklist for cancellations. Every cancellation case must have a documented reason.'},
-        ]
-      },
-      {
-        l2:'General Purchase — Presale Deflection', count:6, maxCount:41,
-        badge:'↩ Transferred Instead of Owning', badgeColor:'rgba(26,79,160,.07)', badgeTxt:'var(--blue)',
-        causes:[
-          {cause:'JC asked cx to call helpline or transferred instead of handling', count:4, owner:'Presales IB/WA/Chat', color:'var(--blue)', fix:'First-Contact-Ownership policy — JC must own all queries within scope. Transfers only for genuine out-of-scope cases with TL approval.'},
-          {cause:'High-intent purchase cx not given personalised assistance', count:2, owner:'Presales Chat', color:'var(--blue)', fix:'High-intent cx (asking for product personalisation, purchase assistance) to be flagged and given priority callback within 30 mins.'},
-        ]
-      },
-      {
-        l2:'Refund / Delivery — No Follow-up', count:8, maxCount:41,
-        badge:'⏰ Refund & Delivery Follow-up Missed', badgeColor:'rgba(26,79,160,.07)', badgeTxt:'var(--blue)',
-        causes:[
-          {cause:'Cx waited 15+ days for refund — JC never followed up', count:3, owner:'Post Sale IB', color:'var(--blue)', fix:'Refund cases >7 days to be auto-flagged in system. JC assigned to these must check and update cx every 3 days.'},
-          {cause:'JC closed chat without confirming cx issue was resolved', count:3, owner:'All Teams', color:'var(--mag)', fix:'Chat/call closure SOP — cx must confirm resolution before JC can close. Audit to score closure without confirmation.'},
-          {cause:'JC failed to use empathy / ownership phrases during interaction', count:2, owner:'All Teams', color:'var(--mag)', fix:'Ownership phrases ("I take responsibility", "I will personally follow up") mandatory in all escalation cases. Auditor to score on this.'},
-        ]
-      }
-    ],
-    actions:['Share ownership scorecard with all team TLs','Add T+24hr follow-up SOP to all team playbooks','Training module: Retention scripting & first-contact ownership','Audit scoring to penalise chat closure without cx confirmation']
-  },
-  {
-    id:'delivery_delay',
-    icon:'🚚', color:'#d97706', tagCls:'pill-amber',
-    title:'Delivery Delays',
-    total:44, share:12.1,
-    team:'Logistics (primary) · Post Sale IB (secondary)',
-    ccpt:'Process-driven — Logistics SLA failures',
-    desc:'44 cases (12.1%) are directly caused by delivery delays. This is a cross-functional issue — Logistics owns the SLA failure, but Post Sale owns the cx communication failure when delays happen.',
-    subtypes:[
-      {
-        l2:'Order Tracking → Delivery Delayed', count:8, maxCount:44,
-        badge:'📍 Status: Delay Not Communicated', badgeColor:'rgba(217,119,6,.07)', badgeTxt:'#d97706',
-        causes:[
-          {cause:'Logistics SLA breach — order not dispatched within promised TAT', count:8, owner:'Logistics', color:'#d97706', fix:'Strict SLA monitoring dashboard. Auto-escalation to Logistics manager if dispatch not done by T+1. Daily SLA breach report.'},
-        ]
-      },
-      {
-        l2:'Order Cancellation → Triggered by Delay', count:12, maxCount:44,
-        badge:'💥 Delay Caused Cancellation', badgeColor:'rgba(217,119,6,.07)', badgeTxt:'#d97706',
-        causes:[
-          {cause:'Cx not informed of delay proactively — found out themselves', count:12, owner:'Logistics + Post Sale IB', color:'var(--mag)', fix:'Proactive WhatsApp/SMS alert to cx the moment a delay is logged in system. JC to call cx before cx contacts us — if cx is calling us about a delay, we\'ve already failed.'},
-        ]
-      },
-      {
-        l2:'Physical Delivery → Slot Not Fulfilled', count:10, maxCount:44,
-        badge:'📅 Committed Slot Missed', badgeColor:'rgba(217,119,6,.07)', badgeTxt:'#d97706',
-        causes:[
-          {cause:'Physical delivery slot missed without advance notice to cx', count:10, owner:'Logistics', color:'#d97706', fix:'Physical delivery slot confirmation call to cx T-1 day. If slot can\'t be kept, cx must be informed 4hrs prior with new slot.'},
-        ]
-      },
-      {
-        l2:'Orders & Delivery → Missed Follow-up After Concern', count:5, maxCount:44,
-        badge:'🔕 Missed Follow-up Call', badgeColor:'rgba(217,119,6,.07)', badgeTxt:'#d97706',
-        causes:[
-          {cause:'JC raised delivery concern but did not follow up with cx', count:5, owner:'Post Sale IB/OB', color:'var(--blue)', fix:'Delivery concern cases: T+24hr mandatory JC callback. If delivery still not done at T+48hr, escalate to Logistics manager directly.'},
-        ]
-      }
-    ],
-    actions:['Share Delivery Delay report directly with Logistics Team','Implement proactive delay alert on Logistics SLA breach','Post Sale IB to own T+24hr follow-up SOP for all delivery concerns','Monthly Logistics SLA vs NS correlation review']
-  },
-  {
-    id:'returns',
-    icon:'↩', color:'var(--green)', tagCls:'pill-green',
-    title:'Returns',
-    total:39, share:10.7,
-    team:'Logistics · Post Sale IB/WA',
-    ccpt:'Process-driven',
-    desc:'39 NS cases across return pick-up scheduling, refund delays, and return initiation failures. Logistics RVP SLA and JC follow-up ownership are the two primary failure points.',
-    subtypes:[
-      {
-        l2:'Return Pick-up Scheduling', count:15, maxCount:39,
-        badge:'📬 RVP Not Scheduled / Delayed', badgeColor:'rgba(26,122,74,.07)', badgeTxt:'var(--green)',
-        causes:[
-          {cause:'Reverse pickup not scheduled within 24hrs of return initiation', count:7, owner:'Logistics', color:'var(--green)', fix:'RVP to be auto-scheduled within 24hrs of return being raised. System alert if not done.'},
-          {cause:'Pickup not serviceable at cx location — no alternate offered', count:4, owner:'Logistics', color:'var(--green)', fix:'Improve RVP partner coverage. If location unserviceable, offer alternate pickup point or drop-off option immediately.'},
-          {cause:'JC did not follow up on pending RVP case', count:4, owner:'Post Sale IB/WA', color:'var(--blue)', fix:'All pending RVP cases: T+48hr mandatory JC follow-up. If RVP still not done, escalate to Logistics manager.'},
-        ]
-      },
-      {
-        l2:'Refund Status / Delay Post Return', count:3, maxCount:39,
-        badge:'💰 Refund Not Triggered', badgeColor:'rgba(26,122,74,.07)', badgeTxt:'var(--green)',
-        causes:[
-          {cause:'Refund not processed after successful return pickup scan', count:3, owner:'Post Sale IB', color:'var(--blue)', fix:'Refund auto-trigger immediately after RVP pickup scan. JC to communicate refund TAT to cx at time of pickup confirmation.'},
-        ]
-      }
-    ],
-    actions:['Share Return RVP SLA breach data with Logistics','Implement auto-refund trigger post RVP scan','JC T+48hr follow-up SOP for pending RVP cases','Cover RVP coverage gaps in Tier-2/3 locations']
-  },
-  {
-    id:'tech_issues',
-    icon:'💻', color:'#7c3aed', tagCls:'',
-    title:'Tech / App Issues',
-    total:36, share:9.9,
-    team:'Tech Team (primary) · Presales (secondary)',
-    ccpt:'Technology-driven',
-    desc:'36 NS cases where the primary cause is a tech or app failure — website errors during purchase, order status not syncing, credit balance not showing, and payment flow bugs. All are preventable with better QA and monitoring.',
-    subtypes:[
-      {
-        l2:'Website Error During Purchase (Presale)', count:8, maxCount:36,
-        badge:'🌐 Website Error', badgeColor:'rgba(124,58,237,.07)', badgeTxt:'#7c3aed',
-        causes:[
-          {cause:'Checkout/purchase flow throwing errors causing drop-offs', count:8, owner:'Tech', color:'#7c3aed', fix:'Weekly checkout error log review. Critical path errors (checkout, payment) to be fixed within 24hrs. Automated alerts on error spike.'},
-        ]
-      },
-      {
-        l2:'Order Status Not Reflecting (ERP Sync)', count:6, maxCount:36,
-        badge:'🔄 ERP Sync Failure', badgeColor:'rgba(124,58,237,.07)', badgeTxt:'#7c3aed',
-        causes:[
-          {cause:'ERP-to-app sync delay causes cx to see wrong/stale order status', count:6, owner:'Tech', color:'#7c3aed', fix:'Reduce ERP-to-app sync delay to under 1hr. Give CS team a manual "force refresh" button for use in live cx interactions.'},
-        ]
-      },
-      {
-        l2:'Credit Balance / Payments Not Visible', count:5, maxCount:36,
-        badge:'💳 Balance Not Showing', badgeColor:'rgba(124,58,237,.07)', badgeTxt:'#7c3aed',
-        causes:[
-          {cause:'Credit balance or prepaid amount not displaying after transaction', count:5, owner:'Tech', color:'#7c3aed', fix:'Real-time credit balance sync on all payment events. Fallback display ("Balance updating, please check in 15 mins") if sync fails.'},
-        ]
-      },
-      {
-        l2:'App Issues During Cancellation / Payment Flow', count:5, maxCount:36,
-        badge:'📱 App Flow Failure', badgeColor:'rgba(124,58,237,.07)', badgeTxt:'#7c3aed',
-        causes:[
-          {cause:'App freezing or throwing errors during cancel/payment flow', count:5, owner:'Tech', color:'#7c3aed', fix:'QA regression on cancel + payment flows every deployment. Hotfix SLA: <4hrs for payment-blocking bugs, <24hrs for others.'},
-        ]
-      }
-    ],
-    actions:['Weekly Tech NS impact review with QA team','P1 escalation SLA for payment & checkout bugs — 4hrs','ERP sync delay to be reduced to <1hr — raise as engineering ticket','OneView "force refresh" for CS agents — request to Tech']
-  },
-  {
-    id:'repair_charges',
-    icon:'🔧', color:'var(--gold)', tagCls:'pill-amber',
-    title:'Repair Charges Dispute',
-    total:19, share:5.2,
-    team:'Repair Team · Post Sale OB',
-    ccpt:'Customer-driven (cx finds charges unexpected) — preventable with upfront communication',
-    desc:'19 NS cases where customers are unhappy with repair charges. The issue isn\'t the charge itself — it\'s that customers are not informed of the cost before the repair begins. An entirely preventable source of NS.',
-    subtypes:[
-      {
-        l2:'Repair Charges Dispute', count:19, maxCount:19,
-        badge:'💸 Charge Felt Unexpected', badgeColor:'rgba(184,134,11,.08)', badgeTxt:'var(--gold)',
-        causes:[
-          {cause:'Repair cost estimate not shared with cx before work began', count:8, owner:'Repair Team', color:'var(--gold)', fix:'Non-negotiable SOP: cx must receive repair cost estimate via WhatsApp before any repair begins. No repair without cx written approval.'},
-          {cause:'Cx disputes final charge vs initial estimate', count:6, owner:'Repair Team', color:'var(--gold)', fix:'Detailed repair charge breakdown to be sent to cx. Any deviation from estimate to be communicated with explanation before final billing.'},
-          {cause:'JC used poor empathy when communicating repair charges to cx', count:5, owner:'Post Sale OB', color:'var(--blue)', fix:'Training module: Delivering difficult financial news. Empathy scripting for repair charge conversations. JC should never be blunt about cost.'},
-        ]
-      }
-    ],
-    actions:['Share Repair NS data with Repair Team head','Make pre-repair cost estimate mandatory in repair SOP','JC training on empathy scripting for repair charge conversations','Audit: Score JC on repair charge communication quality']
-  }
-];
+const CATS = [{"id": "order_management", "icon": "📦", "color": "#1a4fa0", "tagCls": "", "title": "Order Management", "total": 312, "share": 38.6, "team": "Process/Ops team", "ccpt": "Process", "desc": "312 NS cases under Order Management this month (38.6% of all NS). Dominant root cause bucket: Process.", "trend": {"direction": "up", "pct": 117, "prior": 144}, "subtypes": [{"l2": "Delivery Delayed", "count": 87, "maxCount": 312, "badge": "Delivery Delayed", "badgeColor": "#1a4fa018", "badgeTxt": "#1a4fa0", "causes": [{"cause": "Delivery Delayed", "count": 87, "owner": "Process/Ops team", "color": "#1a4fa0", "fix": "Review recurring 'Delivery Delayed' cases — 87 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Order Status not reflecting", "count": 12, "maxCount": 312, "badge": "Order Status not reflecting", "badgeColor": "#1a4fa018", "badgeTxt": "#1a4fa0", "causes": [{"cause": "Order Status not reflecting", "count": 12, "owner": "Tech team", "color": "#1a4fa0", "fix": "Review recurring 'Order Status not reflecting' cases — 12 occurrences this month. Route to Tech team for a fix/process review."}]}, {"l2": "Prepaid Order Sync Issue", "count": 8, "maxCount": 312, "badge": "Prepaid Order Sync Issue", "badgeColor": "#1a4fa018", "badgeTxt": "#1a4fa0", "causes": [{"cause": "Prepaid Order Sync Issue", "count": 8, "owner": "Tech team", "color": "#1a4fa0", "fix": "Review recurring 'Prepaid Order Sync Issue' cases — 8 occurrences this month. Route to Tech team for a fix/process review."}]}, {"l2": "Not happy with delivery timelines", "count": 8, "maxCount": 312, "badge": "Not happy with delivery timeli", "badgeColor": "#1a4fa018", "badgeTxt": "#1a4fa0", "causes": [{"cause": "Not happy with delivery timelines", "count": 8, "owner": "Process/Ops team", "color": "#1a4fa0", "fix": "Review recurring 'Not happy with delivery timelines' cases — 8 occurrences this month. Route to Process/Ops team for a fix/process review."}]}], "actions": ["Review top driver 'Delivery Delayed' (87 cases)"]}, {"id": "presale", "icon": "🛍", "color": "#7c3aed", "tagCls": "", "title": "Presale", "total": 127, "share": 15.7, "team": "Presales/CS communication", "ccpt": "Customer", "desc": "127 NS cases under Presale this month (15.7% of all NS). Dominant root cause bucket: Customer.", "trend": {"direction": "up", "pct": 338, "prior": 29}, "subtypes": [{"l2": "Not happy with Policy", "count": 30, "maxCount": 127, "badge": "Not happy with Policy", "badgeColor": "#7c3aed18", "badgeTxt": "#7c3aed", "causes": [{"cause": "Not happy with Policy", "count": 30, "owner": "Presales/CS communication", "color": "#7c3aed", "fix": "Review recurring 'Not happy with Policy' cases — 30 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}, {"l2": "App issues", "count": 10, "maxCount": 127, "badge": "App issues", "badgeColor": "#7c3aed18", "badgeTxt": "#7c3aed", "causes": [{"cause": "App issues", "count": 10, "owner": "Tech team", "color": "#7c3aed", "fix": "Review recurring 'App issues' cases — 10 occurrences this month. Route to Tech team for a fix/process review."}]}, {"l2": "Customization not possible", "count": 8, "maxCount": 127, "badge": "Customization not possible", "badgeColor": "#7c3aed18", "badgeTxt": "#7c3aed", "causes": [{"cause": "Customization not possible", "count": 8, "owner": "Process/Ops team", "color": "#7c3aed", "fix": "Review recurring 'Customization not possible' cases — 8 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Incomplete information", "count": 7, "maxCount": 127, "badge": "Incomplete information", "badgeColor": "#7c3aed18", "badgeTxt": "#7c3aed", "causes": [{"cause": "Incomplete information", "count": 7, "owner": "Training & Coaching", "color": "#7c3aed", "fix": "Review recurring 'Incomplete information' cases — 7 occurrences this month. Route to Training & Coaching for a fix/process review."}]}], "actions": ["Review top driver 'Not happy with Policy' (30 cases)"]}, {"id": "refunds", "icon": "💰", "color": "#1a4fa0", "tagCls": "", "title": "Refunds", "total": 59, "share": 7.3, "team": "Process/Ops team", "ccpt": "Process", "desc": "59 NS cases under Refunds this month (7.3% of all NS). Dominant root cause bucket: Process.", "trend": {"direction": "up", "pct": 59, "prior": 37}, "subtypes": [{"l2": "Delay in raising refund request by store team", "count": 12, "maxCount": 59, "badge": "Delay in raising refund reques", "badgeColor": "#1a4fa018", "badgeTxt": "#1a4fa0", "causes": [{"cause": "Delay in raising refund request by store team", "count": 12, "owner": "Process/Ops team", "color": "#1a4fa0", "fix": "Review recurring 'Delay in raising refund request by store team' cases — 12 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "No Reason", "count": 3, "maxCount": 59, "badge": "No Reason", "badgeColor": "#1a4fa018", "badgeTxt": "#1a4fa0", "causes": [{"cause": "No Reason", "count": 3, "owner": "Presales/CS communication", "color": "#1a4fa0", "fix": "Review recurring 'No Reason' cases — 3 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}, {"l2": "Order cancelled -Amt deducted", "count": 3, "maxCount": 59, "badge": "Order cancelled -Amt deducted", "badgeColor": "#1a4fa018", "badgeTxt": "#1a4fa0", "causes": [{"cause": "Order cancelled -Amt deducted", "count": 3, "owner": "Process/Ops team", "color": "#1a4fa0", "fix": "Review recurring 'Order cancelled -Amt deducted' cases — 3 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Incorrect Information", "count": 2, "maxCount": 59, "badge": "Incorrect Information", "badgeColor": "#1a4fa018", "badgeTxt": "#1a4fa0", "causes": [{"cause": "Incorrect Information", "count": 2, "owner": "Training & Coaching", "color": "#1a4fa0", "fix": "Review recurring 'Incorrect Information' cases — 2 occurrences this month. Route to Training & Coaching for a fix/process review."}]}], "actions": ["Review top driver 'Delay in raising refund request by store team' (12 cases)"]}, {"id": "returns", "icon": "↩️", "color": "#7c3aed", "tagCls": "", "title": "Returns", "total": 50, "share": 6.2, "team": "Process/Ops team", "ccpt": "Process", "desc": "50 NS cases under Returns this month (6.2% of all NS). Dominant root cause bucket: Process.", "trend": {"direction": "down", "pct": 7, "prior": 54}, "subtypes": [{"l2": "Reverse Pickup Delayed", "count": 8, "maxCount": 50, "badge": "Reverse Pickup Delayed", "badgeColor": "#7c3aed18", "badgeTxt": "#7c3aed", "causes": [{"cause": "Reverse Pickup Delayed", "count": 8, "owner": "Process/Ops team", "color": "#7c3aed", "fix": "Review recurring 'Reverse Pickup Delayed' cases — 8 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "No Reason", "count": 2, "maxCount": 50, "badge": "No Reason", "badgeColor": "#7c3aed18", "badgeTxt": "#7c3aed", "causes": [{"cause": "No Reason", "count": 2, "owner": "Presales/CS communication", "color": "#7c3aed", "fix": "Review recurring 'No Reason' cases — 2 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}, {"l2": "Invalid Details", "count": 2, "maxCount": 50, "badge": "Invalid Details", "badgeColor": "#7c3aed18", "badgeTxt": "#7c3aed", "causes": [{"cause": "Invalid Details", "count": 2, "owner": "Presales/CS communication", "color": "#7c3aed", "fix": "Review recurring 'Invalid Details' cases — 2 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}, {"l2": "Lack of ownership", "count": 2, "maxCount": 50, "badge": "Lack of ownership", "badgeColor": "#7c3aed18", "badgeTxt": "#7c3aed", "causes": [{"cause": "Lack of ownership", "count": 2, "owner": "Training & Coaching", "color": "#7c3aed", "fix": "Review recurring 'Lack of ownership' cases — 2 occurrences this month. Route to Training & Coaching for a fix/process review."}]}], "actions": ["Review top driver 'Reverse Pickup Delayed' (8 cases)"]}, {"id": "payments", "icon": "💳", "color": "#1a4fa0", "tagCls": "", "title": "Payments", "total": 48, "share": 5.9, "team": "Tech team", "ccpt": "Technology", "desc": "48 NS cases under Payments this month (5.9% of all NS). Dominant root cause bucket: Technology.", "trend": {"direction": "up", "pct": 269, "prior": 13}, "subtypes": [{"l2": "Website Error", "count": 9, "maxCount": 48, "badge": "Website Error", "badgeColor": "#1a4fa018", "badgeTxt": "#1a4fa0", "causes": [{"cause": "Website Error", "count": 9, "owner": "Tech team", "color": "#1a4fa0", "fix": "Review recurring 'Website Error' cases — 9 occurrences this month. Route to Tech team for a fix/process review."}]}, {"l2": "App issues", "count": 8, "maxCount": 48, "badge": "App issues", "badgeColor": "#1a4fa018", "badgeTxt": "#1a4fa0", "causes": [{"cause": "App issues", "count": 8, "owner": "Tech team", "color": "#1a4fa0", "fix": "Review recurring 'App issues' cases — 8 occurrences this month. Route to Tech team for a fix/process review."}]}, {"l2": "Not happy with Policy", "count": 4, "maxCount": 48, "badge": "Not happy with Policy", "badgeColor": "#1a4fa018", "badgeTxt": "#1a4fa0", "causes": [{"cause": "Not happy with Policy", "count": 4, "owner": "Presales/CS communication", "color": "#1a4fa0", "fix": "Review recurring 'Not happy with Policy' cases — 4 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}, {"l2": "Credit balance not visible", "count": 4, "maxCount": 48, "badge": "Credit balance not visible", "badgeColor": "#1a4fa018", "badgeTxt": "#1a4fa0", "causes": [{"cause": "Credit balance not visible", "count": 4, "owner": "Tech team", "color": "#1a4fa0", "fix": "Review recurring 'Credit balance not visible' cases — 4 occurrences this month. Route to Tech team for a fix/process review."}]}], "actions": ["Review top driver 'Website Error' (9 cases)"]}, {"id": "pop_treasure_chest", "icon": "🏆", "color": "#1a7a4a", "tagCls": "", "title": "PoP / Treasure Chest", "total": 43, "share": 5.3, "team": "Presales/CS communication", "ccpt": "Customer", "desc": "43 NS cases under PoP / Treasure Chest this month (5.3% of all NS). Dominant root cause bucket: Customer.", "trend": {"direction": "up", "pct": 48, "prior": 29}, "subtypes": [{"l2": "Not happy with Policy", "count": 13, "maxCount": 43, "badge": "Not happy with Policy", "badgeColor": "#1a7a4a18", "badgeTxt": "#1a7a4a", "causes": [{"cause": "Not happy with Policy", "count": 13, "owner": "Presales/CS communication", "color": "#1a7a4a", "fix": "Review recurring 'Not happy with Policy' cases — 13 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}, {"l2": "COD/EMI Not Applicable", "count": 3, "maxCount": 43, "badge": "COD/EMI Not Applicable", "badgeColor": "#1a7a4a18", "badgeTxt": "#1a7a4a", "causes": [{"cause": "COD/EMI Not Applicable", "count": 3, "owner": "Process/Ops team", "color": "#1a7a4a", "fix": "Review recurring 'COD/EMI Not Applicable' cases — 3 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Not happy with PoP refund policy", "count": 2, "maxCount": 43, "badge": "Not happy with PoP refund poli", "badgeColor": "#1a7a4a18", "badgeTxt": "#1a7a4a", "causes": [{"cause": "Not happy with PoP refund policy", "count": 2, "owner": "Presales/CS communication", "color": "#1a7a4a", "fix": "Review recurring 'Not happy with PoP refund policy' cases — 2 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}, {"l2": "Lack of ownership", "count": 2, "maxCount": 43, "badge": "Lack of ownership", "badgeColor": "#1a7a4a18", "badgeTxt": "#1a7a4a", "causes": [{"cause": "Lack of ownership", "count": 2, "owner": "Training & Coaching", "color": "#1a7a4a", "fix": "Review recurring 'Lack of ownership' cases — 2 occurrences this month. Route to Training & Coaching for a fix/process review."}]}], "actions": ["Review top driver 'Not happy with Policy' (13 cases)"]}, {"id": "try_at_home_tah", "icon": "🏠", "color": "#7c3aed", "tagCls": "", "title": "Try at Home (TAH)", "total": 37, "share": 4.6, "team": "Process/Ops team", "ccpt": "Process", "desc": "37 NS cases under Try at Home (TAH) this month (4.6% of all NS). Dominant root cause bucket: Process.", "trend": {"direction": "up", "pct": 100, "prior": 0}, "subtypes": [{"l2": "TAH appointment didn't happen\n as per the scheduled time", "count": 11, "maxCount": 37, "badge": "TAH appointment didn't happen\n", "badgeColor": "#7c3aed18", "badgeTxt": "#7c3aed", "causes": [{"cause": "TAH appointment didn't happen\n as per the scheduled time", "count": 11, "owner": "Process/Ops team", "color": "#7c3aed", "fix": "Review recurring 'TAH appointment didn't happen\n as per the scheduled time' cases — 11 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Shaya - Out of stock", "count": 4, "maxCount": 37, "badge": "Shaya - Out of stock", "badgeColor": "#7c3aed18", "badgeTxt": "#7c3aed", "causes": [{"cause": "Shaya - Out of stock", "count": 4, "owner": "Process/Ops team", "color": "#7c3aed", "fix": "Review recurring 'Shaya - Out of stock' cases — 4 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Not happy with the product", "count": 4, "maxCount": 37, "badge": "Not happy with the product", "badgeColor": "#7c3aed18", "badgeTxt": "#7c3aed", "causes": [{"cause": "Not happy with the product", "count": 4, "owner": "Presales/CS communication", "color": "#7c3aed", "fix": "Review recurring 'Not happy with the product' cases — 4 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}, {"l2": "Delayed Response", "count": 3, "maxCount": 37, "badge": "Delayed Response", "badgeColor": "#7c3aed18", "badgeTxt": "#7c3aed", "causes": [{"cause": "Delayed Response", "count": 3, "owner": "Training & Coaching", "color": "#7c3aed", "fix": "Review recurring 'Delayed Response' cases — 3 occurrences this month. Route to Training & Coaching for a fix/process review."}]}], "actions": ["Review top driver 'TAH appointment didn't happen\n as per the scheduled time' (11 cases)"]}, {"id": "store_related", "icon": "🏬", "color": "#c2590a", "tagCls": "", "title": "Store Related", "total": 32, "share": 4.0, "team": "Process/Ops team", "ccpt": "Process", "desc": "32 NS cases under Store Related this month (4.0% of all NS). Dominant root cause bucket: Process.", "trend": {"direction": "up", "pct": 540, "prior": 5}, "subtypes": [{"l2": "SKU Not available", "count": 17, "maxCount": 32, "badge": "SKU Not available", "badgeColor": "#c2590a18", "badgeTxt": "#c2590a", "causes": [{"cause": "SKU Not available", "count": 17, "owner": "Process/Ops team", "color": "#c2590a", "fix": "Review recurring 'SKU Not available' cases — 17 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Website Error", "count": 2, "maxCount": 32, "badge": "Website Error", "badgeColor": "#c2590a18", "badgeTxt": "#c2590a", "causes": [{"cause": "Website Error", "count": 2, "owner": "Tech team", "color": "#c2590a", "fix": "Review recurring 'Website Error' cases — 2 occurrences this month. Route to Tech team for a fix/process review."}]}, {"l2": "Not much variety at store", "count": 2, "maxCount": 32, "badge": "Not much variety at store", "badgeColor": "#c2590a18", "badgeTxt": "#c2590a", "causes": [{"cause": "Not much variety at store", "count": 2, "owner": "Process/Ops team", "color": "#c2590a", "fix": "Review recurring 'Not much variety at store' cases — 2 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "No order updates", "count": 1, "maxCount": 32, "badge": "No order updates", "badgeColor": "#c2590a18", "badgeTxt": "#c2590a", "causes": [{"cause": "No order updates", "count": 1, "owner": "Process/Ops team", "color": "#c2590a", "fix": "Review recurring 'No order updates' cases — 1 occurrences this month. Route to Process/Ops team for a fix/process review."}]}], "actions": ["Review top driver 'SKU Not available' (17 cases)"]}, {"id": "exchanges", "icon": "🔄", "color": "#c2590a", "tagCls": "", "title": "Exchanges", "total": 31, "share": 3.8, "team": "Process/Ops team", "ccpt": "Process", "desc": "31 NS cases under Exchanges this month (3.8% of all NS). Dominant root cause bucket: Process.", "trend": {"direction": "up", "pct": 675, "prior": 4}, "subtypes": [{"l2": "Not happy with Policy", "count": 7, "maxCount": 31, "badge": "Not happy with Policy", "badgeColor": "#c2590a18", "badgeTxt": "#c2590a", "causes": [{"cause": "Not happy with Policy", "count": 7, "owner": "Presales/CS communication", "color": "#c2590a", "fix": "Review recurring 'Not happy with Policy' cases — 7 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}, {"l2": "Improper handling - Store", "count": 2, "maxCount": 31, "badge": "Improper handling - Store", "badgeColor": "#c2590a18", "badgeTxt": "#c2590a", "causes": [{"cause": "Improper handling - Store", "count": 2, "owner": "Training & Coaching", "color": "#c2590a", "fix": "Review recurring 'Improper handling - Store' cases — 2 occurrences this month. Route to Training & Coaching for a fix/process review."}]}, {"l2": "Website Error", "count": 2, "maxCount": 31, "badge": "Website Error", "badgeColor": "#c2590a18", "badgeTxt": "#c2590a", "causes": [{"cause": "Website Error", "count": 2, "owner": "Tech team", "color": "#c2590a", "fix": "Review recurring 'Website Error' cases — 2 occurrences this month. Route to Tech team for a fix/process review."}]}, {"l2": "Prepaid Order Sync Issue", "count": 2, "maxCount": 31, "badge": "Prepaid Order Sync Issue", "badgeColor": "#c2590a18", "badgeTxt": "#c2590a", "causes": [{"cause": "Prepaid Order Sync Issue", "count": 2, "owner": "Tech team", "color": "#c2590a", "fix": "Review recurring 'Prepaid Order Sync Issue' cases — 2 occurrences this month. Route to Tech team for a fix/process review."}]}], "actions": ["Review top driver 'Not happy with Policy' (7 cases)"]}, {"id": "shaya", "icon": "✨", "color": "#C8005A", "tagCls": "", "title": "Shaya", "total": 17, "share": 2.1, "team": "Process/Ops team", "ccpt": "Process", "desc": "17 NS cases under Shaya this month (2.1% of all NS). Dominant root cause bucket: Process.", "trend": {"direction": "down", "pct": 43, "prior": 30}, "subtypes": [{"l2": "Delivery Delayed", "count": 3, "maxCount": 17, "badge": "Delivery Delayed", "badgeColor": "#C8005A18", "badgeTxt": "#C8005A", "causes": [{"cause": "Delivery Delayed", "count": 3, "owner": "Process/Ops team", "color": "#C8005A", "fix": "Review recurring 'Delivery Delayed' cases — 3 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Not happy with Shaya policy", "count": 2, "maxCount": 17, "badge": "Not happy with Shaya policy", "badgeColor": "#C8005A18", "badgeTxt": "#C8005A", "causes": [{"cause": "Not happy with Shaya policy", "count": 2, "owner": "Process/Ops team", "color": "#C8005A", "fix": "Review recurring 'Not happy with Shaya policy' cases — 2 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Shaya - Out of stock", "count": 2, "maxCount": 17, "badge": "Shaya - Out of stock", "badgeColor": "#C8005A18", "badgeTxt": "#C8005A", "causes": [{"cause": "Shaya - Out of stock", "count": 2, "owner": "Process/Ops team", "color": "#C8005A", "fix": "Review recurring 'Shaya - Out of stock' cases — 2 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "No Reason", "count": 1, "maxCount": 17, "badge": "No Reason", "badgeColor": "#C8005A18", "badgeTxt": "#C8005A", "causes": [{"cause": "No Reason", "count": 1, "owner": "Presales/CS communication", "color": "#C8005A", "fix": "Review recurring 'No Reason' cases — 1 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}], "actions": ["Review top driver 'Delivery Delayed' (3 cases)"]}, {"id": "repair", "icon": "🔧", "color": "#B8860B", "tagCls": "", "title": "Repair", "total": 17, "share": 2.1, "team": "Process/Ops team", "ccpt": "Process", "desc": "17 NS cases under Repair this month (2.1% of all NS). Dominant root cause bucket: Process.", "trend": {"direction": "down", "pct": 59, "prior": 41}, "subtypes": [{"l2": "Not Happy with Repair Charges", "count": 3, "maxCount": 17, "badge": "Not Happy with Repair Charges", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Not Happy with Repair Charges", "count": 3, "owner": "Process/Ops team", "color": "#B8860B", "fix": "Review recurring 'Not Happy with Repair Charges' cases — 3 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Not happy with product Quality", "count": 2, "maxCount": 17, "badge": "Not happy with product Quality", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Not happy with product Quality", "count": 2, "owner": "Process/Ops team", "color": "#B8860B", "fix": "Review recurring 'Not happy with product Quality' cases — 2 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Not happy with the price of the product", "count": 2, "maxCount": 17, "badge": "Not happy with the price of th", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Not happy with the price of the product", "count": 2, "owner": "Presales/CS communication", "color": "#B8860B", "fix": "Review recurring 'Not happy with the price of the product' cases — 2 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}, {"l2": "Lack of listening/understanding skills", "count": 1, "maxCount": 17, "badge": "Lack of listening/understandin", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Lack of listening/understanding skills", "count": 1, "owner": "Training & Coaching", "color": "#B8860B", "fix": "Review recurring 'Lack of listening/understanding skills' cases — 1 occurrences this month. Route to Training & Coaching for a fix/process review."}]}], "actions": ["Review top driver 'Not Happy with Repair Charges' (3 cases)"]}, {"id": "product_quality", "icon": "💎", "color": "#C8005A", "tagCls": "", "title": "Product Quality", "total": 15, "share": 1.9, "team": "Process/Ops team", "ccpt": "Process", "desc": "15 NS cases under Product Quality this month (1.9% of all NS). Dominant root cause bucket: Process.", "trend": {"direction": "up", "pct": 200, "prior": 5}, "subtypes": [{"l2": "Not happy with product Quality", "count": 10, "maxCount": 15, "badge": "Not happy with product Quality", "badgeColor": "#C8005A18", "badgeTxt": "#C8005A", "causes": [{"cause": "Not happy with product Quality", "count": 10, "owner": "Process/Ops team", "color": "#C8005A", "fix": "Review recurring 'Not happy with product Quality' cases — 10 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Product different from image on website", "count": 2, "maxCount": 15, "badge": "Product different from image o", "badgeColor": "#C8005A18", "badgeTxt": "#C8005A", "causes": [{"cause": "Product different from image on website", "count": 2, "owner": "Process/Ops team", "color": "#C8005A", "fix": "Review recurring 'Product different from image on website' cases — 2 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Weight difference online /offline", "count": 2, "maxCount": 15, "badge": "Weight difference online /offl", "badgeColor": "#C8005A18", "badgeTxt": "#C8005A", "causes": [{"cause": "Weight difference online /offline", "count": 2, "owner": "Process/Ops team", "color": "#C8005A", "fix": "Review recurring 'Weight difference online /offline' cases — 2 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Incomplete information", "count": 1, "maxCount": 15, "badge": "Incomplete information", "badgeColor": "#C8005A18", "badgeTxt": "#C8005A", "causes": [{"cause": "Incomplete information", "count": 1, "owner": "Training & Coaching", "color": "#C8005A", "fix": "Review recurring 'Incomplete information' cases — 1 occurrences this month. Route to Training & Coaching for a fix/process review."}]}], "actions": ["Review top driver 'Not happy with product Quality' (10 cases)"]}, {"id": "loyalty_certificates", "icon": "👑", "color": "#B8860B", "tagCls": "", "title": "Loyalty & Certificates", "total": 5, "share": 0.6, "team": "Presales/CS communication", "ccpt": "Customer", "desc": "5 NS cases under Loyalty & Certificates this month (0.6% of all NS). Dominant root cause bucket: Customer.", "trend": {"direction": "up", "pct": 67, "prior": 3}, "subtypes": [{"l2": "Rushing to end conversation", "count": 1, "maxCount": 5, "badge": "Rushing to end conversation", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Rushing to end conversation", "count": 1, "owner": "Training & Coaching", "color": "#B8860B", "fix": "Review recurring 'Rushing to end conversation' cases — 1 occurrences this month. Route to Training & Coaching for a fix/process review."}]}, {"l2": "xCL points not credited", "count": 1, "maxCount": 5, "badge": "xCL points not credited", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "xCL points not credited", "count": 1, "owner": "Tech team", "color": "#B8860B", "fix": "Review recurring 'xCL points not credited' cases — 1 occurrences this month. Route to Tech team for a fix/process review."}]}, {"l2": "Not happy with product Quality", "count": 1, "maxCount": 5, "badge": "Not happy with product Quality", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Not happy with product Quality", "count": 1, "owner": "Process/Ops team", "color": "#B8860B", "fix": "Review recurring 'Not happy with product Quality' cases — 1 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Not happy with Policy", "count": 1, "maxCount": 5, "badge": "Not happy with Policy", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Not happy with Policy", "count": 1, "owner": "Presales/CS communication", "color": "#B8860B", "fix": "Review recurring 'Not happy with Policy' cases — 1 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}], "actions": ["Review top driver 'Rushing to end conversation' (1 cases)"]}, {"id": "digi_gold", "icon": "🪙", "color": "#B8860B", "tagCls": "", "title": "Digi Gold", "total": 5, "share": 0.6, "team": "Tech team", "ccpt": "Technology", "desc": "5 NS cases under Digi Gold this month (0.6% of all NS). Dominant root cause bucket: Technology.", "trend": {"direction": "down", "pct": 58, "prior": 12}, "subtypes": [{"l2": "Prepaid Order Sync Issue", "count": 1, "maxCount": 5, "badge": "Prepaid Order Sync Issue", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Prepaid Order Sync Issue", "count": 1, "owner": "Tech team", "color": "#B8860B", "fix": "Review recurring 'Prepaid Order Sync Issue' cases — 1 occurrences this month. Route to Tech team for a fix/process review."}]}, {"l2": "Lack of process knowledge", "count": 1, "maxCount": 5, "badge": "Lack of process knowledge", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Lack of process knowledge", "count": 1, "owner": "Training & Coaching", "color": "#B8860B", "fix": "Review recurring 'Lack of process knowledge' cases — 1 occurrences this month. Route to Training & Coaching for a fix/process review."}]}, {"l2": "App issues", "count": 1, "maxCount": 5, "badge": "App issues", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "App issues", "count": 1, "owner": "Tech team", "color": "#B8860B", "fix": "Review recurring 'App issues' cases — 1 occurrences this month. Route to Tech team for a fix/process review."}]}, {"l2": "Not happy with Policy", "count": 1, "maxCount": 5, "badge": "Not happy with Policy", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Not happy with Policy", "count": 1, "owner": "Presales/CS communication", "color": "#B8860B", "fix": "Review recurring 'Not happy with Policy' cases — 1 occurrences this month. Route to Presales/CS communication for a fix/process review."}]}], "actions": ["Review top driver 'Prepaid Order Sync Issue' (1 cases)"]}, {"id": "buybacks", "icon": "💱", "color": "#B8860B", "tagCls": "", "title": "Buybacks", "total": 4, "share": 0.5, "team": "Training & Coaching", "ccpt": "Consultant", "desc": "4 NS cases under Buybacks this month (0.5% of all NS). Dominant root cause bucket: Consultant.", "trend": {"direction": "up", "pct": 100, "prior": 0}, "subtypes": [{"l2": "Failed to understand customer query", "count": 1, "maxCount": 4, "badge": "Failed to understand customer ", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Failed to understand customer query", "count": 1, "owner": "Training & Coaching", "color": "#B8860B", "fix": "Review recurring 'Failed to understand customer query' cases — 1 occurrences this month. Route to Training & Coaching for a fix/process review."}]}, {"l2": "Oneview not loading", "count": 1, "maxCount": 4, "badge": "Oneview not loading", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Oneview not loading", "count": 1, "owner": "Tech team", "color": "#B8860B", "fix": "Review recurring 'Oneview not loading' cases — 1 occurrences this month. Route to Tech team for a fix/process review."}]}, {"l2": "incorrect request raised by store team", "count": 1, "maxCount": 4, "badge": "incorrect request raised by st", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "incorrect request raised by store team", "count": 1, "owner": "Process/Ops team", "color": "#B8860B", "fix": "Review recurring 'incorrect request raised by store team' cases — 1 occurrences this month. Route to Process/Ops team for a fix/process review."}]}, {"l2": "Improper handling - Store", "count": 1, "maxCount": 4, "badge": "Improper handling - Store", "badgeColor": "#B8860B18", "badgeTxt": "#B8860B", "causes": [{"cause": "Improper handling - Store", "count": 1, "owner": "Training & Coaching", "color": "#B8860B", "fix": "Review recurring 'Improper handling - Store' cases — 1 occurrences this month. Route to Training & Coaching for a fix/process review."}]}], "actions": ["Review top driver 'Failed to understand customer query' (1 cases)"]}];
 
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.04});
 
@@ -999,6 +270,10 @@ function renderCats(filter){
             <div class="cs-num" style="color:var(--txt3);">${cat.share}%</div>
             <div class="cs-lbl">of Total</div>
           </div>
+          ${cat.trend?`<div class="cs-box" style="border-color:${cat.trend.direction==='up'?'rgba(200,0,90,.25)':cat.trend.direction==='down'?'rgba(26,122,74,.25)':'var(--bdr)'};">
+            <div class="cs-num" style="font-size:22px;color:${cat.trend.direction==='up'?'var(--mag)':cat.trend.direction==='down'?'var(--green)':'var(--txt3)'};">${cat.trend.direction==='flat'?'—':cat.trend.direction==='up'?'▲':'▼'} ${cat.trend.pct}%</div>
+            <div class="cs-lbl">vs June (${cat.trend.prior})</div>
+          </div>`:''}
         </div>
       </div>
       <div class="subtypes">
@@ -1060,7 +335,7 @@ function downloadCSV(){
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
-  a.download='RootCause_Analysis_June2026.csv';
+  a.download='RootCause_Analysis_July2026.csv';
   a.click();
 }
 
@@ -1069,7 +344,7 @@ function downloadCSV(){
 // ── CASE MODAL FOR ROOT CAUSE PAGE ──
 let allRcCases=[];
 if(typeof DASHBOARD_DATA !== 'undefined'){
-  const T=DASHBOARD_DATA.teams;
+  const T=DASHBOARD_DATA.july.teams;
   Object.entries(T).forEach(([team,td])=>{
     Object.entries(td.agents||{}).forEach(([email,ad])=>{
       (ad.cases||[]).forEach(c=>{
@@ -1078,6 +353,17 @@ if(typeof DASHBOARD_DATA !== 'undefined'){
     });
   });
 }
+
+// ── Dynamic hero pills (built from CATS so they never drift out of sync with the data) ──
+function renderPills(){
+  const total = CATS.reduce((s,c)=>s+c.total,0);
+  const pillsHtml = [`<div class="hpill active" onclick="filterCat('all')"><span class="dot" style="background:#C8005A"></span>All Issues (${total})</div>`]
+    .concat(CATS.slice(0,6).map(c=>`<div class="hpill" onclick="filterCat('${c.id}')"><span class="dot" style="background:${c.color}"></span>${c.title} (${c.total})</div>`))
+    .join('');
+  const el = document.getElementById('heroPills');
+  if(el) el.innerHTML = pillsHtml;
+}
+renderPills();
 
 function openRcModal(filterFn, title, sub){
   const cases = allRcCases.filter(filterFn);

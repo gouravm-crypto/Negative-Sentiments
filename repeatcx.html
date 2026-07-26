@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Repeat Customers · NS Audit · July 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;0,800;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mag:#C8005A;--mag-lt:#F0006E;--mag-dk:#8A003E;--mag-pale:#FFF0F6;
+  --gold:#B8860B;--gold-lt:#E8B840;
+  --ink:#0F0A10;--ink2:#1E0E1A;
+  --body:#FAFAF8;--surface:#FFFFFF;
+  --bdr:#EEE4EC;--bdr2:#E0CCD8;
+  --txt:#1A0818;--txt2:#5A3048;--txt3:#9A7085;
+  --sh-sm:0 2px 8px rgba(15,10,16,.08);--sh-md:0 4px 20px rgba(15,10,16,.10);--sh-lg:0 8px 36px rgba(15,10,16,.14);
+  --green:#1a7a4a;--blue:#1a4fa0;--r:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:900;background:var(--ink2);border-bottom:2px solid transparent;border-image:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent) 1;display:flex;align-items:center;padding:0 48px;height:64px;}
+.hdr-brand{display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none;}
+.cl-logo{width:38px;height:38px;object-fit:cover;border-radius:8px;}
+.cl-name{font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#fff;line-height:1;}
+.cl-sub{font-size:7px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,200,220,.4);}
+.hdr-sep{width:1px;height:28px;background:rgba(255,255,255,.1);margin:0 20px;flex-shrink:0;}
+.hdr-nav{display:flex;gap:0;flex:1;}
+.hnav{height:64px;padding:0 13px;display:flex;align-items:center;font-size:9.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:rgba(255,200,220,.35);text-decoration:none;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap;}
+.hnav:hover{color:rgba(255,200,220,.7);}
+.hnav.active{color:#fff;border-bottom-color:var(--mag);background:rgba(200,0,90,.08);}
+.hdr-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.hdr-badge{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mag);border:1.5px solid rgba(200,0,90,.4);padding:4px 10px;border-radius:20px;background:rgba(200,0,90,.08);}
+.csv-btn{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--mag),var(--mag-dk));border:none;padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;}
+.csv-btn:hover{transform:scale(1.05);}
+
+/* PAGE HERO */
+.pg-hero{background:linear-gradient(160deg,var(--ink2) 0%,#2A0E22 55%,#1A0E2A 100%);padding:44px 48px 38px;position:relative;overflow:hidden;}
+.pg-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;}
+.pg-tag{display:inline-flex;align-items:center;gap:6px;font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mag);border:1px solid rgba(200,0,90,.3);padding:4px 12px;border-radius:4px;background:rgba(200,0,90,.07);margin-bottom:14px;}
+.pg-title{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:800;color:#fff;margin-bottom:6px;}
+.pg-sub{font-size:12.5px;color:rgba(255,200,220,.45);margin-bottom:26px;}
+.hero-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.hk{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px 14px;text-align:center;cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);}
+.hk:hover{background:rgba(200,0,90,.12);border-color:rgba(200,0,90,.35);transform:translateY(-3px);box-shadow:0 8px 24px rgba(200,0,90,.18);}
+.hk-num{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:800;line-height:1;color:#fff;}
+.hk-num.mag{color:#F0006E;}.hk-num.gold{color:#E8B840;}.hk-num.green{color:#4ade80;}.hk-num.blue{color:#93c5fd;}
+.hk-lbl{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,200,220,.3);margin-top:4px;}
+.hk-trend{display:inline-flex;align-items:center;gap:3px;font-size:8.5px;font-weight:700;margin-top:7px;padding:2px 7px;border-radius:10px;}
+.hk-trend.up{background:rgba(240,0,110,.16);color:#ff6fa8;}
+.hk-trend.down{background:rgba(74,222,128,.14);color:#4ade80;}
+.hk-trend.flat{background:rgba(255,255,255,.06);color:rgba(255,200,220,.4);}
+.hk-trend.pending{background:rgba(255,255,255,.04);color:rgba(255,200,220,.25);font-style:italic;font-weight:500;}
+
+/* BODY */
+.page{max-width:1380px;margin:0 auto;padding:36px 48px 80px;}
+.spacer{height:36px;}
+.section-hd{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--ink);}
+.section-sub{font-size:11px;color:var(--txt3);}
+.fade-up{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease;}
+.fade-up.visible{opacity:1;transform:none;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+
+/* CCPT REASON CARDS */
+.reason-card{background:var(--surface);border:1.5px solid var(--bdr);border-radius:var(--r);padding:22px 22px;box-shadow:var(--sh-sm);cursor:pointer;transition:all .25s;position:relative;overflow:hidden;}
+.reason-card:hover{transform:translateY(-4px);box-shadow:var(--sh-md);}
+.reason-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--bdr));}
+.reason-card.priority{border-color:rgba(200,0,90,.35);background:linear-gradient(160deg,#fff5f9,#fff);}
+.reason-card.priority::after{background:var(--mag);}
+.reason-badge{display:inline-block;font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:4px;margin-bottom:10px;}
+.reason-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.reason-num{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:800;line-height:1;margin-bottom:4px;}
+.reason-sub{font-size:11px;color:var(--txt3);margin-bottom:10px;}
+.reason-desc{font-size:11.5px;color:var(--txt2);line-height:1.6;}
+
+/* CHART CARDS / BARS */
+.cc{background:var(--surface);border:1.5px solid var(--bdr);border-radius:var(--r);padding:24px 26px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
+.cc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;opacity:.25;}
+.cc-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.cc-sub{font-size:11px;color:var(--txt3);margin-bottom:16px;}
+.bar-row{display:grid;grid-template-columns:170px 1fr 80px;align-items:center;gap:10px;margin-bottom:9px;cursor:pointer;}
+.bar-label{font-size:11px;color:var(--txt2);}
+.bar-track{height:8px;background:rgba(200,0,90,.07);border-radius:5px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:5px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.bf-mag{background:linear-gradient(90deg,var(--mag),var(--mag-lt));}
+.bf-gold{background:linear-gradient(90deg,var(--gold),var(--gold-lt));}
+.bf-blue{background:linear-gradient(90deg,var(--blue),#4a90e2);}
+.bar-val{font-size:11px;font-weight:700;text-align:right;color:var(--txt2);white-space:nowrap;}
+
+/* HIGH PRIORITY TABLE */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);padding:10px 12px;border-bottom:2px solid var(--bdr);text-align:left;}
+.tbl td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--bdr);color:var(--txt2);}
+.tbl tr:hover td{background:#fdf5f8;}
+.tbl tr:last-child td{border-bottom:none;}
+.num-red{color:var(--mag);font-weight:700;}
+
+/* CALLOUT */
+.callout{background:linear-gradient(135deg,#fff5f9,#fffbf0);border:1.5px solid var(--bdr2);border-radius:16px;padding:18px 24px;font-size:12.5px;color:var(--txt2);line-height:1.75;box-shadow:var(--sh-sm);}
+
+/* MODAL (case drill-down, matches other pages) */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,10,16,.7);backdrop-filter:blur(12px);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-sheet{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:1200px;max-height:88vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.34,1.2,.64,1);}
+.modal-overlay.open .modal-sheet{transform:none;}
+.modal-hd{padding:22px 28px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--ink);}
+.modal-meta{font-size:12px;color:var(--txt3);}
+.modal-close{width:34px;height:34px;border-radius:50%;background:var(--body);border:1.5px solid var(--bdr);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--txt3);transition:all .2s;flex-shrink:0;}
+.modal-close:hover{background:var(--mag);color:#fff;border-color:var(--mag);}
+.modal-body{padding:20px 28px;overflow-y:auto;flex:1;}
+.modal-count{font-size:11px;color:var(--txt3);margin-bottom:12px;}
+.case-table{width:100%;border-collapse:collapse;}
+.case-table th{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);padding:9px 12px;border-bottom:2px solid var(--bdr);text-align:left;position:sticky;top:0;background:var(--surface);}
+.case-table td{padding:10px 12px;font-size:11.5px;border-bottom:1px solid var(--bdr);color:var(--txt2);vertical-align:top;}
+.case-table tr:hover td{background:#fdf5f8;}
+.crit-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;}
+.cb-crucial{background:rgba(200,0,90,.1);color:var(--mag);}
+.cb-neutral{background:rgba(184,134,11,.1);color:var(--gold);}
+.cb-less{background:rgba(100,100,100,.1);color:#666;}
+.cx-contact{font-size:10px;color:var(--blue);text-decoration:none;display:block;cursor:pointer;}
+.cx-contact:hover{text-decoration:underline;}
+.summary-text{font-size:11px;color:var(--txt3);line-height:1.6;max-width:280px;}
+
+/* FOOTER */
+footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;justify-content:space-between;}
+.ft-l{font-size:11px;color:rgba(255,200,220,.3);}
+.ft-r{font-size:11px;color:rgba(255,200,220,.3);text-align:right;}
+
+@media(max-width:900px){
+  .hdr{padding:0 16px;height:56px;}
+  .hdr-sep{display:none;}
+  .hnav{padding:0 8px;font-size:8px;letter-spacing:1px;}
+  .pg-hero{padding:28px 16px 24px;}
+  .hero-kpis{grid-template-columns:repeat(3,1fr);gap:8px;}
+  .page{padding:24px 16px 60px;}
+  .g4,.g3{grid-template-columns:repeat(2,1fr);}
+  .g2{grid-template-columns:1fr;}
+  .modal-sheet{max-height:92vh;}
+}
+@media(max-width:500px){
+  .hero-kpis{grid-template-columns:repeat(2,1fr);}
+  .g4,.g3{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <a class="hdr-brand" href="index.html">
+    <img id="hdrLogo" class="cl-logo" alt="CaratLane">
+    <div><div class="cl-name">CaratLane</div><div class="cl-sub">NS Audit Dashboard</div></div>
+  </a>
+  <div class="hdr-sep"></div>
+  <nav class="hdr-nav">
+    <a class="hnav" href="index.html">Overview</a>
+    <a class="hnav" href="analytics.html">Analytics</a>
+    <a class="hnav active" href="repeatcx.html">Repeat Customers</a>
+    <a class="hnav" href="team.html">Teams</a>
+    <a class="hnav" href="rootcause.html">Root Cause</a>
+  </nav>
+  <div class="hdr-right">
+    <button class="csv-btn" onclick="downloadCSV()">⬇ Export CSV</button>
+    <div class="hdr-badge">July 2026</div>
+  </div>
+</header>
+
+<div class="pg-hero">
+  <div class="pg-tag">🔁 Repeat Contact Analysis</div>
+  <div class="pg-title">Repeat Customers</div>
+  <div class="pg-sub">Why customers are contacting us more than once — and which repeats are genuinely a Customer Service issue vs. Process, Tech, or the customer's own ask</div>
+  <div class="hero-kpis" id="heroKpis"></div>
+</div>
+
+<div class="page">
+
+  <div class="spacer"></div>
+  <div class="section-hd fade-up">
+    <div class="section-title">Why Are They Repeating?</div>
+    <div class="section-sub">Root cause split of every repeat-contact case — CS Issue is the one bucket that's a genuine agent/coaching problem, not a policy or system one</div>
+  </div>
+  <div class="g4 fade-up" id="reasonCards"></div>
+
+  <div class="spacer"></div>
+  <div class="callout fade-up" id="csCallout"></div>
+
+  <div class="spacer"></div>
+  <div class="section-hd fade-up">
+    <div class="section-title">Repeat Reasons by Query Type</div>
+    <div class="section-sub">Which service areas generate the most repeat contact</div>
+  </div>
+  <div class="g2 fade-up">
+    <div class="cc"><div class="cc-title">By Query L1</div><div class="cc-sub">Click a bar to see the cases</div><div id="reasonBars"></div></div>
+    <div class="cc"><div class="cc-title">By Team</div><div class="cc-sub">Which teams carry the most repeat-contact customers</div><div id="teamBars"></div></div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="section-hd fade-up">
+    <div class="section-title">High Priority — Customer Service Issue Repeats</div>
+    <div class="section-sub" id="hpSub"></div>
+  </div>
+  <div class="cc fade-up">
+    <div style="overflow-x:auto;">
+      <table class="tbl">
+        <thead><tr><th>Agent</th><th>Team</th><th>Query</th><th>Reason</th><th>Summary</th></tr></thead>
+        <tbody id="hpTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="ft-l">CaratLane Quality Audit · Repeat Customers · July 2026</div>
+  <div class="ft-r">Made by <strong style="color:rgba(255,200,220,.6)">CS Quality Team</strong> · QA Team · Confidential</div>
+</footer>
+
+<!-- CASE DRILL-DOWN MODAL -->
+<div class="modal-overlay" id="caseModal">
+  <div class="modal-sheet">
+    <div class="modal-hd">
+      <div>
+        <div class="modal-title" id="modalTitle">Cases</div>
+        <div class="modal-meta" id="modalMeta"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-count" id="modalCount"></div>
+      <div style="overflow-x:auto;">
+        <table class="case-table">
+          <thead><tr>
+            <th>#</th><th>Criticality</th><th>Team</th><th>Query L1</th><th>Primary Dislike</th>
+            <th>CCPT1</th><th>CX Contact</th><th>Summary</th>
+          </tr></thead>
+          <tbody id="modalTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+
+// Logo injection
+if(typeof DASHBOARD_DATA !== 'undefined' && DASHBOARD_DATA.logo){
+  document.getElementById('hdrLogo').src = DASHBOARD_DATA.logo;
+}
+
+const D=DASHBOARD_DATA, O=D.july.overall, T=D.july.teams, OP=D.june.overall, TP=D.june.teams;
+
+function flattenCases(teams){
+  const out=[];
+  Object.entries(teams).forEach(([team,td])=>{
+    Object.entries(td.agents||{}).forEach(([email,ad])=>{
+      (ad.cases||[]).forEach(c=>out.push({...c, agent_name:ad.name, agent_email:email, team}));
+    });
+  });
+  return out;
+}
+const allCases = flattenCases(T);
+const juneCases = flattenCases(TP);
+const repeatCases = allCases.filter(c=>c.repeat_cx==='Yes');
+const repeatCasesJune = juneCases.filter(c=>c.repeat_cx==='Yes');
+
+// CS Issue = Consultant bucket (agent got it wrong — incorrect info, missed callback/follow-up,
+// failed to probe/act proactively). Price drops, cancellations, and offer/policy pushback are
+// customer-driven asks colliding with policy, NOT a CS issue — those live under Process/Customer.
+const CS_ISSUE_BUCKET = 'Consultant';
+
+function countByCcpt1(cases){
+  const out={Process:0,Technology:0,Customer:0,Consultant:0};
+  cases.forEach(c=>{ if(out.hasOwnProperty(c.ccpt1)) out[c.ccpt1]++; });
+  return out;
+}
+const rByCcpt = countByCcpt1(repeatCases);
+const rByCcptJune = countByCcpt1(repeatCasesJune);
+
+function trendBadge(current, prior){
+  if(prior===undefined||prior===null) return `<div class="hk-trend pending">New — no June baseline</div>`;
+  const diff=current-prior;
+  if(diff===0) return `<div class="hk-trend flat">— flat vs June</div>`;
+  const pct=prior>0?Math.abs(Math.round(diff/prior*100)):100;
+  const arrow=diff>0?'▲':'▼';
+  const cls=diff>0?'up':'down';
+  return `<div class="hk-trend ${cls}">${arrow} ${pct}% vs June</div>`;
+}
+
+// ── HERO KPIS ──
+const repeatPct = Math.round(repeatCases.length/O.total*100*10)/10;
+const repeatPctJune = OP.total>0 ? Math.round(repeatCasesJune.length/OP.total*100*10)/10 : null;
+const heroItems=[
+  {num:repeatCases.length, prior:repeatCasesJune.length, lbl:'Repeat CX', cls:'mag', filter:'all'},
+  {num:repeatPct+'%', priorRaw:repeatPctJune, prior:repeatPctJune, lbl:'Repeat Rate', cls:'gold', filter:'all', isPct:true},
+  {num:rByCcpt.Consultant, prior:rByCcptJune.Consultant, lbl:'CS Issue (High Priority)', cls:'mag', filter:'Consultant'},
+  {num:rByCcpt.Process, prior:rByCcptJune.Process, lbl:'Process', cls:'blue', filter:'Process'},
+  {num:rByCcpt.Technology, prior:rByCcptJune.Technology, lbl:'Technology', cls:'blue', filter:'Technology'},
+];
+document.getElementById('heroKpis').innerHTML = heroItems.map(k=>{
+  const trend = k.isPct ? trendBadge(parseFloat(k.num), k.priorRaw) : trendBadge(typeof k.num==='number'?k.num:parseFloat(k.num), k.prior);
+  return `<div class="hk" onclick="openCaseModal('${k.filter}')">
+    <div class="hk-num ${k.cls}">${k.num}</div>
+    <div class="hk-lbl">${k.lbl}</div>
+    ${trend}
+  </div>`;
+}).join('');
+
+// ── REASON CARDS (Process / Technology / Customer / CS Issue) ──
+const reasonMeta = {
+  Consultant: {title:'Customer Service Issue', accent:'var(--mag)', priority:true, badge:'⚠ HIGH PRIORITY — AGENT CAUSED',
+    desc:'The JC got it wrong — incorrect info given, a promised callback/follow-up missed, or a failed proactive probe. This is the one bucket that\'s a genuine coaching issue, not a policy or system one.'},
+  Process: {title:'Process', accent:'var(--blue)', priority:false, badge:'SYSTEM / SOP GAP',
+    desc:'Policy constraints, SLA breaches, or SOP gaps — price drops, cancellations, and delivery/refund delays where the JC followed process correctly but the process itself created the repeat contact.'},
+  Technology: {title:'Technology', accent:'var(--blue)', priority:false, badge:'TECH / ERP',
+    desc:'App, website, or ERP sync failures causing the customer to come back — not attributable to any agent\'s handling.'},
+  Customer: {title:'Customer', accent:'var(--gold)', priority:false, badge:'CUSTOMER-DRIVEN',
+    desc:'The repeat stems from the customer\'s own changed request or expectation (e.g. wanting a different outcome than policy allows) rather than an agent or system failure.'},
+};
+const reasonOrder=['Consultant','Process','Technology','Customer'];
+document.getElementById('reasonCards').innerHTML = reasonOrder.map(k=>{
+  const meta=reasonMeta[k];
+  const cnt=rByCcpt[k]||0, pct=repeatCases.length>0?Math.round(cnt/repeatCases.length*100):0;
+  return `<div class="reason-card ${meta.priority?'priority':''}" style="--accent:${meta.accent};" onclick="openCaseModal('${k}')">
+    <div class="reason-badge" style="background:${meta.accent}15;color:${meta.accent};">${meta.badge}</div>
+    <div class="reason-title">${meta.title}</div>
+    <div class="reason-num" style="color:${meta.accent};">${cnt}</div>
+    <div class="reason-sub">${pct}% of repeat cases ${trendBadge(cnt, rByCcptJune[k])}</div>
+    <div class="reason-desc">${meta.desc}</div>
+  </div>`;
+}).join('');
+
+// ── CS ISSUE CALLOUT ──
+const csPct = repeatCases.length>0?Math.round(rByCcpt.Consultant/repeatCases.length*100):0;
+document.getElementById('csCallout').innerHTML =
+  `💡 <strong>Key takeaway:</strong> ${rByCcpt.Consultant} of ${repeatCases.length} repeat-contact cases (${csPct}%) are a genuine Customer Service issue — the JC gave wrong info, missed a callback, or failed to probe proactively. The remaining ${repeatCases.length-rByCcpt.Consultant} cases (${100-csPct}%) trace back to Process, Technology, or the customer's own changed request — not agent behaviour, so they need a policy/system fix rather than coaching.`;
+
+// ── REPEAT REASONS BY QUERY L1 ──
+const rr = Object.entries(O.repeat_cx_reasons||{}).sort((a,b)=>b[1]-a[1]).slice(0,8);
+const rrMax = rr[0]?.[1]||1;
+const rrJune = OP.repeat_cx_reasons||{};
+document.getElementById('reasonBars').innerHTML = rr.map(([k,v])=>`
+  <div class="bar-row" onclick="openCaseModalByQuery('${k.replace(/'/g,"\\'")}')">
+    <div class="bar-label">${k}</div>
+    <div class="bar-track"><div class="bar-fill bf-mag" style="width:${Math.round(v/rrMax*100)}%"></div></div>
+    <div class="bar-val">${v} ${trendBadge(v, rrJune[k])}</div>
+  </div>`).join('');
+
+// ── REPEAT BY TEAM ──
+const rt = Object.entries(O.repeat_cx_by_team||{}).sort((a,b)=>b[1]-a[1]).slice(0,8);
+const rtMax = rt[0]?.[1]||1;
+const rtJune = OP.repeat_cx_by_team||{};
+document.getElementById('teamBars').innerHTML = rt.map(([k,v])=>`
+  <div class="bar-row" onclick="openCaseModalByTeam('${k.replace(/'/g,"\\'")}')">
+    <div class="bar-label">${k.replace('Post Sale - ','PS ')}</div>
+    <div class="bar-track"><div class="bar-fill bf-blue" style="width:${Math.round(v/rtMax*100)}%"></div></div>
+    <div class="bar-val">${v} ${trendBadge(v, rtJune[k])}</div>
+  </div>`).join('');
+
+// ── HIGH PRIORITY TABLE (CS Issue repeats) ──
+const csCases = repeatCases.filter(c=>c.ccpt1===CS_ISSUE_BUCKET);
+document.getElementById('hpSub').textContent = `${csCases.length} repeat-contact cases where the JC's own handling drove the second contact — these are ready for direct coaching follow-up`;
+document.getElementById('hpTableBody').innerHTML = csCases.slice(0,40).map(c=>`
+  <tr>
+    <td><strong>${c.agent_name||'—'}</strong></td>
+    <td style="color:var(--txt3);font-size:11px;">${c.team||'—'}</td>
+    <td>${c.query||'—'}</td>
+    <td class="num-red">${c.dislike||'—'}</td>
+    <td style="color:var(--txt3);font-size:11px;max-width:320px;">${(c.summary||'').slice(0,140)}${(c.summary||'').length>140?'…':''}</td>
+  </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--txt3);">No CS-issue repeat cases this month.</td></tr>';
+
+// ── CASE MODAL ──
+function renderModal(cases, title, meta){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalMeta').textContent = meta;
+  document.getElementById('modalCount').textContent = `Showing ${cases.length} case${cases.length!==1?'s':''}`;
+  document.getElementById('modalTableBody').innerHTML = cases.map((c,i)=>{
+    const cb = c.crit==='Crucial'?'cb-crucial':c.crit==='Netural'?'cb-neutral':'cb-less';
+    const contact = c.cx_phone && c.cx_phone!=='nan' && c.cx_phone
+      ? `<a class="cx-contact" onclick="copyText('${c.cx_phone}')">${c.cx_phone}</a>`
+      : c.cx_email && c.cx_email!=='nan' && c.cx_email
+      ? `<a class="cx-contact" onclick="copyText('${c.cx_email}')">${c.cx_email.split('@')[0]}@…</a>`
+      : '<span style="color:var(--txt3);font-size:10px;">—</span>';
+    const summ = c.summary && c.summary.length>10 ? `<div class="summary-text">${c.summary.slice(0,120)}${c.summary.length>120?'…':''}</div>` : '<span style="color:var(--txt3);font-size:10px;">—</span>';
+    return `<tr>
+      <td style="color:var(--txt3);font-size:10px;">${i+1}</td>
+      <td><span class="crit-badge ${cb}">${c.crit==='Netural'?'Neutral':c.crit||'—'}</span></td>
+      <td style="font-size:10px;color:var(--txt3);">${c.team||'—'}</td>
+      <td style="font-size:11px;">${c.query||'—'}</td>
+      <td style="font-size:11px;">${c.dislike||'—'}</td>
+      <td style="font-size:10px;color:var(--txt3);">${c.ccpt1||'—'}</td>
+      <td>${contact}</td>
+      <td>${summ}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('caseModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function openCaseModal(ccptFilter){
+  if(ccptFilter==='all'){ renderModal(repeatCases, 'All Repeat Customers', `${repeatCases.length} cases · July 2026`); return; }
+  const cases = repeatCases.filter(c=>c.ccpt1===ccptFilter);
+  renderModal(cases, (reasonMeta[ccptFilter]?reasonMeta[ccptFilter].title:ccptFilter)+' — Repeat Customers', `${cases.length} cases · July 2026`);
+}
+function openCaseModalByQuery(q){
+  const cases = repeatCases.filter(c=>c.query===q);
+  renderModal(cases, q+' — Repeat Customers', `${cases.length} cases · July 2026`);
+}
+function openCaseModalByTeam(t){
+  const cases = repeatCases.filter(c=>c.team===t);
+  renderModal(cases, t+' — Repeat Customers', `${cases.length} cases · July 2026`);
+}
+function closeModal(){
+  document.getElementById('caseModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('caseModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+function copyText(txt){
+  navigator.clipboard.writeText(txt).then(()=>{
+    const t=document.createElement('div');
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink2);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;z-index:9999;';
+    t.textContent='Copied: '+txt;
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(),2000);
+  });
+}
+
+// ── CSV EXPORT ──
+function downloadCSV(){
+  const rows=[['Agent','Team','Query L1','Primary Dislike','CCPT1','Repeat CX Count','Summary']];
+  repeatCases.forEach(c=>rows.push([c.agent_name,c.team,c.query,c.dislike,c.ccpt1,c.repeat_cx_count||'',(c.summary||'').replace(/\n/g,' ')]));
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='Repeat_Customers_July2026.csv';
+  a.click();
+}
+
+// ── SCROLL FADE ──
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.06});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+</script>
+</body>
+</html>
