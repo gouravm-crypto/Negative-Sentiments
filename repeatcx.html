@@ -238,7 +238,7 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
         <table class="case-table">
           <thead><tr>
             <th>#</th><th>Criticality</th><th>Team</th><th>Query L1</th><th>Primary Dislike</th>
-            <th>CCPT1</th><th>CX Contact</th><th>Summary</th>
+            <th>CCPT1</th><th>Summary</th>
           </tr></thead>
           <tbody id="modalTableBody"></tbody>
         </table>
@@ -383,11 +383,6 @@ function renderModal(cases, title, meta){
   document.getElementById('modalCount').textContent = `Showing ${cases.length} case${cases.length!==1?'s':''}`;
   document.getElementById('modalTableBody').innerHTML = cases.map((c,i)=>{
     const cb = c.crit==='Crucial'?'cb-crucial':c.crit==='Netural'?'cb-neutral':'cb-less';
-    const contact = c.cx_phone && c.cx_phone!=='nan' && c.cx_phone
-      ? `<a class="cx-contact" onclick="copyText('${c.cx_phone}')">${c.cx_phone}</a>`
-      : c.cx_email && c.cx_email!=='nan' && c.cx_email
-      ? `<a class="cx-contact" onclick="copyText('${c.cx_email}')">${c.cx_email.split('@')[0]}@…</a>`
-      : '<span style="color:var(--txt3);font-size:10px;">—</span>';
     const summ = c.summary && c.summary.length>10 ? `<div class="summary-text">${c.summary.slice(0,120)}${c.summary.length>120?'…':''}</div>` : '<span style="color:var(--txt3);font-size:10px;">—</span>';
     return `<tr>
       <td style="color:var(--txt3);font-size:10px;">${i+1}</td>
@@ -396,7 +391,6 @@ function renderModal(cases, title, meta){
       <td style="font-size:11px;">${c.query||'—'}</td>
       <td style="font-size:11px;">${c.dislike||'—'}</td>
       <td style="font-size:10px;color:var(--txt3);">${c.ccpt1||'—'}</td>
-      <td>${contact}</td>
       <td>${summ}</td>
     </tr>`;
   }).join('');
@@ -422,15 +416,6 @@ function closeModal(){
 }
 document.getElementById('caseModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
-function copyText(txt){
-  navigator.clipboard.writeText(txt).then(()=>{
-    const t=document.createElement('div');
-    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink2);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;z-index:9999;';
-    t.textContent='Copied: '+txt;
-    document.body.appendChild(t);
-    setTimeout(()=>t.remove(),2000);
-  });
-}
 
 // ── CSV EXPORT ──
 function downloadCSV(){

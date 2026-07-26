@@ -295,7 +295,7 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
   <!-- MONTH-ON-MONTH TRENDS -->
   <div class="section-hd fade-up">
     <div class="section-title">Month-on-Month — July vs June</div>
-    <div class="section-sub">Auto-drafted "likely driver" reasoning — treat as a starting point for review, not a confirmed root cause</div>
+    <div class="section-sub">Real counts and % change vs June — click any card to see the underlying cases</div>
   </div>
   <div class="g3 fade-up" id="momGrid" style="margin-bottom:8px;"></div>
 
@@ -402,7 +402,7 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
           <thead><tr>
             <th>#</th><th>Criticality</th><th>Query L1</th><th>Primary Dislike</th>
             <th>Team Responsible</th><th>CCPT1</th><th>Converted +ve</th>
-            <th>CX Contact</th><th>Auditor Summary</th>
+            <th>Auditor Summary</th>
           </tr></thead>
           <tbody id="modalTableBody"></tbody>
         </table>
@@ -482,25 +482,6 @@ function trendBadge(current, prior, goodDirection){
   return `<div class="hk-trend ${cls}">${arrow} ${pct}% vs June</div>`;
 }
 
-// ── MoM REASONING GENERATOR (auto-drafted — flagged as a suggestion, not final) ──
-// Finds which team contributed most to the change in a given case-predicate between
-// June and July, and drafts a one-line explanation. This is pattern-matching on the
-// data, not a confirmed root cause — always presented as "Likely driver" to keep that honest.
-function momReason(predicate, label){
-  const byTeamJuly={}, byTeamJune={};
-  allCases.filter(predicate).forEach(c=>byTeamJuly[c.team]=(byTeamJuly[c.team]||0)+1);
-  juneCases.filter(predicate).forEach(c=>byTeamJune[c.team]=(byTeamJune[c.team]||0)+1);
-  const teams=new Set([...Object.keys(byTeamJuly),...Object.keys(byTeamJune)]);
-  let top=null, topDelta=0;
-  teams.forEach(t=>{
-    const d=(byTeamJuly[t]||0)-(byTeamJune[t]||0);
-    if(Math.abs(d)>Math.abs(topDelta)){topDelta=d; top=t;}
-  });
-  if(!top||topDelta===0) return `No single team stands out — the change in ${label} is spread fairly evenly across teams.`;
-  const dir=topDelta>0?'rose':'fell';
-  return `Likely driver: <strong>${top}</strong>, where ${label} ${dir} from ${byTeamJune[top]||0} to ${byTeamJuly[top]||0} cases.`;
-}
-
 // ── HERO KPIS ──
 const heroItems=[
   {num:O.total,prior:OP.total,lbl:'NS Validated',cls:'',filter:'all'},
@@ -521,7 +502,7 @@ document.getElementById('heroKpis').innerHTML=heroItems.map(k=>
 
 // ── MONTH-ON-MONTH TRENDS GRID ──
 function momCard(cfg){
-  const {current,prior,label,filter,predicate,good}=cfg;
+  const {current,prior,label,filter,good}=cfg;
   const diff=current-prior;
   const pct=prior>0?Math.round(Math.abs(diff)/prior*100):(current>0?100:0);
   const rose=diff>0;
@@ -531,12 +512,10 @@ function momCard(cfg){
   else if(good==='up') status = rose? 'better':'worse';
   else status = rose? 'worse':'better'; // default: up=bad framing (most of these are negative-sentiment counts)
   const arrow = diff===0?'—':(rose?'▲':'▼');
-  const reason = diff===0 ? 'No material change vs June.' : momReason(predicate, label);
   return `<div class="mom-card ${status}" onclick="openCaseModal('${filter}','${label}')">
     <div class="mom-lbl">${label}</div>
     <div class="mom-nums"><div class="mom-num">${current}</div><div class="mom-delta ${status}">${arrow} ${pct}%</div></div>
     <div class="mom-prior">vs ${prior} in June</div>
-    <div class="mom-reason"><span class="tag">Likely driver (auto-drafted — verify)</span>${reason}</div>
   </div>`;
 }
 document.getElementById('momGrid').innerHTML = [
@@ -793,11 +772,6 @@ function renderCaseTable(cases){
   document.getElementById('modalCount').textContent=`Showing ${cases.length} case${cases.length!==1?'s':''}`;
   document.getElementById('modalTableBody').innerHTML=cases.map((c,i)=>{
     const cb=c.crit==='Crucial'?'cb-crucial':c.crit==='Netural'?'cb-neutral':'cb-less';
-    const contact=c.cx_phone&&c.cx_phone!='nan'&&c.cx_phone
-      ? `<a class="cx-contact" onclick="copyText('${c.cx_phone}')" title="Click to copy">${c.cx_phone}</a>`
-      : c.cx_email&&c.cx_email!='nan'&&c.cx_email
-      ? `<a class="cx-contact" onclick="copyText('${c.cx_email}')" title="Click to copy">${c.cx_email.split('@')[0]}@…</a>`
-      : '<span style="color:var(--txt3);font-size:10px;">—</span>';
     const summ=c.summary&&c.summary.length>10
       ? `<div class="summary-text">${c.summary.slice(0,120)}${c.summary.length>120?'…':''}</div>`
       : '<span style="color:var(--txt3);font-size:10px;">—</span>';
@@ -812,20 +786,9 @@ function renderCaseTable(cases){
       <td style="font-size:10px;color:var(--txt3);">${c.team_resp||'—'}</td>
       <td style="font-size:10px;color:var(--txt3);">${c.ccpt1||'—'}</td>
       <td>${convBadge}</td>
-      <td>${contact}</td>
       <td>${summ}</td>
     </tr>`;
   }).join('');
-}
-
-function copyText(txt){
-  navigator.clipboard.writeText(txt).then(()=>{
-    const t=document.createElement('div');
-    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink2);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;z-index:9999;pointer-events:none;';
-    t.textContent='Copied: '+txt;
-    document.body.appendChild(t);
-    setTimeout(()=>t.remove(),2000);
-  });
 }
 
 function closeModal(){
@@ -866,8 +829,8 @@ function checkPw(){
 }
 function downloadCSV(){
   if(!allCases.length){alert('Data not loaded yet, please wait a moment.');return;}
-  var rows=[['Team','Agent','Criticality','Query L1','Query L2','Primary Dislike','Secondary Dislike','CCPT1','Team Responsible','Action Req','Training Gap','Auditor Feedback','Repeat CX','Converted +ve','CX Email','CX Phone','Summary']];
-  allCases.forEach(function(c){rows.push([c.team,c.agent_name,c.crit,c.query,c.query_l2||'',c.dislike,c.dislike2||'',c.ccpt1,c.team_resp,c.action_req,c.tgap,c.auditor_insight,c.repeat_cx,c.final_exp,c.cx_email||'',c.cx_phone||'',(c.summary||'').replace(/\n/g,' ')]);});
+  var rows=[['Team','Agent','Criticality','Query L1','Query L2','Primary Dislike','Secondary Dislike','CCPT1','Team Responsible','Action Req','Training Gap','Auditor Feedback','Repeat CX','Converted +ve','Summary']];
+  allCases.forEach(function(c){rows.push([c.team,c.agent_name,c.crit,c.query,c.query_l2||'',c.dislike,c.dislike2||'',c.ccpt1,c.team_resp,c.action_req,c.tgap,c.auditor_insight,c.repeat_cx,c.final_exp,(c.summary||'').replace(/\n/g,' ')]);});
   var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
   var a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
