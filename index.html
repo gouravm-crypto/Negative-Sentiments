@@ -54,6 +54,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 .hero-title{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:800;color:#fff;line-height:1.1;margin-bottom:6px;}
 .hero-sub{font-size:12px;color:rgba(255,200,220,.45);margin-bottom:28px;}
 .hero-kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:12px;}
+.audit-funnel{display:flex;align-items:center;justify-content:center;gap:0;margin:0 0 20px;padding:14px 22px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;flex-wrap:wrap;}
+.af-item{display:flex;flex-direction:column;align-items:center;padding:0 22px;}
+.af-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:800;line-height:1;}
+.af-lbl{font-size:8.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,200,220,.4);margin-top:4px;}
+.af-arrow{font-size:16px;color:rgba(255,200,220,.25);padding:0 4px;}
+.af-note{width:100%;text-align:center;font-size:9.5px;color:rgba(255,200,220,.3);margin-top:8px;font-style:italic;}
 .hk{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);position:relative;}
 .hk:hover{background:rgba(200,0,90,.12);border-color:rgba(200,0,90,.35);transform:translateY(-3px);box-shadow:0 8px 24px rgba(200,0,90,.18);}
 .hk::after{content:'↗';position:absolute;top:6px;right:8px;font-size:8px;color:rgba(255,200,220,.2);opacity:0;transition:opacity .2s;}
@@ -286,6 +292,7 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
   <div class="hero-tag">💎 Quality Audit · Negative Sentiment Report</div>
   <h1 class="hero-title">NS Audit Dashboard</h1>
   <p class="hero-sub">July 2026 · CS Quality Team · Click any metric to drill into those cases</p>
+  <div class="audit-funnel" id="auditFunnel"></div>
   <div class="hero-kpis" id="heroKpis"></div>
 </section>
 
@@ -483,6 +490,17 @@ function trendBadge(current, prior, goodDirection){
 }
 
 // ── HERO KPIS ──
+// ── AUDIT FUNNEL (July only — this breakdown wasn't tracked in June) ──
+if(O.total_audits_done){
+  document.getElementById('auditFunnel').innerHTML = `
+    <div class="af-item"><div class="af-num" style="color:#fff;">${O.total_audits_done}</div><div class="af-lbl">Total Audits Done</div></div>
+    <div class="af-arrow">→</div>
+    <div class="af-item"><div class="af-num" style="color:#4ade80;">${O.valid_ns}</div><div class="af-lbl">Valid NS</div></div>
+    <div class="af-item"><div class="af-num" style="color:#ff6fa8;">${O.invalid_ns}</div><div class="af-lbl">Invalid NS</div></div>
+    <div class="af-note">Every other metric on this dashboard is based on the ${O.valid_ns} Valid NS cases only · not tracked this way in June</div>
+  `;
+}
+
 const heroItems=[
   {num:O.total,prior:OP.total,lbl:'NS Validated',cls:'',filter:'all'},
   {num:O.crucial,prior:OP.crucial,lbl:'Crucial',cls:'mag',filter:'crucial',good:'down'},
