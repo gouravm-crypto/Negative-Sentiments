@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trainer Console · NS Audit · July 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;0,800;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mag:#C8005A;--mag-lt:#F0006E;--mag-dk:#8A003E;--mag-pale:#FFF0F6;
+  --gold:#B8860B;--gold-lt:#E8B840;
+  --ink:#0F0A10;--ink2:#1E0E1A;
+  --body:#FAFAF8;--surface:#FFFFFF;
+  --bdr:#EEE4EC;--bdr2:#E0CCD8;
+  --txt:#1A0818;--txt2:#5A3048;--txt3:#9A7085;
+  --sh-sm:0 2px 8px rgba(15,10,16,.08);--sh-md:0 4px 20px rgba(15,10,16,.10);--sh-lg:0 8px 36px rgba(15,10,16,.14);
+  --green:#1a7a4a;--blue:#1a4fa0;--r:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.hdr{position:sticky;top:0;z-index:900;background:var(--ink2);border-bottom:2px solid transparent;border-image:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent) 1;display:flex;align-items:center;padding:0 48px;height:64px;}
+.hdr-brand{display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none;}
+.cl-logo{width:38px;height:38px;object-fit:cover;border-radius:8px;}
+.cl-name{font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#fff;line-height:1;}
+.cl-sub{font-size:7px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,200,220,.4);}
+.hdr-sep{width:1px;height:28px;background:rgba(255,255,255,.1);margin:0 20px;flex-shrink:0;}
+.hdr-nav{display:flex;gap:0;flex:1;}
+.hnav{height:64px;padding:0 13px;display:flex;align-items:center;font-size:9.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:rgba(255,200,220,.35);text-decoration:none;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap;}
+.hnav:hover{color:rgba(255,200,220,.7);}
+.hnav.active{color:#fff;border-bottom-color:var(--mag);background:rgba(200,0,90,.08);}
+.hdr-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.hdr-badge{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mag);border:1.5px solid rgba(200,0,90,.4);padding:4px 10px;border-radius:20px;background:rgba(200,0,90,.08);}
+.csv-btn{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--mag),var(--mag-dk));border:none;padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.csv-btn:hover{transform:scale(1.05);}
+.csv-btn.alt{background:linear-gradient(135deg,var(--gold),#8A6300);}
+
+.pg-hero{background:linear-gradient(160deg,var(--ink2) 0%,#2A0E22 55%,#1A0E2A 100%);padding:44px 48px 30px;position:relative;overflow:hidden;}
+.pg-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;}
+.pg-tag{display:inline-flex;align-items:center;gap:6px;font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mag);border:1px solid rgba(200,0,90,.3);padding:4px 12px;border-radius:4px;background:rgba(200,0,90,.07);margin-bottom:14px;}
+.pg-title{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:800;color:#fff;margin-bottom:6px;}
+.pg-sub{font-size:12.5px;color:rgba(255,200,220,.45);margin-bottom:24px;}
+.dl-row{display:flex;gap:10px;margin-bottom:22px;}
+.hero-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.hk{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px 14px;text-align:center;cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);}
+.hk:hover{background:rgba(200,0,90,.12);border-color:rgba(200,0,90,.35);transform:translateY(-3px);box-shadow:0 8px 24px rgba(200,0,90,.18);}
+.hk-num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;line-height:1;color:#fff;}
+.hk-num.mag{color:#F0006E;}.hk-num.gold{color:#E8B840;}.hk-num.blue{color:#93c5fd;}.hk-num.green{color:#4ade80;}
+.hk-lbl{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,200,220,.3);margin-top:4px;}
+
+.page{max-width:1380px;margin:0 auto;padding:36px 48px 80px;}
+.spacer{height:36px;}
+.group-hd{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+.group-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.group-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--ink);}
+.group-sub{font-size:11.5px;color:var(--txt3);margin-bottom:18px;}
+.g2{display:grid;grid-template-columns:1.1fr 1.6fr;gap:16px;align-items:start;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.stat-mini{background:var(--surface);border:1.5px solid var(--bdr);border-radius:12px;padding:14px 16px;box-shadow:var(--sh-sm);}
+.stat-mini-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:800;line-height:1;}
+.stat-mini-lbl{font-size:9.5px;color:var(--txt3);margin-top:3px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;}
+
+.cc{background:var(--surface);border:1.5px solid var(--bdr);border-radius:var(--r);padding:22px 24px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
+.cc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;opacity:.2;}
+.cc-title{font-family:'Cormorant Garamond',serif;font-size:16.5px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.cc-sub{font-size:10.5px;color:var(--txt3);margin-bottom:14px;}
+.bar-row{display:grid;grid-template-columns:190px 1fr 42px;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer;}
+.bar-label{font-size:11px;color:var(--txt2);}
+.bar-track{height:7px;background:rgba(200,0,90,.07);border-radius:5px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:5px;}
+.bar-val{font-size:11px;font-weight:700;text-align:right;color:var(--txt2);}
+
+.agent-table{width:100%;border-collapse:collapse;}
+.agent-table th{font-size:8px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt3);padding:8px 10px;border-bottom:2px solid var(--bdr);text-align:left;}
+.agent-table td{padding:8px 10px;font-size:11.5px;border-bottom:1px solid var(--bdr2);color:var(--txt2);cursor:pointer;}
+.agent-table tr:hover td{background:#fdf5f8;}
+.num-red{color:var(--mag);font-weight:700;}
+.num-gold{color:var(--gold);font-weight:700;}
+
+.other-section{background:linear-gradient(160deg,#fbf7f9,#fff);border:1.5px dashed var(--bdr2);border-radius:var(--r);padding:20px 24px;}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(15,10,16,.7);backdrop-filter:blur(12px);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-sheet{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:1200px;max-height:88vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.34,1.2,.64,1);}
+.modal-overlay.open .modal-sheet{transform:none;}
+.modal-hd{padding:22px 28px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--ink);}
+.modal-meta{font-size:12px;color:var(--txt3);}
+.modal-close{width:34px;height:34px;border-radius:50%;background:var(--body);border:1.5px solid var(--bdr);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--txt3);}
+.modal-close:hover{background:var(--mag);color:#fff;border-color:var(--mag);}
+.modal-body{padding:20px 28px;overflow-y:auto;flex:1;}
+.modal-count{font-size:11px;color:var(--txt3);margin-bottom:12px;}
+.case-table{width:100%;border-collapse:collapse;}
+.case-table th{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);padding:9px 12px;border-bottom:2px solid var(--bdr);text-align:left;position:sticky;top:0;background:var(--surface);}
+.case-table td{padding:10px 12px;font-size:11.5px;border-bottom:1px solid var(--bdr);color:var(--txt2);vertical-align:top;}
+.crit-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;}
+.cb-crucial{background:rgba(200,0,90,.1);color:var(--mag);}
+.cb-neutral{background:rgba(184,134,11,.1);color:var(--gold);}
+.cb-less{background:rgba(100,100,100,.1);color:#666;}
+.summary-text{font-size:11px;color:var(--txt3);line-height:1.6;max-width:300px;}
+
+footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;justify-content:space-between;}
+.ft-l{font-size:11px;color:rgba(255,200,220,.3);}
+.ft-r{font-size:11px;color:rgba(255,200,220,.3);text-align:right;}
+
+@media(max-width:900px){
+  .hdr{padding:0 16px;height:56px;}.hdr-sep{display:none;}.hnav{padding:0 8px;font-size:8px;letter-spacing:1px;}
+  .pg-hero{padding:28px 16px 24px;}.hero-kpis{grid-template-columns:repeat(3,1fr);gap:8px;}
+  .page{padding:24px 16px 60px;}.g2{grid-template-columns:1fr;}.g4{grid-template-columns:repeat(2,1fr);}
+  .dl-row{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <a class="hdr-brand" href="index.html">
+    <img id="hdrLogo" class="cl-logo" alt="CaratLane">
+    <div><div class="cl-name">CaratLane</div><div class="cl-sub">NS Audit Dashboard</div></div>
+  </a>
+  <div class="hdr-sep"></div>
+  <nav class="hdr-nav">
+    <a class="hnav" href="index.html">Overview</a>
+    <a class="hnav" href="analytics.html">Analytics</a>
+    <a class="hnav" href="repeatcx.html">Repeat Customers</a>
+    <a class="hnav" href="team.html">Teams</a>
+    <a class="hnav" href="rootcause.html">Root Cause</a>
+    <a class="hnav active" href="trainers.html">Trainers</a>
+  </nav>
+  <div class="hdr-right">
+    <div class="hdr-badge">July 2026</div>
+  </div>
+</header>
+
+<div class="pg-hero">
+  <div class="pg-tag">🎓 Coaching-Ready View</div>
+  <div class="pg-title">Trainer Console</div>
+  <div class="pg-sub">Presale and Post-Sale trainers get separate views below — top Areas of Improvement, plus which agents need coaching on what</div>
+  <div class="dl-row">
+    <button class="csv-btn" onclick="downloadCSV()">⬇ Export CSV (raw cases)</button>
+    <button class="csv-btn alt" onclick="downloadPivotWorkbook()">⬇ Export Pivot Workbook (.xlsx)</button>
+  </div>
+  <div class="hero-kpis" id="heroKpis"></div>
+</div>
+
+<div class="page">
+
+  <div class="spacer"></div>
+  <div id="presaleSection"></div>
+
+  <div class="spacer"></div>
+  <div id="postsaleSection"></div>
+
+  <div class="spacer"></div>
+  <div id="otherSection"></div>
+
+</div>
+
+<footer>
+  <div class="ft-l">CaratLane Quality Audit · Trainer Console · July 2026</div>
+  <div class="ft-r">Made by <strong style="color:rgba(255,200,220,.6)">CS Quality Team</strong> · QA Team · Confidential</div>
+</footer>
+
+<div class="modal-overlay" id="caseModal">
+  <div class="modal-sheet">
+    <div class="modal-hd">
+      <div><div class="modal-title" id="modalTitle">Cases</div><div class="modal-meta" id="modalMeta"></div></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-count" id="modalCount"></div>
+      <div style="overflow-x:auto;">
+        <table class="case-table">
+          <thead><tr>
+            <th>#</th><th>Criticality</th><th>Team</th><th>Agent</th><th>Training Gap</th>
+            <th>CCPT1</th><th>Primary Dislike</th><th>Summary</th>
+          </tr></thead>
+          <tbody id="modalTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="data.js"></script>
+<script>
+
+if(typeof DASHBOARD_DATA !== 'undefined' && DASHBOARD_DATA.logo){
+  document.getElementById('hdrLogo').src = DASHBOARD_DATA.logo;
+}
+
+const D=DASHBOARD_DATA, O=D.july.overall, T=D.july.teams;
+
+// Team → Trainer Group mapping. "Other" covers small mixed-channel teams
+// (Clive / OMNI / TAH) that don't cleanly belong to either desk.
+const GROUP = {
+  'Post Sale - Inbound':'Post-Sale','Post Sale - Whatsapp':'Post-Sale','Post Sale - Outbound':'Post-Sale','Emails':'Post-Sale',
+  'WhatsApp':'Pre-Sale','Presale - Inbound':'Pre-Sale','Presale - Outbound':'Pre-Sale',
+  'Clive':'Other','TAH':'Other','OMNI':'Other',
+};
+
+function flattenCases(teams){
+  const out=[];
+  Object.entries(teams).forEach(([team,td])=>{
+    Object.entries(td.agents||{}).forEach(([email,ad])=>{
+      (ad.cases||[]).forEach(c=>out.push({...c, agent_name:ad.name, agent_email:email, team, group:GROUP[team]||'Other'}));
+    });
+  });
+  return out;
+}
+const allCases = flattenCases(T);
+const tgapCases = allCases.filter(c=>c.tgap==='Yes');
+const consultantCases = allCases.filter(c=>c.ccpt1==='Consultant');
+// The trainer-relevant pool: headline = Training Gap, supporting context = Consultant-CCPT1 (may overlap)
+const trainingRelevant = allCases.filter(c=>c.tgap==='Yes'||c.ccpt1==='Consultant');
+
+function groupTgap(g){ return tgapCases.filter(c=>c.group===g); }
+function groupConsultant(g){ return consultantCases.filter(c=>c.group===g); }
+function groupTotal(g){ return allCases.filter(c=>c.group===g).length; }
+
+// ── HERO KPIS ──
+document.getElementById('heroKpis').innerHTML = [
+  {num:tgapCases.length, lbl:'Training Gap (Headline)', cls:'mag'},
+  {num:consultantCases.length, lbl:'Consultant-CCPT1 (Context)', cls:'gold'},
+  {num:groupTgap('Pre-Sale').length, lbl:'Presale Training Gap', cls:'blue'},
+  {num:groupTgap('Post-Sale').length, lbl:'Post-Sale Training Gap', cls:'blue'},
+  {num:groupTgap('Other').length, lbl:'Other Teams Training Gap', cls:'green'},
+].map(k=>`<div class="hk"><div class="hk-num ${k.cls}">${k.num}</div><div class="hk-lbl">${k.lbl}</div></div>`).join('');
+
+// ── BUILD ONE GROUP SECTION ──
+function buildGroupSection(containerId, groupName, icon, iconBg, accent, isOther){
+  const tgap = groupTgap(groupName);
+  const consultant = groupConsultant(groupName);
+  const total = groupTotal(groupName);
+
+  // AOI themes: primarily from Training Gap cases; fall back to Consultant cases if a
+  // group has few tgap cases so trainers still see a useful theme list.
+  const reasonSource = tgap.length >= 5 ? tgap : [...tgap, ...consultant];
+  const reasonCounts = {};
+  reasonSource.forEach(c=>{ if(c.dislike) reasonCounts[c.dislike]=(reasonCounts[c.dislike]||0)+1; });
+  const topReasons = Object.entries(reasonCounts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const maxR = topReasons[0]?.[1] || 1;
+
+  // Agent rollup
+  const agentMap = {};
+  [...tgap, ...consultant].forEach(c=>{
+    const key = c.agent_email;
+    if(!agentMap[key]) agentMap[key] = {name:c.agent_name, team:c.team, tgap:0, consultant:0, reasons:{}};
+    agentMap[key].team = c.team;
+  });
+  tgap.forEach(c=>{ agentMap[c.agent_email].tgap++; if(c.dislike) agentMap[c.agent_email].reasons[c.dislike]=(agentMap[c.agent_email].reasons[c.dislike]||0)+1; });
+  consultant.forEach(c=>{ agentMap[c.agent_email].consultant++; });
+  const agents = Object.entries(agentMap).map(([email,a])=>{
+    const topReason = Object.entries(a.reasons).sort((x,y)=>y[1]-x[1])[0];
+    return {email, ...a, topReason: topReason?topReason[0]:'—', score: a.tgap*2+a.consultant};
+  }).sort((a,b)=>b.score-a.score);
+
+  const sectionClass = isOther ? 'other-section' : '';
+  const html = `
+    <div class="group-hd">
+      <div class="group-icon" style="background:${iconBg};">${icon}</div>
+      <div><div class="group-title">${groupName} Trainer View</div></div>
+    </div>
+    <div class="group-sub">${total} total cases this month · ${tgap.length} Training Gap · ${consultant.length} Consultant-CCPT1 (supporting context)</div>
+    <div class="${sectionClass}" style="${isOther?'':''}">
+    <div class="g4">
+      <div class="stat-mini"><div class="stat-mini-num" style="color:${accent};">${tgap.length}</div><div class="stat-mini-lbl">Training Gap</div></div>
+      <div class="stat-mini"><div class="stat-mini-num" style="color:var(--gold);">${consultant.length}</div><div class="stat-mini-lbl">Consultant-CCPT1</div></div>
+      <div class="stat-mini"><div class="stat-mini-num" style="color:var(--txt2);">${agents.length}</div><div class="stat-mini-lbl">Agents Flagged</div></div>
+      <div class="stat-mini"><div class="stat-mini-num" style="color:var(--txt2);">${total?Math.round(tgap.length/total*100):0}%</div><div class="stat-mini-lbl">of Group's Cases</div></div>
+    </div>
+    <div class="g2">
+      <div class="cc">
+        <div class="cc-title">Top AOIs</div>
+        <div class="cc-sub">Click a bar to see the cases</div>
+        ${topReasons.map(([reason,cnt])=>`
+          <div class="bar-row" onclick="openReasonModal('${groupName}','${reason.replace(/'/g,"\\'")}')">
+            <div class="bar-label">${reason}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt/maxR*100)}%;background:${accent};"></div></div>
+            <div class="bar-val">${cnt}</div>
+          </div>`).join('') || '<div style="font-size:11px;color:var(--txt3);">No flagged cases this month.</div>'}
+      </div>
+      <div class="cc">
+        <div class="cc-title">Agents Needing Coaching</div>
+        <div class="cc-sub">Sorted by coaching priority (Training Gap weighted 2×) · click a row for their cases</div>
+        <div style="overflow-x:auto;max-height:340px;overflow-y:auto;">
+        <table class="agent-table">
+          <thead><tr><th>Agent</th><th>Team</th><th>Training Gap</th><th>Consultant</th><th>Top AOI</th></tr></thead>
+          <tbody>
+            ${agents.map(a=>`<tr onclick="openAgentModal('${a.email.replace(/'/g,"\\'")}','${a.name.replace(/'/g,"\\'")}')">
+              <td><strong>${a.name}</strong></td>
+              <td style="color:var(--txt3);font-size:10.5px;">${a.team}</td>
+              <td class="num-red">${a.tgap}</td>
+              <td class="num-gold">${a.consultant}</td>
+              <td style="font-size:10.5px;color:var(--txt3);">${a.topReason}</td>
+            </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--txt3);">No agents flagged.</td></tr>'}
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+    </div>
+  `;
+  document.getElementById(containerId).innerHTML = html;
+}
+
+buildGroupSection('presaleSection', 'Pre-Sale', '🛍', 'rgba(26,79,160,.12)', 'var(--blue)', false);
+buildGroupSection('postsaleSection', 'Post-Sale', '📦', 'rgba(200,0,90,.12)', 'var(--mag)', false);
+buildGroupSection('otherSection', 'Other', '🔀', 'rgba(184,134,11,.12)', 'var(--gold)', true);
+
+// ── CASE MODAL ──
+function renderModal(cases, title, meta){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalMeta').textContent = meta;
+  document.getElementById('modalCount').textContent = `Showing ${cases.length} case${cases.length!==1?'s':''}`;
+  document.getElementById('modalTableBody').innerHTML = cases.map((c,i)=>{
+    const cb = c.crit==='Crucial'?'cb-crucial':c.crit==='Netural'?'cb-neutral':'cb-less';
+    const summ = c.summary && c.summary.length>10 ? `<div class="summary-text">${c.summary.slice(0,140)}${c.summary.length>140?'…':''}</div>` : '<span style="color:var(--txt3);font-size:10px;">—</span>';
+    return `<tr>
+      <td style="color:var(--txt3);font-size:10px;">${i+1}</td>
+      <td><span class="crit-badge ${cb}">${c.crit==='Netural'?'Neutral':c.crit||'—'}</span></td>
+      <td style="font-size:10px;color:var(--txt3);">${c.team||'—'}</td>
+      <td style="font-size:11px;">${c.agent_name||'—'}</td>
+      <td style="font-size:10px;color:${c.tgap==='Yes'?'var(--mag)':'var(--txt3)'};font-weight:${c.tgap==='Yes'?'700':'400'};">${c.tgap||'No'}</td>
+      <td style="font-size:10px;color:var(--txt3);">${c.ccpt1||'—'}</td>
+      <td style="font-size:11px;">${c.dislike||'—'}</td>
+      <td>${summ}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('caseModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function openReasonModal(group, reason){
+  const cases = trainingRelevant.filter(c=>c.group===group && c.dislike===reason);
+  renderModal(cases, reason, `${group} · ${cases.length} cases · July 2026`);
+}
+function openAgentModal(email, name){
+  const cases = trainingRelevant.filter(c=>c.agent_email===email);
+  renderModal(cases, name, `${cases.length} training-relevant cases · July 2026`);
+}
+function closeModal(){
+  document.getElementById('caseModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('caseModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// ── CSV EXPORT (raw training-relevant cases) ──
+function downloadCSV(){
+  const rows=[['Group','Team','Agent','Criticality','Training Gap','CCPT1','Primary Dislike','Secondary Dislike','Summary']];
+  trainingRelevant.forEach(c=>rows.push([c.group,c.team,c.agent_name,c.crit,c.tgap,c.ccpt1,c.dislike||'',c.dislike2||'',(c.summary||'').replace(/\n/g,' ')]));
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='Trainer_Console_Cases_July2026.csv';
+  a.click();
+}
+
+// ── PIVOT WORKBOOK EXPORT (multi-sheet .xlsx via SheetJS) ──
+// Note: these are pre-computed cross-tab summary sheets (Agent × Reason, Team × Reason,
+// Group Summary) alongside the raw flat data — not a live/interactive native Excel
+// PivotTable object, but gives the same cut of the data ready to read or refresh manually.
+function downloadPivotWorkbook(){
+  const wb = XLSX.utils.book_new();
+
+  // Sheet 1: Raw data
+  const rawRows = trainingRelevant.map(c=>({
+    Group:c.group, Team:c.team, Agent:c.agent_name, Email:c.agent_email,
+    Criticality:c.crit==='Netural'?'Neutral':c.crit, 'Training Gap':c.tgap, CCPT1:c.ccpt1||'',
+    'Primary Dislike':c.dislike||'', 'Secondary Dislike':c.dislike2||'', 'Query L1':c.query||'',
+    Summary:c.summary||''
+  }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rawRows), 'Raw Data');
+
+  // Sheet 2: Pivot - Agent x Reason (top 12 reasons as columns)
+  const reasonCounts = {};
+  trainingRelevant.forEach(c=>{ if(c.dislike) reasonCounts[c.dislike]=(reasonCounts[c.dislike]||0)+1; });
+  const topReasons = Object.entries(reasonCounts).sort((a,b)=>b[1]-a[1]).slice(0,12).map(r=>r[0]);
+  const agentAgg = {};
+  trainingRelevant.forEach(c=>{
+    const key = c.agent_name+' ('+c.team+')';
+    if(!agentAgg[key]) agentAgg[key] = {Agent:key, Group:c.group, 'Training Gap Total':0, 'Consultant Total':0};
+    if(c.tgap==='Yes') agentAgg[key]['Training Gap Total']++;
+    if(c.ccpt1==='Consultant') agentAgg[key]['Consultant Total']++;
+    if(c.dislike && topReasons.includes(c.dislike)) agentAgg[key][c.dislike] = (agentAgg[key][c.dislike]||0)+1;
+  });
+  const agentPivotRows = Object.values(agentAgg).sort((a,b)=>b['Training Gap Total']-a['Training Gap Total']);
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(agentPivotRows), 'Pivot - Agent x Reason');
+
+  // Sheet 3: Pivot - Team x Reason
+  const teamAgg = {};
+  trainingRelevant.forEach(c=>{
+    const key = c.team;
+    if(!teamAgg[key]) teamAgg[key] = {Team:key, Group:c.group, 'Training Gap Total':0, 'Consultant Total':0};
+    if(c.tgap==='Yes') teamAgg[key]['Training Gap Total']++;
+    if(c.ccpt1==='Consultant') teamAgg[key]['Consultant Total']++;
+    if(c.dislike && topReasons.includes(c.dislike)) teamAgg[key][c.dislike] = (teamAgg[key][c.dislike]||0)+1;
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(Object.values(teamAgg)), 'Pivot - Team x Reason');
+
+  // Sheet 4: Group summary
+  const groupSummary = ['Pre-Sale','Post-Sale','Other'].map(g=>({
+    Group:g, 'Total Cases':groupTotal(g), 'Training Gap':groupTgap(g).length, 'Consultant-CCPT1':groupConsultant(g).length,
+    '% of Group is Training Gap': groupTotal(g)? Math.round(groupTgap(g).length/groupTotal(g)*100)+'%':'0%'
+  }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(groupSummary), 'Group Summary');
+
+  XLSX.writeFile(wb, 'Trainer_Console_Pivot_July2026.xlsx');
+}
+
+</script>
+</body>
+</html>
