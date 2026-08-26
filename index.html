@@ -588,19 +588,9 @@ document.getElementById('trend3Grid').innerHTML = `<div class="t3-grid">` + [
   if(!RT || !AS) return;
   document.getElementById('realtimeGrid').innerHTML = `<div class="rt-grid">
     <div class="rt-card">
-      <div class="rt-num">${RT.total_assigned}</div>
-      <div class="rt-lbl">NS Audits Assigned</div>
-      <div class="rt-sub">Across presale + postsale, Aug 2026</div>
-    </div>
-    <div class="rt-card">
       <div class="rt-num" style="color:var(--green);">${RT.total_realtime}</div>
       <div class="rt-lbl">Completed in Real-Time</div>
       <div class="rt-sub">Assigned → completed within 2 days</div>
-    </div>
-    <div class="rt-card">
-      <div class="rt-num" style="color:var(--gold);">${RT.pct_realtime_of_assigned}%</div>
-      <div class="rt-lbl">Real-Time Rate</div>
-      <div class="rt-sub">Share of all assigned audits</div>
     </div>
     <div class="rt-card">
       <div class="rt-num">${AS.total_assigned}</div>
