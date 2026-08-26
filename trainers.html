@@ -196,17 +196,22 @@ if(typeof DASHBOARD_DATA !== 'undefined' && DASHBOARD_DATA.logo){
 const D=DASHBOARD_DATA, O=D.august.overall, T=D.august.teams;
 
 // Team → Trainer Group mapping. "Other" covers small mixed-channel teams
-// (Clive / OMNI / TAH) that don't cleanly belong to either desk.
+// (OMNI, TAH) that don't cleanly belong to either desk. Clive is a Presale channel.
 const GROUP = {
   'Post Sale - Inbound':'Post-Sale','Post Sale - Whatsapp':'Post-Sale','Post Sale - Outbound':'Post-Sale','Emails':'Post-Sale',
-  'WhatsApp':'Pre-Sale','Presale - Inbound':'Pre-Sale','Presale - Outbound':'Pre-Sale',
-  'Clive':'Other','TAH':'Other','OMNI':'Other',
+  'WhatsApp':'Pre-Sale','Presale - Inbound':'Pre-Sale','Presale - Outbound':'Pre-Sale','Clive':'Pre-Sale',
+  'TAH':'Other','OMNI':'Other',
 };
+
+// Agents no longer with the company — excluded from this coaching view only.
+// Their cases still count everywhere else on the dashboard (Teams, Root Cause, etc.).
+const EXITED_AGENTS = new Set(['Huda_A']);
 
 function flattenCases(teams){
   const out=[];
   Object.entries(teams).forEach(([team,td])=>{
     Object.entries(td.agents||{}).forEach(([email,ad])=>{
+      if(EXITED_AGENTS.has(ad.name)) return;
       (ad.cases||[]).forEach(c=>out.push({...c, agent_name:ad.name, agent_email:email, team, group:GROUP[team]||'Other'}));
     });
   });

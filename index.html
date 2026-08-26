@@ -40,6 +40,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 .btn-sm{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--mag),var(--mag-dk));border:none;padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;}
 .btn-sm:hover{opacity:.88;transform:scale(1.04);}
 
+/* ── TOTAL INTERACTIONS VS NS% BANNER ── */
+.vol-banner{background:linear-gradient(135deg,#1A0E1C,#2A0E22);padding:16px 40px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:32px;border-bottom:1px solid rgba(255,255,255,.06);}
+.vol-item{display:flex;align-items:center;gap:14px;}
+.vol-num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;line-height:1;color:#fff;}
+.vol-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:2px;}
+.vol-sub{font-size:10.5px;color:rgba(255,255,255,.45);}
+.vol-sep{width:1px;height:36px;background:rgba(255,255,255,.12);}
+.vol-ns-num{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:800;line-height:1;color:var(--mag-lt);background:rgba(200,0,90,.14);padding:2px 14px;border-radius:10px;border:1.5px solid rgba(200,0,90,.35);}
+.vol-trend{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;margin-left:8px;}
+.vol-trend.good{background:rgba(26,122,74,.16);color:#4ade80;}
+.vol-trend.bad{background:rgba(200,0,90,.16);color:#ff6fa8;}
+
 /* ── HERO ── */
 .hero{background:linear-gradient(160deg,var(--ink2) 0%,#2A0E22 55%,#1A0E2A 100%);padding:46px 40px 38px;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;top:-80px;right:-80px;width:380px;height:380px;background:radial-gradient(circle,rgba(200,0,90,.1),transparent 70%);pointer-events:none;}
@@ -289,6 +301,9 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
   </div>
 </header>
 
+<!-- TOTAL INTERACTIONS VS NS% -->
+<div class="vol-banner" id="volBanner"></div>
+
 <!-- HERO -->
 <section class="hero">
   <div class="hero-logo-wrap">
@@ -449,6 +464,37 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
 // O/T = current month (July). OP/TP = prior month (June), used purely for MoM deltas.
 var D=DASHBOARD_DATA, O=D.august.overall, T=D.august.teams, OP=D.july.overall, TP=D.july.teams;
 var OJune = D.june ? D.june.overall : null; // 3rd month for the trend view
+
+// ── TOTAL INTERACTIONS VS NS% (all sentiment volume, not just audited NS cases) ──
+(function(){
+  const SV = D.sentiment_volume;
+  if(!SV) return;
+  const cur = SV.august, prior = SV.july;
+  const diff = cur.ns_pct - prior.ns_pct;
+  const good = diff <= 0; // a lower NS% is the desired direction
+  const arrow = diff===0 ? '—' : (diff>0?'▲':'▼');
+  const trendHtml = prior ? `<span class="vol-trend ${good?'good':'bad'}">${arrow} ${Math.abs(diff).toFixed(1)}pt vs ${prior.ns_pct}% in July</span>` : '';
+  document.getElementById('volBanner').innerHTML = `
+    <div class="vol-item">
+      <div>
+        <div class="vol-lbl">Total Interactions</div>
+        <div class="vol-num">${cur.total.toLocaleString('en-IN')}</div>
+        <div class="vol-sub">${cur.negative.toLocaleString('en-IN')} Negative · ${cur.neutral.toLocaleString('en-IN')} Neutral · ${cur.positive.toLocaleString('en-IN')} Positive</div>
+      </div>
+    </div>
+    <div class="vol-sep"></div>
+    <div class="vol-item">
+      <div>
+        <div class="vol-lbl">Negative Sentiment Rate</div>
+        <div style="display:flex;align-items:baseline;gap:6px;">
+          <div class="vol-ns-num">${cur.ns_pct}%</div>
+          ${trendHtml}
+        </div>
+        <div class="vol-sub" style="margin-top:4px;">Share of all interactions flagged negative, before QA validation</div>
+      </div>
+    </div>
+  `;
+})();
 var pendingTeam=null, allCases=[], juneCases=[];
 
 // LOGO
