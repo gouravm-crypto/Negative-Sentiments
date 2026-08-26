@@ -10,10 +10,10 @@
   --mag:#C8005A;--mag-lt:#F0006E;--mag-dk:#8A003E;--mag-pale:#FFF0F6;
   --gold:#B8860B;--gold-lt:#E8B840;
   --ink:#0F0A10;--ink2:#1E0E1A;
-  --body:#FAFAF8;--surface:#FFFFFF;
-  --bdr:#EEE4EC;--bdr2:#E0CCD8;
-  --txt:#1A0818;--txt2:#5A3048;--txt3:#9A7085;
-  --sh-sm:0 2px 8px rgba(15,10,16,.08);--sh-md:0 4px 20px rgba(15,10,16,.10);--sh-lg:0 8px 36px rgba(15,10,16,.14);
+  --body:#FAF6EE;--surface:#FFFEFB;
+  --bdr:#EFE6D8;--bdr2:#E4D4B8;
+  --txt:#241A12;--txt2:#6B5644;--txt3:#9C8570;
+  --sh-sm:0 2px 8px rgba(36,26,18,.06);--sh-md:0 4px 20px rgba(36,26,18,.10);--sh-lg:0 8px 36px rgba(36,26,18,.14);
   --green:#1a7a4a;--blue:#1a4fa0;--r:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -45,11 +45,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 .pg-sub{font-size:12.5px;color:rgba(255,200,220,.45);margin-bottom:24px;}
 .dl-row{display:flex;gap:10px;margin-bottom:22px;}
 .hero-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
-.hk{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px 14px;text-align:center;cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);}
+.hk{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px 14px;text-align:center;cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);animation:cardIn .5s ease backwards;}
 .hk:hover{background:rgba(200,0,90,.12);border-color:rgba(200,0,90,.35);transform:translateY(-3px);box-shadow:0 8px 24px rgba(200,0,90,.18);}
+.hk-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;}
+.hk-icon .icn{width:17px;height:17px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.hk-icon.mag{background:rgba(200,0,90,.16);color:#ff6fa8;}
+.hk-icon.gold{background:rgba(184,134,11,.16);color:var(--gold-lt);}
+.hk-icon.blue{background:rgba(26,79,160,.16);color:#93c5fd;}
+.hk-icon.green{background:rgba(26,122,74,.16);color:#4ade80;}
 .hk-num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;line-height:1;color:#fff;}
 .hk-num.mag{color:#F0006E;}.hk-num.gold{color:#E8B840;}.hk-num.blue{color:#93c5fd;}.hk-num.green{color:#4ade80;}
 .hk-lbl{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,200,220,.3);margin-top:4px;}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
 
 .page{max-width:1380px;margin:0 auto;padding:36px 48px 80px;}
 .spacer{height:36px;}
@@ -228,13 +235,18 @@ function groupConsultant(g){ return consultantCases.filter(c=>c.group===g); }
 function groupTotal(g){ return allCases.filter(c=>c.group===g).length; }
 
 // ── HERO KPIS ──
+const TRICON = {
+  gradCap:`<svg class="icn" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/><path d="M22 9v6"/></svg>`,
+  msgSquare:`<svg class="icn" viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/></svg>`,
+  users:`<svg class="icn" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="8" r="3"/><path d="M14.5 14.2c2.7.4 5.5 2.4 5.5 5.8"/></svg>`,
+};
 document.getElementById('heroKpis').innerHTML = [
-  {num:tgapCases.length, lbl:'Training Gap (Headline)', cls:'mag'},
-  {num:consultantCases.length, lbl:'Consultant-CCPT1 (Context)', cls:'gold'},
-  {num:groupTgap('Pre-Sale').length, lbl:'Presale Training Gap', cls:'blue'},
-  {num:groupTgap('Post-Sale').length, lbl:'Post-Sale Training Gap', cls:'blue'},
-  {num:groupTgap('Other').length, lbl:'Other Teams Training Gap', cls:'green'},
-].map(k=>`<div class="hk"><div class="hk-num ${k.cls}">${k.num}</div><div class="hk-lbl">${k.lbl}</div></div>`).join('');
+  {num:tgapCases.length, lbl:'Training Gap (Headline)', cls:'mag', icon:TRICON.gradCap},
+  {num:consultantCases.length, lbl:'Consultant-CCPT1 (Context)', cls:'gold', icon:TRICON.msgSquare},
+  {num:groupTgap('Pre-Sale').length, lbl:'Presale Training Gap', cls:'blue', icon:TRICON.users},
+  {num:groupTgap('Post-Sale').length, lbl:'Post-Sale Training Gap', cls:'blue', icon:TRICON.users},
+  {num:groupTgap('Other').length, lbl:'Other Teams Training Gap', cls:'green', icon:TRICON.users},
+].map((k,i)=>`<div class="hk" style="animation-delay:${i*0.06}s;"><div class="hk-icon ${k.cls}">${k.icon}</div><div class="hk-num ${k.cls}">${k.num}</div><div class="hk-lbl">${k.lbl}</div></div>`).join('');
 
 // ── BUILD ONE GROUP SECTION ──
 function buildGroupSection(containerId, groupName, icon, iconBg, accent, isOther){

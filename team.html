@@ -13,10 +13,10 @@
   --mag-pale:#FFF0F6;--mag-glow:rgba(200,0,90,.22);
   --gold:#B8860B;--gold-lt:#E8B840;
   --ink:#0F0A10;--ink2:#1E0E1A;
-  --body:#FAFAF8;--surface:#FFFFFF;
-  --bdr:#EEE4EC;--bdr2:#E0CCD8;
-  --txt:#1A0818;--txt2:#5A3048;--txt3:#9A7085;--txt4:#C4A8B8;
-  --sh-sm:0 2px 8px rgba(15,10,16,.08);--sh-md:0 4px 20px rgba(15,10,16,.10);--sh-lg:0 8px 36px rgba(15,10,16,.14);
+  --body:#FAF6EE;--surface:#FFFEFB;
+  --bdr:#EFE6D8;--bdr2:#E4D4B8;
+  --txt:#241A12;--txt2:#6B5644;--txt3:#9C8570;--txt4:#C7B49C;
+  --sh-sm:0 2px 8px rgba(36,26,18,.06);--sh-md:0 4px 20px rgba(36,26,18,.10);--sh-lg:0 8px 36px rgba(36,26,18,.14);
   --green:#1a7a4a;--blue:#1a4fa0;
   --r:18px;
 }
@@ -119,6 +119,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 .fade-up{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease;}
 .fade-up.visible{opacity:1;transform:translateY(0);}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--body);}::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:3px;}
+@keyframes iconPop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1);}}
+.pg-hero{background:linear-gradient(160deg,var(--ink2),#2A0E22);padding:32px 48px;position:relative;overflow:hidden;}
+.pg-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;}
+.pg-hero-row{display:flex;align-items:center;gap:16px;position:relative;z-index:1;}
+.pg-icon-circle{width:48px;height:48px;border-radius:50%;background:rgba(200,0,90,.16);color:#ff6fa8;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:iconPop .5s cubic-bezier(.34,1.56,.64,1) backwards;}
+.pg-icon-circle .icn{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.pg-tag{font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mag-lt);margin-bottom:4px;}
+.pg-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:800;color:#fff;margin-bottom:4px;}
+.pg-sub{font-size:12px;color:rgba(255,200,220,.4);}
 .sec-ey{font-size:8.5px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--mag);margin-bottom:8px;display:flex;align-items:center;gap:10px;}
 .sec-ey::before{content:'';width:20px;height:1.5px;background:var(--mag);border-radius:2px;flex-shrink:0;}
 .sec-ttl{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3.5vw,40px);font-weight:700;color:var(--ink);line-height:1.05;margin-bottom:8px;}
@@ -205,6 +214,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
   </nav>
   <div class="hdr-badge">August 2026 Live</div>
 </header>
+
+<div class="pg-hero">
+  <div class="pg-hero-row">
+    <div class="pg-icon-circle">
+      <svg class="icn" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="8" r="3"/><path d="M14.5 14.2c2.7.4 5.5 2.4 5.5 5.8"/></svg>
+    </div>
+    <div>
+      <div class="pg-tag">Team Leaderboards</div>
+      <div class="pg-title">Teams &amp; Agents</div>
+      <div class="pg-sub">August 2026 · Click a team to view its agent-level data</div>
+    </div>
+  </div>
+</div>
 
 <div class="main">
 

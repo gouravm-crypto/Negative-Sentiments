@@ -10,16 +10,19 @@
   --mag:#C8005A;--mag-lt:#F0006E;--mag-dk:#8A003E;
   --gold:#B8860B;--gold-lt:#E8B840;
   --ink:#0F0A10;--ink2:#1E0E1A;
-  --body:#FAFAF8;--surface:#FFFFFF;
-  --bdr:#EEE4EC;--bdr2:#E0CCD8;
-  --txt:#1A0818;--txt2:#5A3048;--txt3:#9A7085;
-  --sh-sm:0 2px 8px rgba(15,10,16,.08);--sh-md:0 4px 20px rgba(15,10,16,.12);--sh-lg:0 8px 40px rgba(15,10,16,.18);
+  --body:#FAF6EE;--surface:#FFFEFB;
+  --bdr:#EFE6D8;--bdr2:#E4D4B8;
+  --txt:#241A12;--txt2:#6B5644;--txt3:#9C8570;
+  --sh-sm:0 2px 8px rgba(36,26,18,.06);--sh-md:0 4px 20px rgba(36,26,18,.10);--sh-lg:0 8px 40px rgba(36,26,18,.16);
   --green:#1a7a4a;--blue:#1a4fa0;--r:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
 @keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+@keyframes iconPop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1);}}
+@keyframes softPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,0,90,.28)}50%{box-shadow:0 0 0 7px rgba(200,0,90,0)}}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:none;opacity:1}}
@@ -41,49 +44,87 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 .btn-sm:hover{opacity:.88;transform:scale(1.04);}
 
 /* ── TOTAL INTERACTIONS VS NS% BANNER ── */
-.vol-banner{background:linear-gradient(135deg,#1A0E1C,#2A0E22);padding:16px 40px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:32px;border-bottom:1px solid rgba(255,255,255,.06);}
-.vol-item{display:flex;align-items:center;gap:14px;}
-.vol-num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;line-height:1;color:#fff;}
-.vol-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:2px;}
-.vol-sub{font-size:10.5px;color:rgba(255,255,255,.45);}
-.vol-sep{width:1px;height:36px;background:rgba(255,255,255,.12);}
-.vol-ns-num{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:800;line-height:1;color:var(--mag-lt);background:rgba(200,0,90,.14);padding:2px 14px;border-radius:10px;border:1.5px solid rgba(200,0,90,.35);}
-.vol-trend{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;margin-left:8px;}
-.vol-trend.good{background:rgba(26,122,74,.16);color:#4ade80;}
-.vol-trend.bad{background:rgba(200,0,90,.16);color:#ff6fa8;}
 
-/* ── HERO ── */
-.hero{background:linear-gradient(160deg,var(--ink2) 0%,#2A0E22 55%,#1A0E2A 100%);padding:46px 40px 38px;position:relative;overflow:hidden;}
+/* ── HERO v2 ── */
+.hero{background:linear-gradient(160deg,var(--ink2) 0%,#2A0E22 55%,#1A0E2A 100%);padding:28px 40px 34px;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;top:-80px;right:-80px;width:380px;height:380px;background:radial-gradient(circle,rgba(200,0,90,.1),transparent 70%);pointer-events:none;}
 .hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;}
-.hero-logo-wrap{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
-.hero-logo-circle{width:60px;height:60px;border-radius:50%;overflow:hidden;box-shadow:0 0 28px rgba(200,0,90,.2);border:1.5px solid rgba(200,0,90,.22);}
+.hero-inner{position:relative;z-index:1;}
+
+/* Icon system: hand-drawn inline SVGs, no external dependency */
+.icn{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;display:block;}
+.icon-circle{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:iconPop .5s cubic-bezier(.34,1.56,.64,1) backwards;}
+.icon-circle.sm{width:42px;height:42px;}
+.icon-circle.sm .icn{width:19px;height:19px;}
+.icon-circle.purple{background:rgba(147,51,234,.16);color:#c4a2f5;}
+.icon-circle.mag{background:rgba(200,0,90,.16);color:#ff6fa8;}
+.icon-circle.green{background:rgba(26,122,74,.16);color:#4ade80;}
+.icon-circle.red{background:rgba(220,38,38,.16);color:#f87171;}
+.icon-circle.gold{background:rgba(184,134,11,.16);color:var(--gold-lt);}
+.icon-circle.blue{background:rgba(26,79,160,.16);color:#93c5fd;}
+
+/* Top split card: Total Interactions / NS Rate */
+.qi-split{display:flex;align-items:center;gap:28px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:20px 28px;flex-wrap:wrap;animation:cardIn .5s ease backwards;}
+.qi-half{display:flex;align-items:center;gap:16px;flex:1;min-width:260px;}
+.qi-divider{width:1px;align-self:stretch;background:rgba(255,255,255,.1);}
+.qi-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:3px;}
+.qi-num{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:800;color:#fff;line-height:1;}
+.qi-sub{font-size:10.5px;color:rgba(255,255,255,.4);margin-top:5px;}
+.qi-ns-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+.qi-ns-num{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:800;color:var(--mag-lt);}
+.qi-trend-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;white-space:nowrap;}
+.qi-trend-pill.good{background:rgba(26,122,74,.2);color:#4ade80;}
+.qi-trend-pill.bad{background:rgba(200,0,90,.2);color:#ff6fa8;}
+
+/* Title row */
+.hero-title-row{display:flex;align-items:center;gap:16px;margin:24px 0 18px;flex-wrap:wrap;}
+.hero-logo-circle{width:52px;height:52px;border-radius:50%;overflow:hidden;box-shadow:0 0 24px rgba(200,0,90,.2);border:1.5px solid rgba(200,0,90,.22);flex-shrink:0;}
 .hero-logo-circle img{width:100%;height:100%;object-fit:cover;}
-.hero-brand-txt{line-height:1;}
-.hero-brand-name{font-size:15px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#fff;}
-.hero-brand-sub{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,200,220,.4);}
-.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mag);border:1px solid rgba(200,0,90,.3);padding:3px 10px;border-radius:4px;background:rgba(200,0,90,.07);margin-bottom:12px;}
-.hero-title{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:800;color:#fff;line-height:1.1;margin-bottom:6px;}
-.hero-sub{font-size:12px;color:rgba(255,200,220,.45);margin-bottom:28px;}
-.hero-kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:12px;}
-.audit-funnel{display:flex;align-items:center;justify-content:center;gap:0;margin:0 0 20px;padding:14px 22px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;flex-wrap:wrap;}
-.af-item{display:flex;flex-direction:column;align-items:center;padding:0 22px;}
-.af-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:800;line-height:1;}
-.af-lbl{font-size:8.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,200,220,.4);margin-top:4px;}
-.af-arrow{font-size:16px;color:rgba(255,200,220,.25);padding:0 4px;}
-.af-note{width:100%;text-align:center;font-size:9.5px;color:rgba(255,200,220,.3);margin-top:8px;font-style:italic;}
-.hk{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);position:relative;}
-.hk:hover{background:rgba(200,0,90,.12);border-color:rgba(200,0,90,.35);transform:translateY(-3px);box-shadow:0 8px 24px rgba(200,0,90,.18);}
-.hk::after{content:'↗';position:absolute;top:6px;right:8px;font-size:8px;color:rgba(255,200,220,.2);opacity:0;transition:opacity .2s;}
-.hk:hover::after{opacity:1;}
-.hk-num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:800;line-height:1;color:#fff;}
-.hk-num.mag{color:#F0006E;}.hk-num.gold{color:#E8B840;}.hk-num.green{color:#4ade80;}.hk-num.blue{color:#93c5fd;}.hk-num.amber{color:#fbbf24;}
-.hk-lbl{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,200,220,.3);margin-top:3px;}
-.hk-trend{display:inline-flex;align-items:center;gap:3px;font-size:8.5px;font-weight:700;margin-top:6px;padding:2px 7px;border-radius:10px;}
-.hk-trend.up{background:rgba(240,0,110,.16);color:#ff6fa8;}
-.hk-trend.down{background:rgba(74,222,128,.14);color:#4ade80;}
-.hk-trend.flat{background:rgba(255,255,255,.06);color:rgba(255,200,220,.4);}
-.hk-trend.pending{background:rgba(255,255,255,.04);color:rgba(255,200,220,.25);font-style:italic;font-weight:500;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:800;color:#fff;line-height:1.1;}
+.hero-sub{font-size:11.5px;color:rgba(255,200,220,.45);margin-top:3px;}
+.hero-tag-pill{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:10.5px;font-weight:600;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.15);padding:8px 16px;border-radius:10px;background:rgba(255,255,255,.03);}
+
+/* Section labels within dark hero */
+.hero-section-lbl{font-size:12.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.3px;margin:22px 0 10px;font-family:'DM Sans',sans-serif;}
+
+/* Quality insights (3-up funnel) */
+.qi-triple{display:flex;align-items:center;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:20px 28px;flex-wrap:wrap;gap:16px;animation:cardIn .5s ease .05s backwards;}
+.qi-triple .qi-half{justify-content:flex-start;}
+.qi-note{width:100%;font-size:10px;color:rgba(255,255,255,.35);margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07);font-style:italic;}
+
+/* Audit breakdown 8-card grid */
+.ab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.ab-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px;cursor:pointer;transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s,border-color .22s;position:relative;overflow:hidden;animation:cardIn .5s ease backwards;}
+.ab-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--mag));opacity:.85;}
+.ab-card:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(0,0,0,.28);border-color:rgba(255,255,255,.18);}
+.ab-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:800;color:#fff;line-height:1;margin-top:12px;}
+.ab-lbl{font-size:8.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.5);margin:4px 0 10px;}
+.ab-trend{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:10px;}
+.ab-trend.bad{background:rgba(200,0,90,.18);color:#ff6fa8;}
+.ab-trend.good{background:rgba(74,222,128,.14);color:#4ade80;}
+.ab-trend.flat{background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);}
+.ab-trend.pending{background:rgba(255,255,255,.04);color:rgba(255,255,255,.3);font-style:italic;font-weight:500;}
+
+/* Loyalty tier row */
+.loy-row{display:flex;gap:14px;flex-wrap:wrap;}
+.loy-card{flex:1;min-width:180px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s;animation:cardIn .5s ease backwards;}
+.loy-card:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(0,0,0,.28);}
+.loy-emoji{font-size:26px;line-height:1;}
+.loy-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:800;color:#fff;line-height:1;}
+.loy-lbl{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:2px;}
+
+/* Focus callout */
+.focus-callout{display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px 26px;margin-top:22px;flex-wrap:wrap;animation:cardIn .5s ease .1s backwards;}
+.focus-text h3{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:3px;}
+.focus-text p{font-size:11px;color:rgba(255,255,255,.5);line-height:1.5;max-width:520px;}
+.focus-btn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.5px;color:#fff;background:linear-gradient(135deg,var(--mag),var(--mag-dk));border:none;padding:11px 20px;border-radius:24px;cursor:pointer;transition:transform .2s,box-shadow .2s;text-decoration:none;white-space:nowrap;}
+.focus-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(200,0,90,.35);}
+
+@media (max-width:1000px){
+  .ab-grid{grid-template-columns:repeat(2,1fr);}
+  .qi-split,.qi-triple{flex-direction:column;align-items:stretch;}
+  .qi-divider{display:none;}
+}
 
 /* ── PAGE ── */
 .page{max-width:1380px;margin:0 auto;padding:36px 40px 80px;}
@@ -256,9 +297,9 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
   .hdr{padding:0 16px;height:56px;}
   .hdr-sep{display:none;}
   .hnav{padding:0 8px;font-size:8px;letter-spacing:1px;}
-  .hero{padding:28px 16px 24px;}
-  .hero-kpis{grid-template-columns:repeat(4,1fr);gap:8px;}
-  .hk-num{font-size:22px;}
+  .hero{padding:20px 16px 24px;}
+  .ab-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .ab-num{font-size:22px;}
   .page{padding:24px 16px 60px;}
   .g4{grid-template-columns:repeat(2,1fr);}
   .g3{grid-template-columns:repeat(2,1fr);}
@@ -266,14 +307,15 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
   .team-grid{grid-template-columns:repeat(2,1fr);}
   .insight-grid{grid-template-columns:1fr;}
   .modal-sheet{max-height:92vh;}
-  .hero-title{font-size:28px;}
+  .hero-title{font-size:26px;}
+  .hero-tag-pill{margin-left:0;}
   .btn-sm{display:none;}
 }
 @media(max-width:500px){
-  .hero-kpis{grid-template-columns:repeat(2,1fr);}
+  .ab-grid{grid-template-columns:repeat(2,1fr);}
   .team-grid{grid-template-columns:1fr;}
   .g4{grid-template-columns:1fr;}
-  .hk-lbl{font-size:7px;}
+  .ab-lbl{font-size:7px;}
   .hnav{font-size:7px;padding:0 6px;letter-spacing:.5px;}
 }
 
@@ -301,23 +343,48 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
   </div>
 </header>
 
-<!-- TOTAL INTERACTIONS VS NS% -->
-<div class="vol-banner" id="volBanner"></div>
-
-<!-- HERO -->
+<!-- HERO v2 -->
 <section class="hero">
-  <div class="hero-logo-wrap">
-    <div class="hero-logo-circle"><img id="heroLogo" alt="CaratLane"></div>
-    <div class="hero-brand-txt">
-      <div class="hero-brand-name">CaratLane</div>
-      <div class="hero-brand-sub">A Tata Product</div>
+  <div class="hero-inner">
+    <!-- Total Interactions vs NS Rate -->
+    <div class="qi-split" id="volBanner"></div>
+
+    <!-- Title row -->
+    <div class="hero-title-row">
+      <div class="hero-logo-circle"><img id="heroLogo" alt="CaratLane"></div>
+      <div>
+        <h1 class="hero-title">NS Audit Dashboard</h1>
+        <p class="hero-sub">August 2026 · CS Quality Team · Click any metric to drill into those cases</p>
+      </div>
+      <div class="hero-tag-pill">💎 Quality Audit · Negative Sentiment Report</div>
+    </div>
+
+    <!-- Quality insights at a glance -->
+    <div class="hero-section-lbl">Quality insights at a glance</div>
+    <div class="qi-triple" id="auditFunnel"></div>
+
+    <!-- Audit Breakdown -->
+    <div class="hero-section-lbl">Audit Breakdown</div>
+    <div class="ab-grid" id="heroKpis"></div>
+
+    <!-- Loyalty tiers -->
+    <div class="hero-section-lbl">Loyalty Tiers Among NS Cases</div>
+    <div class="loy-row" id="loyaltyRow"></div>
+
+    <!-- Focus callout -->
+    <div class="focus-callout">
+      <div class="icon-circle sm mag">
+        <svg class="icn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".6" fill="currentColor"/></svg>
+      </div>
+      <div class="focus-text">
+        <h3>Focus on what matters</h3>
+        <p>Use these insights to identify training needs, improve processes, and enhance customer experience.</p>
+      </div>
+      <a class="focus-btn" href="analytics.html">View Detailed Analytics
+        <svg class="icn" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
     </div>
   </div>
-  <div class="hero-tag">💎 Quality Audit · Negative Sentiment Report</div>
-  <h1 class="hero-title">NS Audit Dashboard</h1>
-  <p class="hero-sub">August 2026 · CS Quality Team · Click any metric to drill into those cases</p>
-  <div class="audit-funnel" id="auditFunnel"></div>
-  <div class="hero-kpis" id="heroKpis"></div>
 </section>
 
 <div class="page">
@@ -465,6 +532,48 @@ footer{background:var(--ink2);padding:22px 40px;display:flex;align-items:center;
 var D=DASHBOARD_DATA, O=D.august.overall, T=D.august.teams, OP=D.july.overall, TP=D.july.teams;
 var OJune = D.june ? D.june.overall : null; // 3rd month for the trend view
 
+// ── ICON LIBRARY (hand-drawn inline SVG, no external dependency) ──
+const ICON = {
+  refresh:`<svg class="icn" viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 3v6h-6"/></svg>`,
+  trendUp:`<svg class="icn" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>`,
+  clipboard:`<svg class="icn" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4V3a1 1 0 011-1h4a1 1 0 011 1v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>`,
+  checkCircle:`<svg class="icn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>`,
+  xCircle:`<svg class="icn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>`,
+  alertTriangle:`<svg class="icn" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 9v5M12 17h.01"/></svg>`,
+  circleDot:`<svg class="icn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/></svg>`,
+  shieldCheck:`<svg class="icn" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>`,
+  flag:`<svg class="icn" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/></svg>`,
+  gradCap:`<svg class="icn" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/><path d="M22 9v6"/></svg>`,
+  msgSquare:`<svg class="icn" viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/></svg>`,
+  thumbsUp:`<svg class="icn" viewBox="0 0 24 24"><path d="M7 22V11l4-8 2 1v7h6l1 2-2 9H9z"/></svg>`,
+  layers:`<svg class="icn" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>`,
+};
+
+// ── COUNT-UP ANIMATION (plain JS, GitHub Pages friendly) ──
+const raf = window.requestAnimationFrame || function(cb){ return setTimeout(cb,16); };
+function animateCount(el, target, opts){
+  opts = opts || {};
+  const dur = opts.dur || 900, decimals = opts.decimals || 0, suffix = opts.suffix || '';
+  const start = performance.now();
+  function tick(now){
+    const p = Math.min(1, (now-start)/dur);
+    const eased = 1 - Math.pow(1-p, 3);
+    const val = target*eased;
+    el.textContent = decimals ? val.toFixed(decimals)+suffix : Math.round(val).toLocaleString('en-IN')+suffix;
+    if(p<1) raf(tick);
+    else el.textContent = (decimals?target.toFixed(decimals):target.toLocaleString('en-IN'))+suffix;
+  }
+  raf(tick);
+}
+function animateCountsIn(root){
+  root.querySelectorAll('[data-count]').forEach(el=>{
+    const target = parseFloat(el.getAttribute('data-count'));
+    const decimals = parseInt(el.getAttribute('data-decimals')||'0',10);
+    const suffix = el.getAttribute('data-suffix')||'';
+    animateCount(el, target, {decimals, suffix});
+  });
+}
+
 // ── TOTAL INTERACTIONS VS NS% (all sentiment volume, not just audited NS cases) ──
 (function(){
   const SV = D.sentiment_volume;
@@ -473,27 +582,30 @@ var OJune = D.june ? D.june.overall : null; // 3rd month for the trend view
   const diff = cur.ns_pct - prior.ns_pct;
   const good = diff <= 0; // a lower NS% is the desired direction
   const arrow = diff===0 ? '—' : (diff>0?'▲':'▼');
-  const trendHtml = prior ? `<span class="vol-trend ${good?'good':'bad'}">${arrow} ${Math.abs(diff).toFixed(1)}pt vs ${prior.ns_pct}% in July</span>` : '';
+  const trendHtml = prior ? `<span class="qi-trend-pill ${good?'good':'bad'}">${arrow} ${Math.abs(diff).toFixed(1)}pp vs ${prior.ns_pct}% in July</span>` : '';
   document.getElementById('volBanner').innerHTML = `
-    <div class="vol-item">
+    <div class="qi-half">
+      <div class="icon-circle purple">${ICON.refresh}</div>
       <div>
-        <div class="vol-lbl">Total Interactions</div>
-        <div class="vol-num">${cur.total.toLocaleString('en-IN')}</div>
-        <div class="vol-sub">${cur.negative.toLocaleString('en-IN')} Negative · ${cur.neutral.toLocaleString('en-IN')} Neutral · ${cur.positive.toLocaleString('en-IN')} Positive</div>
+        <div class="qi-lbl">Total Interactions</div>
+        <div class="qi-num" data-count="${cur.total}">0</div>
+        <div class="qi-sub">${cur.negative.toLocaleString('en-IN')} Negative · ${cur.neutral.toLocaleString('en-IN')} Neutral · ${cur.positive.toLocaleString('en-IN')} Positive</div>
       </div>
     </div>
-    <div class="vol-sep"></div>
-    <div class="vol-item">
+    <div class="qi-divider"></div>
+    <div class="qi-half">
+      <div class="icon-circle mag">${ICON.trendUp}</div>
       <div>
-        <div class="vol-lbl">Negative Sentiment Rate</div>
-        <div style="display:flex;align-items:baseline;gap:6px;">
-          <div class="vol-ns-num">${cur.ns_pct}%</div>
+        <div class="qi-lbl">Negative Sentiment Rate</div>
+        <div class="qi-ns-row">
+          <div class="qi-ns-num" data-count="${cur.ns_pct}" data-decimals="1" data-suffix="%">0%</div>
           ${trendHtml}
         </div>
-        <div class="vol-sub" style="margin-top:4px;">Share of all interactions flagged negative, before QA validation</div>
+        <div class="qi-sub" style="margin-top:4px;">Share of all interactions flagged negative, before QA validation</div>
       </div>
     </div>
   `;
+  animateCountsIn(document.getElementById('volBanner'));
 })();
 var pendingTeam=null, allCases=[], juneCases=[];
 
@@ -547,33 +659,69 @@ function trendBadge(current, prior, goodDirection){
 }
 
 // ── HERO KPIS ──
-// ── AUDIT FUNNEL (tracked from July 2026 onward) ──
+// ── QUALITY INSIGHTS AT A GLANCE (tracked from July 2026 onward) ──
 if(O.total_audits_done){
   document.getElementById('auditFunnel').innerHTML = `
-    <div class="af-item"><div class="af-num" style="color:#fff;">${O.total_audits_done}</div><div class="af-lbl">Total Audits Done</div></div>
-    <div class="af-arrow">→</div>
-    <div class="af-item"><div class="af-num" style="color:#4ade80;">${O.valid_ns}</div><div class="af-lbl">Valid NS</div></div>
-    <div class="af-item"><div class="af-num" style="color:#ff6fa8;">${O.invalid_ns}</div><div class="af-lbl">Invalid NS</div></div>
-    <div class="af-note">Every other metric on this dashboard is based on the ${O.valid_ns} Valid NS cases only · not tracked this way before July 2026</div>
+    <div class="qi-half">
+      <div class="icon-circle purple">${ICON.clipboard}</div>
+      <div><div class="qi-lbl">Total Audits Done</div><div class="qi-num" data-count="${O.total_audits_done}">0</div></div>
+    </div>
+    <div class="qi-divider"></div>
+    <div class="qi-half">
+      <div class="icon-circle green">${ICON.checkCircle}</div>
+      <div><div class="qi-lbl">Valid NS</div><div class="qi-num" data-count="${O.valid_ns}" style="color:#4ade80;">0</div></div>
+    </div>
+    <div class="qi-divider"></div>
+    <div class="qi-half">
+      <div class="icon-circle red">${ICON.xCircle}</div>
+      <div><div class="qi-lbl">Invalid NS</div><div class="qi-num" data-count="${O.invalid_ns}" style="color:#f87171;">0</div></div>
+    </div>
+    <div class="qi-note">Every other metric on this dashboard is based on the ${O.valid_ns} Valid NS cases only · not tracked this way before July 2026</div>
   `;
+  animateCountsIn(document.getElementById('auditFunnel'));
 }
 
 const heroItems=[
-  {num:O.total,prior:OP.total,lbl:'NS Validated',cls:'',filter:'all'},
-  {num:O.crucial,prior:OP.crucial,lbl:'Crucial',cls:'mag',filter:'crucial',good:'down'},
-  {num:loy.regal,prior:loyPrior.regal,lbl:'Regal ⭐',cls:'blue',filter:'loyalty_regal'},
-  {num:loy.imperial,prior:loyPrior.imperial,lbl:'Imperial 💎',cls:'blue',filter:'loyalty_imperial'},
-  {num:loy.crown,prior:loyPrior.crown,lbl:'Crown 👑',cls:'gold',filter:'loyalty_crown'},
-  {num:O.action_required,prior:OP.action_required,lbl:'Action Req',cls:'amber',filter:'action_required',good:'down'},
-  {num:O.training_gap,prior:OP.training_gap,lbl:'Training Gap',cls:'amber',filter:'training_gap',good:'down'},
-  {num:O.auditor_insights,prior:OP.auditor_insights,lbl:'Auditor Feedback',cls:'gold',filter:'auditor_insights'},
+  {num:O.total,prior:OP.total,lbl:'NS Validated',icon:ICON.layers,accent:'var(--mag)',cls:'mag',filter:'all'},
+  {num:O.crucial,prior:OP.crucial,lbl:'Crucial',icon:ICON.alertTriangle,accent:'#dc2626',cls:'red',filter:'crucial',good:'down'},
+  {num:O.neutral,prior:OP.neutral,lbl:'Neutral',icon:ICON.circleDot,accent:'var(--gold)',cls:'gold',filter:'neutral'},
+  {num:O.less,prior:OP.less,lbl:'Less Significant',icon:ICON.shieldCheck,accent:'var(--green)',cls:'green',filter:'less'},
+  {num:O.action_required,prior:OP.action_required,lbl:'Action Required',icon:ICON.flag,accent:'var(--mag)',cls:'mag',filter:'action_required',good:'down'},
+  {num:O.training_gap,prior:OP.training_gap,lbl:'Training Gap',icon:ICON.gradCap,accent:'var(--gold)',cls:'gold',filter:'training_gap',good:'down'},
+  {num:O.auditor_insights,prior:OP.auditor_insights,lbl:'Auditor Feedback',icon:ICON.msgSquare,accent:'var(--blue)',cls:'blue',filter:'auditor_insights'},
+  {num:O.converted_pos,prior:OP.converted_pos,lbl:'Converted +ve',icon:ICON.thumbsUp,accent:'var(--green)',cls:'green',filter:'converted_pos',good:'up'},
 ];
-document.getElementById('heroKpis').innerHTML=heroItems.map(k=>
-  `<div class="hk" onclick="openCaseModal('${k.filter}','${k.lbl}')">
-    <div class="hk-num ${k.cls}">${k.num}</div>
-    <div class="hk-lbl">${k.lbl}</div>
-    ${trendBadge(k.num, k.prior, k.good)}
+function abTrendHtml(current, prior, goodDirection){
+  if(prior===undefined||prior===null) return `<span class="ab-trend pending">New — no July baseline</span>`;
+  const diff=current-prior;
+  if(diff===0) return `<span class="ab-trend flat">— flat vs July</span>`;
+  const pct=prior>0?Math.abs(Math.round((diff/prior)*100)):100;
+  const arrow=diff>0?'▲':'▼';
+  const rose=diff>0;
+  let cls;
+  if(!goodDirection) cls=rose?'bad':'good';
+  else cls=(rose===(goodDirection==='up'))?'good':'bad';
+  return `<span class="ab-trend ${cls}">${arrow} ${pct}% vs July</span>`;
+}
+document.getElementById('heroKpis').innerHTML=heroItems.map((k,i)=>
+  `<div class="ab-card" style="--accent:${k.accent};animation-delay:${i*0.05}s;" onclick="openCaseModal('${k.filter}','${k.lbl}')">
+    <div class="icon-circle sm ${k.cls}">${k.icon}</div>
+    <div class="ab-num" data-count="${k.num}">0</div>
+    <div class="ab-lbl">${k.lbl}</div>
+    ${abTrendHtml(k.num, k.prior, k.good)}
   </div>`).join('');
+animateCountsIn(document.getElementById('heroKpis'));
+
+// ── LOYALTY TIERS ROW ──
+document.getElementById('loyaltyRow').innerHTML = [
+  {emoji:'⭐',num:loy.regal,prior:loyPrior.regal,lbl:'Regal',filter:'loyalty_regal'},
+  {emoji:'💎',num:loy.imperial,prior:loyPrior.imperial,lbl:'Imperial',filter:'loyalty_imperial'},
+  {emoji:'👑',num:loy.crown,prior:loyPrior.crown,lbl:'Crown',filter:'loyalty_crown'},
+].map((k,i)=>`<div class="loy-card" style="animation-delay:${i*0.06}s;" onclick="openCaseModal('${k.filter}','${k.lbl} customers')">
+    <div class="loy-emoji">${k.emoji}</div>
+    <div><div class="loy-num" data-count="${k.num}">0</div><div class="loy-lbl">${k.lbl}</div></div>
+  </div>`).join('');
+animateCountsIn(document.getElementById('loyaltyRow'));
 
 // ── MONTH-ON-MONTH TRENDS GRID ──
 function momCard(cfg){

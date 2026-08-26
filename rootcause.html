@@ -10,10 +10,10 @@
   --mag:#C8005A;--mag-lt:#F0006E;--mag-dk:#8A003E;--mag-pale:#FFF0F6;
   --gold:#B8860B;--gold-lt:#E8B840;
   --ink:#0F0A10;--ink2:#1E0E1A;
-  --body:#FAFAF8;--surface:#FFFFFF;
-  --bdr:#EEE4EC;--bdr2:#E0CCD8;
-  --txt:#1A0818;--txt2:#5A3048;--txt3:#9A7085;
-  --sh-sm:0 2px 8px rgba(15,10,16,.08);--sh-md:0 4px 20px rgba(15,10,16,.10);--sh-lg:0 8px 36px rgba(15,10,16,.14);
+  --body:#FAF6EE;--surface:#FFFEFB;
+  --bdr:#EFE6D8;--bdr2:#E4D4B8;
+  --txt:#241A12;--txt2:#6B5644;--txt3:#9C8570;
+  --sh-sm:0 2px 8px rgba(36,26,18,.06);--sh-md:0 4px 20px rgba(36,26,18,.10);--sh-lg:0 8px 36px rgba(36,26,18,.14);
   --green:#1a7a4a;--blue:#1a4fa0;--orange:#c2590a;--r:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -40,10 +40,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 /* HERO */
 .hero{background:linear-gradient(160deg,var(--ink2) 0%,#2A0E22 55%,#1A0E2A 100%);padding:44px 48px 38px;position:relative;overflow:hidden;}
 .hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;}
-.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mag);border:1px solid rgba(200,0,90,.3);padding:4px 12px;border-radius:4px;background:rgba(200,0,90,.07);margin-bottom:14px;}
-.hero-title{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:800;color:#fff;line-height:1.1;margin-bottom:6px;}
-.hero-sub{font-size:13px;color:rgba(255,200,220,.45);margin-bottom:28px;}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mag-lt);margin-bottom:4px;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:800;color:#fff;line-height:1.1;margin-bottom:6px;}
+.hero-sub{font-size:12.5px;color:rgba(255,200,220,.45);margin-bottom:24px;max-width:760px;}
 .hero-pills{display:flex;gap:10px;flex-wrap:wrap;}
+.hero-title-row{display:flex;align-items:center;gap:16px;margin-bottom:8px;}
+.hero-icon-circle{width:48px;height:48px;border-radius:50%;background:rgba(200,0,90,.16);color:#ff6fa8;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:iconPop .5s cubic-bezier(.34,1.56,.64,1) backwards;}
+.hero-icon-circle .icn{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+@keyframes iconPop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1);}}
 .hpill{display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:600;padding:6px 14px;border-radius:20px;cursor:pointer;border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);background:rgba(255,255,255,.04);transition:all .2s;}
 .hpill:hover,.hpill.active{color:#fff;background:rgba(200,0,90,.15);border-color:rgba(200,0,90,.4);}
 .hpill .dot{width:7px;height:7px;border-radius:50%;}
@@ -170,8 +174,15 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
 </header>
 
 <div class="hero">
-  <div class="hero-tag">🔍 Pinpointed Root Cause Analysis</div>
-  <h1 class="hero-title">Why Are Customers Dissatisfied?</h1>
+  <div class="hero-title-row">
+    <div class="hero-icon-circle">
+      <svg class="icn" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    </div>
+    <div>
+      <div class="hero-tag">Pinpointed Root Cause Analysis</div>
+      <h1 class="hero-title">Why Are Customers Dissatisfied?</h1>
+    </div>
+  </div>
   <p class="hero-sub">Every NS mapped to its exact cause, responsible team, and recommended fix — drill down from L1 → L2 → Root Cause → Owner → Action</p>
   <div class="hero-pills" id="heroPills"></div>
 </div>
