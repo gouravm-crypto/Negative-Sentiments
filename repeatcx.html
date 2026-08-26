@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Repeat Customers · NS Audit · July 2026</title>
+<title>Repeat Customers · NS Audit · August 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;0,800;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -169,7 +169,7 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
   </nav>
   <div class="hdr-right">
     <button class="csv-btn" onclick="downloadCSV()">⬇ Export CSV</button>
-    <div class="hdr-badge">July 2026</div>
+    <div class="hdr-badge">August 2026</div>
   </div>
 </header>
 
@@ -219,7 +219,7 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
 </div>
 
 <footer>
-  <div class="ft-l">CaratLane Quality Audit · Repeat Customers · July 2026</div>
+  <div class="ft-l">CaratLane Quality Audit · Repeat Customers · August 2026</div>
   <div class="ft-r">Made by <strong style="color:rgba(255,200,220,.6)">CS Quality Team</strong> · QA Team · Confidential</div>
 </footer>
 
@@ -256,7 +256,7 @@ if(typeof DASHBOARD_DATA !== 'undefined' && DASHBOARD_DATA.logo){
   document.getElementById('hdrLogo').src = DASHBOARD_DATA.logo;
 }
 
-const D=DASHBOARD_DATA, O=D.july.overall, T=D.july.teams, OP=D.june.overall, TP=D.june.teams;
+const D=DASHBOARD_DATA, O=D.august.overall, T=D.august.teams, OP=D.july.overall, TP=D.july.teams;
 
 function flattenCases(teams){
   const out=[];
@@ -286,13 +286,13 @@ const rByCcpt = countByCcpt1(repeatCases);
 const rByCcptJune = countByCcpt1(repeatCasesJune);
 
 function trendBadge(current, prior){
-  if(prior===undefined||prior===null) return `<div class="hk-trend pending">New — no June baseline</div>`;
+  if(prior===undefined||prior===null) return `<div class="hk-trend pending">New — no July baseline</div>`;
   const diff=current-prior;
-  if(diff===0) return `<div class="hk-trend flat">— flat vs June</div>`;
+  if(diff===0) return `<div class="hk-trend flat">— flat vs July</div>`;
   const pct=prior>0?Math.abs(Math.round(diff/prior*100)):100;
   const arrow=diff>0?'▲':'▼';
   const cls=diff>0?'up':'down';
-  return `<div class="hk-trend ${cls}">${arrow} ${pct}% vs June</div>`;
+  return `<div class="hk-trend ${cls}">${arrow} ${pct}% vs July</div>`;
 }
 
 // ── HERO KPIS ──
@@ -399,17 +399,17 @@ function renderModal(cases, title, meta){
   document.body.style.overflow='hidden';
 }
 function openCaseModal(ccptFilter){
-  if(ccptFilter==='all'){ renderModal(repeatCases, 'All Repeat Customers', `${repeatCases.length} cases · July 2026`); return; }
+  if(ccptFilter==='all'){ renderModal(repeatCases, 'All Repeat Customers', `${repeatCases.length} cases · August 2026`); return; }
   const cases = repeatCases.filter(c=>c.ccpt1===ccptFilter);
-  renderModal(cases, (reasonMeta[ccptFilter]?reasonMeta[ccptFilter].title:ccptFilter)+' — Repeat Customers', `${cases.length} cases · July 2026`);
+  renderModal(cases, (reasonMeta[ccptFilter]?reasonMeta[ccptFilter].title:ccptFilter)+' — Repeat Customers', `${cases.length} cases · August 2026`);
 }
 function openCaseModalByQuery(q){
   const cases = repeatCases.filter(c=>c.query===q);
-  renderModal(cases, q+' — Repeat Customers', `${cases.length} cases · July 2026`);
+  renderModal(cases, q+' — Repeat Customers', `${cases.length} cases · August 2026`);
 }
 function openCaseModalByTeam(t){
   const cases = repeatCases.filter(c=>c.team===t);
-  renderModal(cases, t+' — Repeat Customers', `${cases.length} cases · July 2026`);
+  renderModal(cases, t+' — Repeat Customers', `${cases.length} cases · August 2026`);
 }
 function closeModal(){
   document.getElementById('caseModal').classList.remove('open');

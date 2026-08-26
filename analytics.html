@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analytics · NS Audit · July 2026</title>
+<title>Analytics · NS Audit · August 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;0,800;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
@@ -155,7 +155,7 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
   </nav>
   <div class="hdr-right">
     <button class="csv-btn" onclick="downloadCSV()">⬇ Export CSV</button>
-    <div class="hdr-badge">July 2026</div>
+    <div class="hdr-badge">August 2026</div>
   </div>
 </header>
 
@@ -234,7 +234,7 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
 </div>
 
 <footer>
-  <div class="ft-l">CaratLane Quality Audit · Analytics · July 2026</div>
+  <div class="ft-l">CaratLane Quality Audit · Analytics · August 2026</div>
   <div class="ft-r">Made by <strong style="color:rgba(255,200,220,.6)">CS Quality Team</strong> · QA Team · Confidential</div>
 </footer>
 
@@ -247,13 +247,13 @@ if(typeof DASHBOARD_DATA !== 'undefined' && DASHBOARD_DATA.logo){
   logoEls.forEach(el=>{ el.src=DASHBOARD_DATA.logo; });
 }
 
-const D=DASHBOARD_DATA, O=D.july.overall, T=D.july.teams, OP=D.june.overall, TP=D.june.teams;
+const D=DASHBOARD_DATA, O=D.august.overall, T=D.august.teams, OP=D.july.overall, TP=D.july.teams;
 const MAG='rgba(200,0,90,', GLD='rgba(184,134,11,', BLU='rgba(26,79,160,', GRN='rgba(26,122,74,', AMB='rgba(217,119,6,';
 const TT={callbacks:{label:ctx=>' '+ctx.dataset.label+': '+ctx.raw}};
 const GR={color:'rgba(200,0,90,.05)'};
 const TX={color:'#5A3048',font:{family:'DM Sans',size:10}};
 
-// Compact inline trend helper (▲/▼ % vs June)
+// Compact inline trend helper (▲/▼ % vs July)
 function mo(cur,prior){
   if(prior===undefined||prior===null) return '';
   const diff=cur-prior;
@@ -266,7 +266,7 @@ function mo(cur,prior){
 
 // KPIs
 document.getElementById('kpiRow').innerHTML=`
-  <div class="sc red"><div class="sc-label">Total NS Cases</div><div class="sc-num">${O.total}</div><div class="sc-sub">July 2026 · All teams ${mo(O.total,OP.total)}</div></div>
+  <div class="sc red"><div class="sc-label">Total NS Cases</div><div class="sc-num">${O.total}</div><div class="sc-sub">August 2026 · All teams ${mo(O.total,OP.total)}</div></div>
   <div class="sc red"><div class="sc-label">Crucial Cases</div><div class="sc-num">${O.crucial}</div><div class="sc-sub">${Math.round(O.crucial/O.total*100)}% of NS · Urgent ${mo(O.crucial,OP.crucial)}</div></div>
   <div class="sc green"><div class="sc-label">Converted +ve</div><div class="sc-num">${O.converted_pos}</div><div class="sc-sub">${O.converted_pos_pct}% recovery rate ${mo(O.converted_pos,OP.converted_pos)}</div></div>
   <div class="sc blue"><div class="sc-label">Repeat Customers</div><div class="sc-num">${O.repeat_cx}</div><div class="sc-sub">${O.repeat_cx_pct}% repeat rate ${mo(O.repeat_cx,OP.repeat_cx)}</div></div>
@@ -296,7 +296,7 @@ let tRows=teamsSorted.map(([name,d])=>{
 }).join('');
 const totConvPct=Math.round(O.converted_pos/O.total*100);
 tRows+=`<tr class="total-row"><td>Total</td><td>${O.total}</td><td class="num-red">${O.crucial}</td><td>${O.neutral}</td><td>${O.less}</td><td class="num-red">${O.action_required}</td><td class="num-gold">${O.training_gap}</td><td class="num-gold">${O.auditor_insights}</td><td class="num-blue">${O.repeat_cx}</td><td class="num-green">${O.converted_pos} (${totConvPct}%)</td><td>${O.agents}</td><td>${mo(O.total,OP.total)}</td></tr>`;
-document.getElementById('teamTable').innerHTML=`<table class="tbl"><thead><tr><th>Team</th><th>Total</th><th>Crucial</th><th>Neutral</th><th>Less Sig</th><th>Action Req</th><th>Training Gap</th><th>Auditor Feedback</th><th>Repeat CX</th><th>Converted +ve</th><th>Agents</th><th>vs June</th></tr></thead><tbody>${tRows}</tbody></table>`;
+document.getElementById('teamTable').innerHTML=`<table class="tbl"><thead><tr><th>Team</th><th>Total</th><th>Crucial</th><th>Neutral</th><th>Less Sig</th><th>Action Req</th><th>Training Gap</th><th>Auditor Feedback</th><th>Repeat CX</th><th>Converted +ve</th><th>Agents</th><th>vs July</th></tr></thead><tbody>${tRows}</tbody></table>`;
 
 // CCPT1 Donut
 (()=>{

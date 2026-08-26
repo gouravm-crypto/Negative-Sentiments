@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teams · NS Audit · July 2026</title>
+<title>Teams · NS Audit · August 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;0,800;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -107,25 +107,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 .team-cta-arrow{font-size:14px;color:var(--mag);transition:transform .2s;}
 .team-card:hover .team-cta-arrow{transform:translateX(5px);}
 
-/* ── PASSWORD MODAL ── */
-.pw-overlay{position:fixed;inset:0;background:rgba(15,10,16,.75);backdrop-filter:blur(14px);z-index:998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
-.pw-overlay.open{opacity:1;pointer-events:all;}
-.pw-box{background:var(--surface);border:1.5px solid var(--bdr2);border-radius:22px;padding:44px;max-width:420px;width:90%;position:relative;box-shadow:var(--sh-lg),0 20px 60px rgba(200,0,90,.14);transform:scale(.94) translateY(12px);transition:transform .3s;}
-.pw-overlay.open .pw-box{transform:scale(1) translateY(0);}
-.pw-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:22px 22px 0 0;background:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent);background-size:200% 100%;animation:shimmer 3s linear infinite;}
-.pw-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:var(--body);border:1.5px solid var(--bdr2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--txt3);transition:all .2s;}
-.pw-close:hover{background:var(--mag-pale);color:var(--mag);}
-.pw-icon{font-size:34px;margin-bottom:16px;text-align:center;}
-.pw-title{font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:700;color:var(--ink);margin-bottom:6px;}
-.pw-sub{font-size:13px;color:var(--txt3);line-height:1.65;margin-bottom:24px;}
-.pw-input{width:100%;padding:14px 16px;border:1.5px solid var(--bdr2);border-radius:10px;font-size:15px;font-weight:600;letter-spacing:3px;background:var(--body);color:var(--ink);outline:none;transition:border-color .2s;margin-bottom:6px;text-transform:uppercase;}
-.pw-input:focus{border-color:var(--mag);}
-.pw-input.wrong{border-color:var(--mag);animation:shake .4s ease;}
-.pw-hint{font-size:10px;color:var(--txt4);margin-bottom:18px;}
-.pw-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--mag),var(--mag-lt));color:#fff;border:none;border-radius:10px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;}
-.pw-btn:hover{opacity:.85;}
-.pw-error{font-size:12px;color:var(--mag);font-weight:600;margin-top:10px;text-align:center;display:none;}
-
 /* ── FOOTER ── */
 .footer{background:var(--ink2);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent,var(--mag),var(--gold-lt),var(--mag),transparent) 1;padding:36px 56px;display:flex;justify-content:space-between;align-items:center;}
 .ft-brand{display:flex;align-items:center;gap:10px;}
@@ -222,7 +203,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
     <a href="rootcause.html" class="hnav">Root Cause</a>
     <a href="trainers.html" class="hnav">Trainers</a>
   </nav>
-  <div class="hdr-badge">July 2026 Live</div>
+  <div class="hdr-badge">August 2026 Live</div>
 </header>
 
 <div class="main">
@@ -230,9 +211,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
   <!-- OVERVIEW: team picker -->
   <div id="overviewSection" class="overview-section">
     <section>
-      <div class="sec-ey fade-up">Team Leaderboards · July 2026</div>
+      <div class="sec-ey fade-up">Team Leaderboards · August 2026</div>
       <div class="sec-ttl fade-up">Select a Team</div>
-      <div class="sec-sub fade-up">Each team requires a password to view agent-level data. Use your team code or the master password.</div>
+      <div class="sec-sub fade-up">Click a team to view its agent-level data.</div>
       <div class="sec-rule"></div>
       <div class="team-grid fade-up" id="teamGrid"></div>
     </section>
@@ -271,22 +252,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--body);color:var(--txt);-w
 
 <footer class="footer">
   <div class="ft-brand"><div class="ft-gem"></div><div class="ft-txt">Sentiment Analysis · Teams</div></div>
-  <div class="ft-right">CS Quality Audit · July 2026 · 666 Cases<br><strong>Made by CS Quality Team</strong> · QA | NS Project<br>Confidential — Internal Use Only</div>
+  <div class="ft-right">CS Quality Audit · August 2026 · 666 Cases<br><strong>Made by CS Quality Team</strong> · QA | NS Project<br>Confidential — Internal Use Only</div>
 </footer>
-
-<!-- PASSWORD MODAL -->
-<div class="pw-overlay" id="pwModal">
-  <div class="pw-box">
-    <div class="pw-close" onclick="closePwModal()">✕</div>
-    <div class="pw-icon">🔒</div>
-    <div class="pw-title" id="pwTitle">Team Access</div>
-    <div class="pw-sub" id="pwSub">Enter your team password to view agent data.</div>
-    <input class="pw-input" id="pwInput" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()">
-    <div class="pw-hint">Use your team code or master password.</div>
-    <button class="pw-btn" onclick="checkPw()">Unlock →</button>
-    <div class="pw-error" id="pwError">Incorrect password — please try again.</div>
-  </div>
-</div>
 
 <!-- AGENT MODAL -->
 <div class="modal-overlay" id="agentModal" onclick="closeAgentBg(event)">
@@ -302,7 +269,7 @@ if(typeof DASHBOARD_DATA !== 'undefined' && DASHBOARD_DATA.logo){
   logoEls.forEach(el=>{ el.src=DASHBOARD_DATA.logo; });
 }
 
-const D=DASHBOARD_DATA, O=D.july.overall, T=D.july.teams, OP=D.june.overall, TP=D.june.teams, P=D.passwords;
+const D=DASHBOARD_DATA, O=D.august.overall, T=D.august.teams, OP=D.july.overall, TP=D.july.teams;
 const MAG='rgba(200,0,90,', GLD='rgba(184,134,11,', BLU='rgba(26,79,160,';
 const TT={backgroundColor:'#fff',borderColor:'#EEE4EC',borderWidth:1.5,titleColor:'#1A0818',bodyColor:'#9A7085',padding:12,cornerRadius:10};
 const TX={color:'#9A7085',font:{family:'DM Sans',size:11}};
@@ -328,7 +295,7 @@ function teamCasesFlat(teamData){
   return out;
 }
 function trendTrigger(curTgap,priorTgap,curCases,priorCases){
-  if(priorCases===undefined) return null; // no June baseline — e.g. brand-new team/agent
+  if(priorCases===undefined) return null; // no July baseline — e.g. brand-new team/agent
   const tgapUp = curTgap>priorTgap;
   const repUp = repeatJCErrorCount(curCases) > repeatJCErrorCount(priorCases);
   const comboUp = comboMissCount(curCases) > comboMissCount(priorCases);
@@ -355,7 +322,7 @@ document.getElementById('teamGrid').innerHTML=teamsSorted.map(([name,data],idx)=
   const al=alarmLevel(data.total);
   const priorTeam=TP[name];
   const trig = trendTrigger(data.training_gap, priorTeam?priorTeam.training_gap:undefined, teamCasesFlat(data), priorTeam?teamCasesFlat(priorTeam):undefined);
-  const trigBadge = trig ? `<div style="margin-top:8px;font-size:9px;font-weight:700;color:var(--mag);background:rgba(200,0,90,.08);border:1px solid rgba(200,0,90,.2);border-radius:6px;padding:5px 8px;line-height:1.5;">⚠ vs June: ${trig}</div>` : (priorTeam ? '' : `<div style="margin-top:8px;font-size:9px;color:var(--txt3);font-style:italic;">New this month — no June baseline</div>`);
+  const trigBadge = trig ? `<div style="margin-top:8px;font-size:9px;font-weight:700;color:var(--mag);background:rgba(200,0,90,.08);border:1px solid rgba(200,0,90,.2);border-radius:6px;padding:5px 8px;line-height:1.5;">⚠ vs July: ${trig}</div>` : (priorTeam ? '' : `<div style="margin-top:8px;font-size:9px;color:var(--txt3);font-style:italic;">New this month — no July baseline</div>`);
   return `<div class="team-card ${al.cls}" onclick="openTeam('${name.replace(/'/g,"\\'")}')" >
     <div class="team-card-hd">
       <div class="team-rank">${idx+1}</div>
@@ -374,38 +341,16 @@ document.getElementById('teamGrid').innerHTML=teamsSorted.map(([name,data],idx)=
       <div class="team-gap-row">Training Gaps <span class="tv">${data.training_gap}</span></div>
       <div class="team-gap-row">Auditor Feedback <span class="gv">${data.auditor_insight||0}</span></div>
       ${trigBadge}
-      <div class="team-cta"><span class="team-cta-txt">🔒 View Agents</span><span class="team-cta-arrow">→</span></div>
+      <div class="team-cta"><span class="team-cta-txt">View Agents</span><span class="team-cta-arrow">→</span></div>
     </div>
   </div>`;
 }).join('');
 
-// ── Password ──
+// ── Team selection (password protection removed — direct access) ──
 function openTeam(teamName){
-  // Check if already unlocked in session
-  const unlocked=sessionStorage.getItem('sa_unlocked_'+teamName);
-  if(unlocked==='1'){ loadTeamView(teamName); return; }
-  pendingTeam=teamName;
-  document.getElementById('pwTitle').textContent=teamName;
-  document.getElementById('pwSub').textContent=`Enter the password for ${teamName} team, or use the master password.`;
-  document.getElementById('pwInput').value=''; document.getElementById('pwError').style.display='none';
-  document.getElementById('pwModal').classList.add('open');
-  setTimeout(()=>document.getElementById('pwInput').focus(),300);
+  loadTeamView(teamName);
 }
-function closePwModal(){document.getElementById('pwModal').classList.remove('open');pendingTeam=null;}
-function checkPw(){
-  const val=document.getElementById('pwInput').value.trim().toUpperCase();
-  const tp=(P[pendingTeam]||'').toUpperCase(), mp=(P['__master__']||'').toUpperCase();
-  if(val===tp||val===mp){
-    const t=pendingTeam; closePwModal();
-    sessionStorage.setItem('sa_unlocked_'+t,'1');
-    loadTeamView(t);
-  } else {
-    const inp=document.getElementById('pwInput'); inp.classList.add('wrong');
-    document.getElementById('pwError').style.display='block';
-    setTimeout(()=>inp.classList.remove('wrong'),500);
-  }
-}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePwModal();closeAgentModal();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAgentModal();}});
 
 // ── Team view ──
 function loadTeamView(teamName){
@@ -436,7 +381,7 @@ function loadTeamView(teamName){
     const priorAgent = priorTeamData ? priorTeamData.agents[a.email] : undefined;
     const trig = trendTrigger(a.training_gap, priorAgent?priorAgent.training_gap:undefined, allCasesOf(a), priorAgent?allCasesOf(priorAgent):undefined);
     const trigLine = trig
-      ? `<div style="margin-top:6px;font-size:9px;font-weight:700;color:var(--mag);background:rgba(200,0,90,.08);border:1px solid rgba(200,0,90,.2);border-radius:6px;padding:4px 8px;display:inline-block;">⚠ vs June: ${trig}</div>`
+      ? `<div style="margin-top:6px;font-size:9px;font-weight:700;color:var(--mag);background:rgba(200,0,90,.08);border:1px solid rgba(200,0,90,.2);border-radius:6px;padding:4px 8px;display:inline-block;">⚠ vs July: ${trig}</div>`
       : '';
     return `
     <div class="lb-item" onclick="openAgentModal('${a.email.replace(/'/g,"\\'")}')" >
@@ -514,9 +459,7 @@ function loadTeamView(teamName){
   const p=new URLSearchParams(window.location.search);
   const team=p.get('team');
   if(team&&T[team]){
-    const unlocked=sessionStorage.getItem('sa_unlocked_'+team);
-    if(unlocked==='1'){ loadTeamView(team); return; }
-    openTeam(team);
+    loadTeamView(team);
   }
 })();
 

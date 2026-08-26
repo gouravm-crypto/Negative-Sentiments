@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trainer Console · NS Audit · July 2026</title>
+<title>Trainer Console · NS Audit · August 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;0,800;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -131,7 +131,7 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
     <a class="hnav active" href="trainers.html">Trainers</a>
   </nav>
   <div class="hdr-right">
-    <div class="hdr-badge">July 2026</div>
+    <div class="hdr-badge">August 2026</div>
   </div>
 </header>
 
@@ -160,7 +160,7 @@ footer{background:var(--ink2);padding:24px 48px;display:flex;align-items:center;
 </div>
 
 <footer>
-  <div class="ft-l">CaratLane Quality Audit · Trainer Console · July 2026</div>
+  <div class="ft-l">CaratLane Quality Audit · Trainer Console · August 2026</div>
   <div class="ft-r">Made by <strong style="color:rgba(255,200,220,.6)">CS Quality Team</strong> · QA Team · Confidential</div>
 </footer>
 
@@ -193,7 +193,7 @@ if(typeof DASHBOARD_DATA !== 'undefined' && DASHBOARD_DATA.logo){
   document.getElementById('hdrLogo').src = DASHBOARD_DATA.logo;
 }
 
-const D=DASHBOARD_DATA, O=D.july.overall, T=D.july.teams;
+const D=DASHBOARD_DATA, O=D.august.overall, T=D.august.teams;
 
 // Team → Trainer Group mapping. "Other" covers small mixed-channel teams
 // (Clive / OMNI / TAH) that don't cleanly belong to either desk.
@@ -336,11 +336,11 @@ function renderModal(cases, title, meta){
 }
 function openReasonModal(group, reason){
   const cases = trainingRelevant.filter(c=>c.group===group && c.dislike===reason);
-  renderModal(cases, reason, `${group} · ${cases.length} cases · July 2026`);
+  renderModal(cases, reason, `${group} · ${cases.length} cases · August 2026`);
 }
 function openAgentModal(email, name){
   const cases = trainingRelevant.filter(c=>c.agent_email===email);
-  renderModal(cases, name, `${cases.length} training-relevant cases · July 2026`);
+  renderModal(cases, name, `${cases.length} training-relevant cases · August 2026`);
 }
 function closeModal(){
   document.getElementById('caseModal').classList.remove('open');
